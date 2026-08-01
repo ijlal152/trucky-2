@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trucky/core/constants/app_constants.dart';
 import 'package:trucky/core/router/app_router.dart';
 import 'package:trucky/core/theme/app_theme.dart';
@@ -9,11 +10,22 @@ class TruckyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: AppConstants.appName,
-      theme: AppTheme.light,
-      routerConfig: appRouter,
-      debugShowCheckedModeBanner: false,
+    return ScreenUtilInit(
+      designSize: const Size(412, 892),
+      minTextAdapt: true,
+      fontSizeResolver: FontSizeResolvers.height,
+      useInheritedMediaQuery: false,
+      builder: (context, child) => MediaQuery(
+        data: MediaQuery.of(
+          context,
+        ).copyWith(textScaler: const TextScaler.linear(1)),
+        child: MaterialApp.router(
+          title: AppConstants.appName,
+          theme: AppTheme.light,
+          routerConfig: appRouter,
+          debugShowCheckedModeBanner: false,
+        ),
+      ),
     );
   }
 }

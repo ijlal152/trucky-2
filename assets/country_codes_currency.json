@@ -1,0 +1,2485 @@
+[
+  {
+    "country": {
+      "en": "Afghanistan",
+      "ar": "أفغانستان",
+      "fr": "Afghanistan"
+    },
+    "dial_code": "+93",
+    "currency": {
+      "en": "AFN",
+      "ar": "أفغاني",
+      "fr": "AFN"
+    }
+  },
+  {
+    "country": {
+      "en": "Albania",
+      "ar": "ألبانيا",
+      "fr": "Albanie"
+    },
+    "dial_code": "+355",
+    "currency": {
+      "en": "ALL",
+      "ar": "ليك ألباني",
+      "fr": "ALL"
+    }
+  },
+  {
+    "country": {
+      "en": "Algeria",
+      "ar": "الجزائر",
+      "fr": "Algérie"
+    },
+    "dial_code": "+213",
+    "currency": {
+      "en": "DZD",
+      "ar": "دينار جزائري",
+      "fr": "DZD"
+    }
+  },
+  {
+    "country": {
+      "en": "Andorra",
+      "ar": "أندورا",
+      "fr": "Andorre"
+    },
+    "dial_code": "+376",
+    "currency": {
+      "en": "EUR",
+      "ar": "يورو",
+      "fr": "EUR"
+    }
+  },
+  {
+    "country": {
+      "en": "Angola",
+      "ar": "أنغولا",
+      "fr": "Angola"
+    },
+    "dial_code": "+244",
+    "currency": {
+      "en": "AOA",
+      "ar": "كوانزا أنغولي",
+      "fr": "AOA"
+    }
+  },
+  {
+    "country": {
+      "en": "Antigua and Barbuda",
+      "ar": "أنتيغوا وباربودا",
+      "fr": "Antigua-et-Barbuda"
+    },
+    "dial_code": "+1-268",
+    "currency": {
+      "en": "XCD",
+      "ar": "دولار شرق الكاريبي",
+      "fr": "XCD"
+    }
+  },
+  {
+    "country": {
+      "en": "Argentina",
+      "ar": "الأرجنتين",
+      "fr": "Argentine"
+    },
+    "dial_code": "+54",
+    "currency": {
+      "en": "ARS",
+      "ar": "بيزو أرجنتيني",
+      "fr": "ARS"
+    }
+  },
+  {
+    "country": {
+      "en": "Armenia",
+      "ar": "أرمينيا",
+      "fr": "Arménie"
+    },
+    "dial_code": "+374",
+    "currency": {
+      "en": "AMD",
+      "ar": "درام أرميني",
+      "fr": "AMD"
+    }
+  },
+  {
+    "country": {
+      "en": "Australia",
+      "ar": "أستراليا",
+      "fr": "Australie"
+    },
+    "dial_code": "+61",
+    "currency": {
+      "en": "AUD",
+      "ar": "دولار أسترالي",
+      "fr": "AUD"
+    }
+  },
+  {
+    "country": {
+      "en": "Austria",
+      "ar": "النمسا",
+      "fr": "Autriche"
+    },
+    "dial_code": "+43",
+    "currency": {
+      "en": "EUR",
+      "ar": "يورو",
+      "fr": "EUR"
+    }
+  },
+  {
+    "country": {
+      "en": "Azerbaijan",
+      "ar": "أذربيجان",
+      "fr": "Azerbaïdjan"
+    },
+    "dial_code": "+994",
+    "currency": {
+      "en": "AZN",
+      "ar": "مانات أذربيجاني",
+      "fr": "AZN"
+    }
+  },
+  {
+    "country": {
+      "en": "Bahamas",
+      "ar": "الباهاماس",
+      "fr": "Bahamas"
+    },
+    "dial_code": "+1-242",
+    "currency": {
+      "en": "BSD",
+      "ar": "دولار باهامي",
+      "fr": "BSD"
+    }
+  },
+  {
+    "country": {
+      "en": "Bahrain",
+      "ar": "البحرين",
+      "fr": "Bahreïn"
+    },
+    "dial_code": "+973",
+    "currency": {
+      "en": "BHD",
+      "ar": "دينار بحريني",
+      "fr": "BHD"
+    }
+  },
+  {
+    "country": {
+      "en": "Bangladesh",
+      "ar": "بنغلاديش",
+      "fr": "Bangladesh"
+    },
+    "dial_code": "+880",
+    "currency": {
+      "en": "BDT",
+      "ar": "تاكا بنغالي",
+      "fr": "BDT"
+    }
+  },
+  {
+    "country": {
+      "en": "Barbados",
+      "ar": "بربادوس",
+      "fr": "Barbade"
+    },
+    "dial_code": "+1-246",
+    "currency": {
+      "en": "BBD",
+      "ar": "دولار باربادوسي",
+      "fr": "BBD"
+    }
+  },
+  {
+    "country": {
+      "en": "Belarus",
+      "ar": "بيلاروس",
+      "fr": "Biélorussie"
+    },
+    "dial_code": "+375",
+    "currency": {
+      "en": "BYN",
+      "ar": "روبل بيلاروسي",
+      "fr": "BYN"
+    }
+  },
+  {
+    "country": {
+      "en": "Belgium",
+      "ar": "بلجيكا",
+      "fr": "Belgique"
+    },
+    "dial_code": "+32",
+    "currency": {
+      "en": "EUR",
+      "ar": "يورو",
+      "fr": "EUR"
+    }
+  },
+  {
+    "country": {
+      "en": "Belize",
+      "ar": "بليز",
+      "fr": "Belize"
+    },
+    "dial_code": "+501",
+    "currency": {
+      "en": "BZD",
+      "ar": "دولار بليزي",
+      "fr": "BZD"
+    }
+  },
+  {
+    "country": {
+      "en": "Benin",
+      "ar": "بنين",
+      "fr": "Bénin"
+    },
+    "dial_code": "+229",
+    "currency": {
+      "en": "XOF",
+      "ar": "فرنك غرب أفريقي",
+      "fr": "XOF"
+    }
+  },
+  {
+    "country": {
+      "en": "Bhutan",
+      "ar": "بوتان",
+      "fr": "Bhoutan"
+    },
+    "dial_code": "+975",
+    "currency": {
+      "en": "INR",
+      "ar": "روبية هندية",
+      "fr": "INR"
+    }
+  },
+  {
+    "country": {
+      "en": "Bolivia",
+      "ar": "بوليفيا",
+      "fr": "Bolivie"
+    },
+    "dial_code": "+591",
+    "currency": {
+      "en": "BOB",
+      "ar": "بوليفيانو",
+      "fr": "BOB"
+    }
+  },
+  {
+    "country": {
+      "en": "Bosnia and Herzegovina",
+      "ar": "البوسنة والهرسك",
+      "fr": "Bosnie-Herzégovine"
+    },
+    "dial_code": "+387",
+    "currency": {
+      "en": "BAM",
+      "ar": "مارك بوسني",
+      "fr": "BAM"
+    }
+  },
+  {
+    "country": {
+      "en": "Botswana",
+      "ar": "بوتسوانا",
+      "fr": "Botswana"
+    },
+    "dial_code": "+267",
+    "currency": {
+      "en": "BWP",
+      "ar": "بولا بوتسواني",
+      "fr": "BWP"
+    }
+  },
+  {
+    "country": {
+      "en": "Brazil",
+      "ar": "البرازيل",
+      "fr": "Brésil"
+    },
+    "dial_code": "+55",
+    "currency": {
+      "en": "BRL",
+      "ar": "ريال برازيلي",
+      "fr": "BRL"
+    }
+  },
+  {
+    "country": {
+      "en": "Brunei",
+      "ar": "بروناي",
+      "fr": "Brunei"
+    },
+    "dial_code": "+673",
+    "currency": {
+      "en": "BND",
+      "ar": "دولار بروني",
+      "fr": "BND"
+    }
+  },
+  {
+    "country": {
+      "en": "Bulgaria",
+      "ar": "بلغاريا",
+      "fr": "Bulgarie"
+    },
+    "dial_code": "+359",
+    "currency": {
+      "en": "BGN",
+      "ar": "ليف بلغاري",
+      "fr": "BGN"
+    }
+  },
+  {
+    "country": {
+      "en": "Burkina Faso",
+      "ar": "بوركينا فاسو",
+      "fr": "Burkina Faso"
+    },
+    "dial_code": "+226",
+    "currency": {
+      "en": "XOF",
+      "ar": "فرنك غرب أفريقي",
+      "fr": "XOF"
+    }
+  },
+  {
+    "country": {
+      "en": "Burundi",
+      "ar": "بوروندي",
+      "fr": "Burundi"
+    },
+    "dial_code": "+257",
+    "currency": {
+      "en": "BIF",
+      "ar": "فرنك بوروندي",
+      "fr": "BIF"
+    }
+  },
+  {
+    "country": {
+      "en": "Cabo Verde",
+      "ar": "الرأس الأخضر",
+      "fr": "Cap-Vert"
+    },
+    "dial_code": "+238",
+    "currency": {
+      "en": "CVE",
+      "ar": "إسكودو كاب فيردي",
+      "fr": "CVE"
+    }
+  },
+  {
+    "country": {
+      "en": "Cambodia",
+      "ar": "كمبوديا",
+      "fr": "Cambodge"
+    },
+    "dial_code": "+855",
+    "currency": {
+      "en": "KHR",
+      "ar": "رييل كمبودي",
+      "fr": "KHR"
+    }
+  },
+  {
+    "country": {
+      "en": "Cameroon",
+      "ar": "الكاميرون",
+      "fr": "Cameroun"
+    },
+    "dial_code": "+237",
+    "currency": {
+      "en": "XAF",
+      "ar": "فرنك وسط أفريقي",
+      "fr": "XAF"
+    }
+  },
+  {
+    "country": {
+      "en": "Canada",
+      "ar": "كندا",
+      "fr": "Canada"
+    },
+    "dial_code": "+1",
+    "currency": {
+      "en": "CAD",
+      "ar": "دولار كندي",
+      "fr": "CAD"
+    }
+  },
+  {
+    "country": {
+      "en": "Central African Republic",
+      "ar": "جمهورية أفريقيا الوسطى",
+      "fr": "République Centrafricaine"
+    },
+    "dial_code": "+236",
+    "currency": {
+      "en": "XAF",
+      "ar": "فرنك وسط أفريقي",
+      "fr": "XAF"
+    }
+  },
+  {
+    "country": {
+      "en": "Chad",
+      "ar": "تشاد",
+      "fr": "Tchad"
+    },
+    "dial_code": "+235",
+    "currency": {
+      "en": "XAF",
+      "ar": "فرنك وسط أفريقي",
+      "fr": "XAF"
+    }
+  },
+  {
+    "country": {
+      "en": "Chile",
+      "ar": "تشيلي",
+      "fr": "Chili"
+    },
+    "dial_code": "+56",
+    "currency": {
+      "en": "CLP",
+      "ar": "بيزو تشيلي",
+      "fr": "CLP"
+    }
+  },
+  {
+    "country": {
+      "en": "China",
+      "ar": "الصين",
+      "fr": "Chine"
+    },
+    "dial_code": "+86",
+    "currency": {
+      "en": "CNY",
+      "ar": "يوان صيني",
+      "fr": "CNY"
+    }
+  },
+  {
+    "country": {
+      "en": "Colombia",
+      "ar": "كولومبيا",
+      "fr": "Colombie"
+    },
+    "dial_code": "+57",
+    "currency": {
+      "en": "COP",
+      "ar": "بيزو كولومبي",
+      "fr": "COP"
+    }
+  },
+  {
+    "country": {
+      "en": "Comoros",
+      "ar": "جزر القمر",
+      "fr": "Comores"
+    },
+    "dial_code": "+269",
+    "currency": {
+      "en": "KMF",
+      "ar": "فرنك جزر القمر",
+      "fr": "KMF"
+    }
+  },
+  {
+    "country": {
+      "en": "Congo, Republic of the",
+      "ar": "الكونغو، جمهورية",
+      "fr": "Congo"
+    },
+    "dial_code": "+242",
+    "currency": {
+      "en": "XAF",
+      "ar": "فرنك وسط أفريقي",
+      "fr": "XAF"
+    }
+  },
+  {
+    "country": {
+      "en": "Congo, Democratic Republic of the",
+      "ar": "جمهورية الكونغو الديمقراطية",
+      "fr": "République Démocratique du Congo"
+    },
+    "dial_code": "+243",
+    "currency": {
+      "en": "CDF",
+      "ar": "فرنك كونغولي",
+      "fr": "CDF"
+    }
+  },
+  {
+    "country": {
+      "en": "Costa Rica",
+      "ar": "كوستاريكا",
+      "fr": "Costa Rica"
+    },
+    "dial_code": "+506",
+    "currency": {
+      "en": "CRC",
+      "ar": "كولون كوستاريكي",
+      "fr": "CRC"
+    }
+  },
+  {
+    "country": {
+      "en": "Croatia",
+      "ar": "كرواتيا",
+      "fr": "Croatie"
+    },
+    "dial_code": "+385",
+    "currency": {
+      "en": "HRK",
+      "ar": " kuna",
+      "fr": "HRK"
+    }
+  },
+  {
+    "country": {
+      "en": "Cuba",
+      "ar": "كوبا",
+      "fr": "Cuba"
+    },
+    "dial_code": "+53",
+    "currency": {
+      "en": "CUP",
+      "ar": "بيزو كوبي",
+      "fr": "CUP"
+    }
+  },
+  {
+    "country": {
+      "en": "Cyprus",
+      "ar": "قبرص",
+      "fr": "Chypre"
+    },
+    "dial_code": "+357",
+    "currency": {
+      "en": "EUR",
+      "ar": "يورو",
+      "fr": "EUR"
+    }
+  },
+  {
+    "country": {
+      "en": "Denmark",
+      "ar": "الدانمارك",
+      "fr": "Danemark"
+    },
+    "dial_code": "+45",
+    "currency": {
+      "en": "DKK",
+      "ar": "كرونة دانماركية",
+      "fr": "DKK"
+    }
+  },
+  {
+    "country": {
+      "en": "Djibouti",
+      "ar": "جيبوتي",
+      "fr": "Djibouti"
+    },
+    "dial_code": "+253",
+    "currency": {
+      "en": "DJF",
+      "ar": "فرنك جيبوتي",
+      "fr": "DJF"
+    }
+  },
+  {
+    "country": {
+      "en": "Dominica",
+      "ar": "دومينيكا",
+      "fr": "Dominique"
+    },
+    "dial_code": "+1-767",
+    "currency": {
+      "en": "XCD",
+      "ar": "دولار شرق الكاريبي",
+      "fr": "XCD"
+    }
+  },
+  {
+    "country": {
+      "en": "Dominican Republic",
+      "ar": "جمهورية الدومينيكان",
+      "fr": "République Dominicaine"
+    },
+    "dial_code": "+1-809",
+    "currency": {
+      "en": "DOP",
+      "ar": "بيزو دومينيكاني",
+      "fr": "DOP"
+    }
+  },
+  {
+    "country": {
+      "en": "Ecuador",
+      "ar": "الإكوادور",
+      "fr": "Équateur"
+    },
+    "dial_code": "+593",
+    "currency": {
+      "en": "USD",
+      "ar": "دولار أمريكي",
+      "fr": "USD"
+    }
+  },
+  {
+    "country": {
+      "en": "Egypt",
+      "ar": "مصر",
+      "fr": "Égypte"
+    },
+    "dial_code": "+20",
+    "currency": {
+      "en": "EGP",
+      "ar": "جنيه مصري",
+      "fr": "EGP"
+    }
+  },
+  {
+    "country": {
+      "en": "El Salvador",
+      "ar": "السلفادور",
+      "fr": "El Salvador"
+    },
+    "dial_code": "+503",
+    "currency": {
+      "en": "USD",
+      "ar": "دولار أمريكي",
+      "fr": "USD"
+    }
+  },
+  {
+    "country": {
+      "en": "Equatorial Guinea",
+      "ar": "غينيا الاستوائية",
+      "fr": "Guinée Équatoriale"
+    },
+    "dial_code": "+240",
+    "currency": {
+      "en": "XAF",
+      "ar": "فرنك وسط أفريقي",
+      "fr": "XAF"
+    }
+  },
+  {
+    "country": {
+      "en": "Eritrea",
+      "ar": "إريتريا",
+      "fr": "Érythrée"
+    },
+    "dial_code": "+291",
+    "currency": {
+      "en": "ERN",
+      "ar": "ناكفا إريتري",
+      "fr": "ERN"
+    }
+  },
+  {
+    "country": {
+      "en": "Estonia",
+      "ar": "استونيا",
+      "fr": "Estonie"
+    },
+    "dial_code": "+372",
+    "currency": {
+      "en": "EUR",
+      "ar": "يورو",
+      "fr": "EUR"
+    }
+  },
+  {
+    "country": {
+      "en": "Eswatini",
+      "ar": "إسواتيني",
+      "fr": "Eswatini"
+    },
+    "dial_code": "+268",
+    "currency": {
+      "en": "SZL",
+      "ar": "ليلانغيني سواتيني",
+      "fr": "SZL"
+    }
+  },
+  {
+    "country": {
+      "en": "Ethiopia",
+      "ar": "إثيوبيا",
+      "fr": "Éthiopie"
+    },
+    "dial_code": "+251",
+    "currency": {
+      "en": "ETB",
+      "ar": "بير إثيوبي",
+      "fr": "ETB"
+    }
+  },
+  {
+    "country": {
+      "en": "Fiji",
+      "ar": "فيجي",
+      "fr": "Fidji"
+    },
+    "dial_code": "+679",
+    "currency": {
+      "en": "FJD",
+      "ar": "دولار فيجي",
+      "fr": "FJD"
+    }
+  },
+  {
+    "country": {
+      "en": "Finland",
+      "ar": "فنلندا",
+      "fr": "Finlande"
+    },
+    "dial_code": "+358",
+    "currency": {
+      "en": "EUR",
+      "ar": "يورو",
+      "fr": "EUR"
+    }
+  },
+  {
+    "country": {
+      "en": "France",
+      "ar": "فرنسا",
+      "fr": "France"
+    },
+    "dial_code": "+33",
+    "currency": {
+      "en": "EUR",
+      "ar": "يورو",
+      "fr": "EUR"
+    }
+  },
+  {
+    "country": {
+      "en": "Gabon",
+      "ar": "الغابون",
+      "fr": "Gabon"
+    },
+    "dial_code": "+241",
+    "currency": {
+      "en": "XAF",
+      "ar": "فرنك وسط أفريقي",
+      "fr": "XAF"
+    }
+  },
+  {
+    "country": {
+      "en": "Gambia",
+      "ar": "غامبيا",
+      "fr": "Gambie"
+    },
+    "dial_code": "+220",
+    "currency": {
+      "en": "GMD",
+      "ar": "دالاسي غامبي",
+      "fr": "GMD"
+    }
+  },
+  {
+    "country": {
+      "en": "Georgia",
+      "ar": "جورجيا",
+      "fr": "Géorgie"
+    },
+    "dial_code": "+995",
+    "currency": {
+      "en": "GEL",
+      "ar": "لارى جورجي",
+      "fr": "GEL"
+    }
+  },
+  {
+    "country": {
+      "en": "Germany",
+      "ar": "ألمانيا",
+      "fr": "Allemagne"
+    },
+    "dial_code": "+49",
+    "currency": {
+      "en": "EUR",
+      "ar": "يورو",
+      "fr": "EUR"
+    }
+  },
+  {
+    "country": {
+      "en": "Ghana",
+      "ar": "غانا",
+      "fr": "Ghana"
+    },
+    "dial_code": "+233",
+    "currency": {
+      "en": "GHS",
+      "ar": "سيدي غاني",
+      "fr": "GHS"
+    }
+  },
+  {
+    "country": {
+      "en": "Greece",
+      "ar": "اليونان",
+      "fr": "Grèce"
+    },
+    "dial_code": "+30",
+    "currency": {
+      "en": "EUR",
+      "ar": "يورو",
+      "fr": "EUR"
+    }
+  },
+  {
+    "country": {
+      "en": "Grenada",
+      "ar": "غرينادا",
+      "fr": "Grenade"
+    },
+    "dial_code": "+1-473",
+    "currency": {
+      "en": "XCD",
+      "ar": "دولار شرق الكاريبي",
+      "fr": "XCD"
+    }
+  },
+  {
+    "country": {
+      "en": "Guatemala",
+      "ar": "غواتيمالا",
+      "fr": "Guatemala"
+    },
+    "dial_code": "+502",
+    "currency": {
+      "en": "GTQ",
+      "ar": "كيتزال غواتيمالي",
+      "fr": "GTQ"
+    }
+  },
+  {
+    "country": {
+      "en": "Guinea",
+      "ar": "غينيا",
+      "fr": "Guinée"
+    },
+    "dial_code": "+224",
+    "currency": {
+      "en": "GNF",
+      "ar": "فرنك غيني",
+      "fr": "GNF"
+    }
+  },
+  {
+    "country": {
+      "en": "Guinea-Bissau",
+      "ar": "غينيا بيساو",
+      "fr": "Guinée-Bissau"
+    },
+    "dial_code": "+245",
+    "currency": {
+      "en": "XOF",
+      "ar": "فرنك غرب أفريقي",
+      "fr": "XOF"
+    }
+  },
+  {
+    "country": {
+      "en": "Guyana",
+      "ar": "غيانا",
+      "fr": "Guyane"
+    },
+    "dial_code": "+592",
+    "currency": {
+      "en": "GYD",
+      "ar": "دولار غياني",
+      "fr": "GYD"
+    }
+  },
+  {
+    "country": {
+      "en": "Haiti",
+      "ar": "هايتي",
+      "fr": "Haïti"
+    },
+    "dial_code": "+509",
+    "currency": {
+      "en": "HTG",
+      "ar": "غورد هاييتي",
+      "fr": "HTG"
+    }
+  },
+  {
+    "country": {
+      "en": "Honduras",
+      "ar": "هندوراس",
+      "fr": "Honduras"
+    },
+    "dial_code": "+504",
+    "currency": {
+      "en": "HNL",
+      "ar": "لمبيرة هندوراسية",
+      "fr": "HNL"
+    }
+  },
+  {
+    "country": {
+      "en": "Hungary",
+      "ar": "المجر",
+      "fr": "Hongrie"
+    },
+    "dial_code": "+36",
+    "currency": {
+      "en": "HUF",
+      "ar": "فورنت هنغاري",
+      "fr": "HUF"
+    }
+  },
+  {
+    "country": {
+      "en": "Iceland",
+      "ar": "أيسلندا",
+      "fr": "Islande"
+    },
+    "dial_code": "+354",
+    "currency": {
+      "en": "ISK",
+      "ar": "كرونة آيسلندية",
+      "fr": "ISK"
+    }
+  },
+  {
+    "country": {
+      "en": "India",
+      "ar": "الهند",
+      "fr": "Inde"
+    },
+    "dial_code": "+91",
+    "currency": {
+      "en": "INR",
+      "ar": "روبية هندية",
+      "fr": "INR"
+    }
+  },
+  {
+    "country": {
+      "en": "Indonesia",
+      "ar": "إندونيسيا",
+      "fr": "Indonésie"
+    },
+    "dial_code": "+62",
+    "currency": {
+      "en": "IDR",
+      "ar": "روبية إندونيسية",
+      "fr": "IDR"
+    }
+  },
+  {
+    "country": {
+      "en": "Iran",
+      "ar": "إيران",
+      "fr": "Iran"
+    },
+    "dial_code": "+98",
+    "currency": {
+      "en": "IRR",
+      "ar": "ريال إيراني",
+      "fr": "IRR"
+    }
+  },
+  {
+    "country": {
+      "en": "Iraq",
+      "ar": "العراق",
+      "fr": "Irak"
+    },
+    "dial_code": "+964",
+    "currency": {
+      "en": "IQD",
+      "ar": "دينار عراقي",
+      "fr": "IQD"
+    }
+  },
+  {
+    "country": {
+      "en": "Ireland",
+      "ar": "أيرلندا",
+      "fr": "Irlande"
+    },
+    "dial_code": "+353",
+    "currency": {
+      "en": "EUR",
+      "ar": "يورو",
+      "fr": "EUR"
+    }
+  },
+  {
+    "country": {
+      "en": "Israel",
+      "ar": "إسرائيل",
+      "fr": "Israël"
+    },
+    "dial_code": "+972",
+    "currency": {
+      "en": "ILS",
+      "ar": "شيكل إسرائيلي",
+      "fr": "ILS"
+    }
+  },
+  {
+    "country": {
+      "en": "Italy",
+      "ar": "إيطاليا",
+      "fr": "Italie"
+    },
+    "dial_code": "+39",
+    "currency": {
+      "en": "EUR",
+      "ar": "يورو",
+      "fr": "EUR"
+    }
+  },
+  {
+    "country": {
+      "en": "Jamaica",
+      "ar": "جامايكا",
+      "fr": "Jamaïque"
+    },
+    "dial_code": "+1-876",
+    "currency": {
+      "en": "JMD",
+      "ar": "دولار جامايكي",
+      "fr": "JMD"
+    }
+  },
+  {
+    "country": {
+      "en": "Japan",
+      "ar": "اليابان",
+      "fr": "Japon"
+    },
+    "dial_code": "+81",
+    "currency": {
+      "en": "JPY",
+      "ar": "ين ياباني",
+      "fr": "JPY"
+    }
+  },
+  {
+    "country": {
+      "en": "Jordan",
+      "ar": "الأردن",
+      "fr": "Jordanie"
+    },
+    "dial_code": "+962",
+    "currency": {
+      "en": "JOD",
+      "ar": "دينار أردني",
+      "fr": "JOD"
+    }
+  },
+  {
+    "country": {
+      "en": "Kazakhstan",
+      "ar": "كازاخستان",
+      "fr": "Kazakhstan"
+    },
+    "dial_code": "+7",
+    "currency": {
+      "en": "KZT",
+      "ar": "تنجي كازاخستاني",
+      "fr": "KZT"
+    }
+  },
+  {
+    "country": {
+      "en": "Kenya",
+      "ar": "كينيا",
+      "fr": "Kenya"
+    },
+    "dial_code": "+254",
+    "currency": {
+      "en": "KES",
+      "ar": "شلن كيني",
+      "fr": "KES"
+    }
+  },
+  {
+    "country": {
+      "en": "Kiribati",
+      "ar": "كيريباتي",
+      "fr": "Kiribati"
+    },
+    "dial_code": "+686",
+    "currency": {
+      "en": "AUD",
+      "ar": "دولار أسترالي",
+      "fr": "AUD"
+    }
+  },
+  {
+    "country": {
+      "en": "Kuwait",
+      "ar": "الكويت",
+      "fr": "Koweït"
+    },
+    "dial_code": "+965",
+    "currency": {
+      "en": "KWD",
+      "ar": "دينار كويتي",
+      "fr": "KWD"
+    }
+  },
+  {
+    "country": {
+      "en": "Kyrgyzstan",
+      "ar": "قيرغيزستان",
+      "fr": "Kirghizistan"
+    },
+    "dial_code": "+996",
+    "currency": {
+      "en": "KGS",
+      "ar": "سوم قيرغيزي",
+      "fr": "KGS"
+    }
+  },
+  {
+    "country": {
+      "en": "Laos",
+      "ar": "لاوس",
+      "fr": "Laos"
+    },
+    "dial_code": "+856",
+    "currency": {
+      "en": "LAK",
+      "ar": "كيات لاوي",
+      "fr": "LAK"
+    }
+  },
+  {
+    "country": {
+      "en": "Latvia",
+      "ar": "لاتفيا",
+      "fr": "Lettonie"
+    },
+    "dial_code": "+371",
+    "currency": {
+      "en": "EUR",
+      "ar": "يورو",
+      "fr": "EUR"
+    }
+  },
+  {
+    "country": {
+      "en": "Lebanon",
+      "ar": "لبنان",
+      "fr": "Liban"
+    },
+    "dial_code": "+961",
+    "currency": {
+      "en": "LBP",
+      "ar": "ليرة لبنانية",
+      "fr": "LBP"
+    }
+  },
+  {
+    "country": {
+      "en": "Lesotho",
+      "ar": "ليسوتو",
+      "fr": "Lesotho"
+    },
+    "dial_code": "+266",
+    "currency": {
+      "en": "LSL",
+      "ar": "لوتي ليسوتو",
+      "fr": "LSL"
+    }
+  },
+  {
+    "country": {
+      "en": "Liberia",
+      "ar": "ليبيريا",
+      "fr": "Liberia"
+    },
+    "dial_code": "+231",
+    "currency": {
+      "en": "LRD",
+      "ar": "دولار ليبيري",
+      "fr": "LRD"
+    }
+  },
+  {
+    "country": {
+      "en": "Libya",
+      "ar": "ليبيا",
+      "fr": "Libye"
+    },
+    "dial_code": "+218",
+    "currency": {
+      "en": "LYD",
+      "ar": "دينار ليبي",
+      "fr": "LYD"
+    }
+  },
+  {
+    "country": {
+      "en": "Liechtenstein",
+      "ar": "ليختنشتاين",
+      "fr": "Liechtenstein"
+    },
+    "dial_code": "+423",
+    "currency": {
+      "en": "CHF",
+      "ar": "فرنك سويسري",
+      "fr": "CHF"
+    }
+  },
+  {
+    "country": {
+      "en": "Lithuania",
+      "ar": "ليتوانيا",
+      "fr": "Lituanie"
+    },
+    "dial_code": "+370",
+    "currency": {
+      "en": "EUR",
+      "ar": "يورو",
+      "fr": "EUR"
+    }
+  },
+  {
+    "country": {
+      "en": "Luxembourg",
+      "ar": "لوكسمبورغ",
+      "fr": "Luxembourg"
+    },
+    "dial_code": "+352",
+    "currency": {
+      "en": "EUR",
+      "ar": "يورو",
+      "fr": "EUR"
+    }
+  },
+  {
+    "country": {
+      "en": "Madagascar",
+      "ar": "مدغشقر",
+      "fr": "Madagascar"
+    },
+    "dial_code": "+261",
+    "currency": {
+      "en": "MGA",
+      "ar": "أرياري مدغشقري",
+      "fr": "MGA"
+    }
+  },
+  {
+    "country": {
+      "en": "Malawi",
+      "ar": "مالاوي",
+      "fr": "Malawi"
+    },
+    "dial_code": "+265",
+    "currency": {
+      "en": "MWK",
+      "ar": "كواشا مالاوي",
+      "fr": "MWK"
+    }
+  },
+  {
+    "country": {
+      "en": "Malaysia",
+      "ar": "ماليزيا",
+      "fr": "Malaisie"
+    },
+    "dial_code": "+60",
+    "currency": {
+      "en": "MYR",
+      "ar": "رينجيت ماليزي",
+      "fr": "MYR"
+    }
+  },
+  {
+    "country": {
+      "en": "Malta",
+      "ar": "مالطا",
+      "fr": "Malte"
+    },
+    "dial_code": "+356",
+    "currency": {
+      "en": "EUR",
+      "ar": "يورو",
+      "fr": "EUR"
+    }
+  },
+  {
+    "country": {
+      "en": "Marshall Islands",
+      "ar": "جزر مارشال",
+      "fr": "Îles Marshall"
+    },
+    "dial_code": "+692",
+    "currency": {
+      "en": "USD",
+      "ar": "دولار أمريكي",
+      "fr": "USD"
+    }
+  },
+  {
+    "country": {
+      "en": "Mauritania",
+      "ar": "موريتانيا",
+      "fr": "Mauritanie"
+    },
+    "dial_code": "+222",
+    "currency": {
+      "en": "MRU",
+      "ar": "أوقية موريتانية",
+      "fr": "MRU"
+    }
+  },
+  {
+    "country": {
+      "en": "Mauritius",
+      "ar": "موريشيوس",
+      "fr": "Maurice"
+    },
+    "dial_code": "+230",
+    "currency": {
+      "en": "MUR",
+      "ar": "روبية موريشية",
+      "fr": "MUR"
+    }
+  },
+  {
+    "country": {
+      "en": "Mexico",
+      "ar": "المكسيك",
+      "fr": "Mexique"
+    },
+    "dial_code": "+52",
+    "currency": {
+      "en": "MXN",
+      "ar": "بيزو مكسيكي",
+      "fr": "MXN"
+    }
+  },
+  {
+    "country": {
+      "en": "Micronesia",
+      "ar": "ميكرونيزيا",
+      "fr": "Micronésie"
+    },
+    "dial_code": "+691",
+    "currency": {
+      "en": "USD",
+      "ar": "دولار أمريكي",
+      "fr": "USD"
+    }
+  },
+  {
+    "country": {
+      "en": "Moldova",
+      "ar": "مولدوفا",
+      "fr": "Moldavie"
+    },
+    "dial_code": "+373",
+    "currency": {
+      "en": "MDL",
+      "ar": "ليو مولدوفي",
+      "fr": "MDL"
+    }
+  },
+  {
+    "country": {
+      "en": "Monaco",
+      "ar": "موناكو",
+      "fr": "Monaco"
+    },
+    "dial_code": "+377",
+    "currency": {
+      "en": "EUR",
+      "ar": "يورو",
+      "fr": "EUR"
+    }
+  },
+  {
+    "country": {
+      "en": "Mongolia",
+      "ar": "منغوليا",
+      "fr": "Mongolie"
+    },
+    "dial_code": "+976",
+    "currency": {
+      "en": "MNT",
+      "ar": "توغروغ منغولي",
+      "fr": "MNT"
+    }
+  },
+  {
+    "country": {
+      "en": "Montenegro",
+      "ar": "الجبل الأسود",
+      "fr": "Monténégro"
+    },
+    "dial_code": "+382",
+    "currency": {
+      "en": "EUR",
+      "ar": "يورو",
+      "fr": "EUR"
+    }
+  },
+  {
+    "country": {
+      "en": "Morocco",
+      "ar": "المغرب",
+      "fr": "Maroc"
+    },
+    "dial_code": "+212",
+    "currency": {
+      "en": "MAD",
+      "ar": "درهم مغربي",
+      "fr": "MAD"
+    }
+  },
+  {
+    "country": {
+      "en": "Mozambique",
+      "ar": "موزمبيق",
+      "fr": "Mozambique"
+    },
+    "dial_code": "+258",
+    "currency": {
+      "en": "MZN",
+      "ar": "ميتكال موزمبيقي",
+      "fr": "MZN"
+    }
+  },
+  {
+    "country": {
+      "en": "Myanmar",
+      "ar": "ميانمار",
+      "fr": "Myanmar"
+    },
+    "dial_code": "+95",
+    "currency": {
+      "en": "MMK",
+      "ar": "كيات ميانمار",
+      "fr": "MMK"
+    }
+  },
+  {
+    "country": {
+      "en": "Namibia",
+      "ar": "ناميبيا",
+      "fr": "Namibie"
+    },
+    "dial_code": "+264",
+    "currency": {
+      "en": "NAD",
+      "ar": "دولار ناميبي",
+      "fr": "NAD"
+    }
+  },
+  {
+    "country": {
+      "en": "Nauru",
+      "ar": "ناورو",
+      "fr": "Nauru"
+    },
+    "dial_code": "+674",
+    "currency": {
+      "en": "AUD",
+      "ar": "دولار أسترالي",
+      "fr": "AUD"
+    }
+  },
+  {
+    "country": {
+      "en": "Nepal",
+      "ar": "نيبال",
+      "fr": "Népal"
+    },
+    "dial_code": "+977",
+    "currency": {
+      "en": "NPR",
+      "ar": "روبية نيبالية",
+      "fr": "NPR"
+    }
+  },
+  {
+    "country": {
+      "en": "Netherlands",
+      "ar": "هولندا",
+      "fr": "Pays-Bas"
+    },
+    "dial_code": "+31",
+    "currency": {
+      "en": "EUR",
+      "ar": "يورو",
+      "fr": "EUR"
+    }
+  },
+  {
+    "country": {
+      "en": "New Caledonia",
+      "ar": "كاليدونيا الجديدة",
+      "fr": "Nouvelle-Calédonie"
+    },
+    "dial_code": "+687",
+    "currency": {
+      "en": "XPF",
+      "ar": "فرنك محلي",
+      "fr": "XPF"
+    }
+  },
+  {
+    "country": {
+      "en": "New Zealand",
+      "ar": "نيوزيلندا",
+      "fr": "Nouvelle-Zélande"
+    },
+    "dial_code": "+64",
+    "currency": {
+      "en": "NZD",
+      "ar": "دولار نيوزيلندي",
+      "fr": "NZD"
+    }
+  },
+  {
+    "country": {
+      "en": "Nicaragua",
+      "ar": "نيكاراغوا",
+      "fr": "Nicaragua"
+    },
+    "dial_code": "+505",
+    "currency": {
+      "en": "NIO",
+      "ar": "كوردوبا نيكاراغوي",
+      "fr": "NIO"
+    }
+  },
+  {
+    "country": {
+      "en": "Niger",
+      "ar": "النيجر",
+      "fr": "Niger"
+    },
+    "dial_code": "+227",
+    "currency": {
+      "en": "XOF",
+      "ar": "فرنك غرب أفريقي",
+      "fr": "XOF"
+    }
+  },
+  {
+    "country": {
+      "en": "Nigeria",
+      "ar": "نيجيريا",
+      "fr": "Nigeria"
+    },
+    "dial_code": "+234",
+    "currency": {
+      "en": "NGN",
+      "ar": "نايرا نيجيري",
+      "fr": "NGN"
+    }
+  },
+  {
+    "country": {
+      "en": "North Korea",
+      "ar": "كوريا الشمالية",
+      "fr": "Corée du Nord"
+    },
+    "dial_code": "+850",
+    "currency": {
+      "en": "KPW",
+      "ar": "وون كوريا شمالي",
+      "fr": "KPW"
+    }
+  },
+  {
+    "country": {
+      "en": "North Macedonia",
+      "ar": "مقدونيا الشمالية",
+      "fr": "Macédoine du Nord"
+    },
+    "dial_code": "+389",
+    "currency": {
+      "en": "MKD",
+      "ar": "دينار مقدوني",
+      "fr": "MKD"
+    }
+  },
+  {
+    "country": {
+      "en": "Norway",
+      "ar": "النرويج",
+      "fr": "Norvège"
+    },
+    "dial_code": "+47",
+    "currency": {
+      "en": "NOK",
+      "ar": "كرونة نرويجية",
+      "fr": "NOK"
+    }
+  },
+  {
+    "country": {
+      "en": "Oman",
+      "ar": "عمان",
+      "fr": "Oman"
+    },
+    "dial_code": "+968",
+    "currency": {
+      "en": "OMR",
+      "ar": "ريال عماني",
+      "fr": "OMR"
+    }
+  },
+  {
+    "country": {
+      "en": "Pakistan",
+      "ar": "باكستان",
+      "fr": "Pakistan"
+    },
+    "dial_code": "+92",
+    "currency": {
+      "en": "PKR",
+      "ar": "روبية باكستانية",
+      "fr": "PKR"
+    }
+  },
+  {
+    "country": {
+      "en": "Palau",
+      "ar": "بالاو",
+      "fr": "Palaos"
+    },
+    "dial_code": "+680",
+    "currency": {
+      "en": "USD",
+      "ar": "دولار أمريكي",
+      "fr": "USD"
+    }
+  },
+  {
+    "country": {
+      "en": "Panama",
+      "ar": "بنما",
+      "fr": "Panama"
+    },
+    "dial_code": "+507",
+    "currency": {
+      "en": "PAB",
+      "ar": "بالبوا",
+      "fr": "PAB"
+    }
+  },
+  {
+    "country": {
+      "en": "Papua New Guinea",
+      "ar": "بابوا غينيا الجديدة",
+      "fr": "Papouasie-Nouvelle-Guinée"
+    },
+    "dial_code": "+675",
+    "currency": {
+      "en": "PGK",
+      "ar": "كينا بابوا غينيا الجديدة",
+      "fr": "PGK"
+    }
+  },
+  {
+    "country": {
+      "en": "Paraguay",
+      "ar": "باراغواي",
+      "fr": "Paraguay"
+    },
+    "dial_code": "+595",
+    "currency": {
+      "en": "PYG",
+      "ar": "غواراني باراغواي",
+      "fr": "PYG"
+    }
+  },
+  {
+    "country": {
+      "en": "Peru",
+      "ar": "بيرو",
+      "fr": "Pérou"
+    },
+    "dial_code": "+51",
+    "currency": {
+      "en": "PEN",
+      "ar": "نويفو سول بيروفي",
+      "fr": "PEN"
+    }
+  },
+  {
+    "country": {
+      "en": "Philippines",
+      "ar": "الفلبين",
+      "fr": "Philippines"
+    },
+    "dial_code": "+63",
+    "currency": {
+      "en": "PHP",
+      "ar": "بيزو فلبيني",
+      "fr": "PHP"
+    }
+  },
+  {
+    "country": {
+      "en": "Poland",
+      "ar": "بولندا",
+      "fr": "Pologne"
+    },
+    "dial_code": "+48",
+    "currency": {
+      "en": "PLN",
+      "ar": "زلوطي بولندي",
+      "fr": "PLN"
+    }
+  },
+  {
+    "country": {
+      "en": "Portugal",
+      "ar": "البرتغال",
+      "fr": "Portugal"
+    },
+    "dial_code": "+351",
+    "currency": {
+      "en": "EUR",
+      "ar": "يورو",
+      "fr": "EUR"
+    }
+  },
+  {
+    "country": {
+      "en": "Qatar",
+      "ar": "قطر",
+      "fr": "Qatar"
+    },
+    "dial_code": "+974",
+    "currency": {
+      "en": "QAR",
+      "ar": "ريال قطري",
+      "fr": "QAR"
+    }
+  },
+  {
+    "country": {
+      "en": "Romania",
+      "ar": "رومانيا",
+      "fr": "Roumanie"
+    },
+    "dial_code": "+40",
+    "currency": {
+      "en": "RON",
+      "ar": "ليو روماني",
+      "fr": "RON"
+    }
+  },
+  {
+    "country": {
+      "en": "Russia",
+      "ar": "روسيا",
+      "fr": "Russie"
+    },
+    "dial_code": "+7",
+    "currency": {
+      "en": "RUB",
+      "ar": "روبل روسي",
+      "fr": "RUB"
+    }
+  },
+  {
+    "country": {
+      "en": "Rwanda",
+      "ar": "رواندا",
+      "fr": "Rwanda"
+    },
+    "dial_code": "+250",
+    "currency": {
+      "en": "RWF",
+      "ar": "فرنك رواندي",
+      "fr": "RWF"
+    }
+  },
+  {
+    "country": {
+      "en": "Saint Kitts and Nevis",
+      "ar": "سانت كيتس ونيفيس",
+      "fr": "Saint-Kitts-et-Nevis"
+    },
+    "dial_code": "+1-869",
+    "currency": {
+      "en": "XCD",
+      "ar": "دولار شرق الكاريبي",
+      "fr": "XCD"
+    }
+  },
+  {
+    "country": {
+      "en": "Saint Lucia",
+      "ar": "سانت لوسيا",
+      "fr": "Sainte-Lucie"
+    },
+    "dial_code": "+1-758",
+    "currency": {
+      "en": "XCD",
+      "ar": "دولار شرق الكاريبي",
+      "fr": "XCD"
+    }
+  },
+  {
+    "country": {
+      "en": "Saint Vincent and the Grenadines",
+      "ar": "سانت فنسنت وجزر غرينادين",
+      "fr": "Saint-Vincent-et-les-Grenadines"
+    },
+    "dial_code": "+1-784",
+    "currency": {
+      "en": "XCD",
+      "ar": "دولار شرق الكاريبي",
+      "fr": "XCD"
+    }
+  },
+  {
+    "country": {
+      "en": "Samoa",
+      "ar": "ساموا",
+      "fr": "Samoa"
+    },
+    "dial_code": "+685",
+    "currency": {
+      "en": "WST",
+      "ar": "تالا ساموي",
+      "fr": "WST"
+    }
+  },
+  {
+    "country": {
+      "en": "San Marino",
+      "ar": "سان مارينو",
+      "fr": "Saint-Marin"
+    },
+    "dial_code": "+378",
+    "currency": {
+      "en": "EUR",
+      "ar": "يورو",
+      "fr": "EUR"
+    }
+  },
+  {
+    "country": {
+      "en": "Sao Tome and Principe",
+      "ar": "ساو تومي وبرينسيب",
+      "fr": "Sao Tomé-et-Principe"
+    },
+    "dial_code": "+239",
+    "currency": {
+      "en": "STN",
+      "ar": "دوبرا ساو تومي وبرينسيب",
+      "fr": "STN"
+    }
+  },
+  {
+    "country": {
+      "en": "Saudi Arabia",
+      "ar": "المملكة العربية السعودية",
+      "fr": "Arabie Saoudite"
+    },
+    "dial_code": "+966",
+    "currency": {
+      "en": "SAR",
+      "ar": "ريال سعودي",
+      "fr": "SAR"
+    }
+  },
+  {
+    "country": {
+      "en": "Senegal",
+      "ar": "السنغال",
+      "fr": "Sénégal"
+    },
+    "dial_code": "+221",
+    "currency": {
+      "en": "XOF",
+      "ar": "فرنك غرب أفريقي",
+      "fr": "XOF"
+    }
+  },
+  {
+    "country": {
+      "en": "Serbia",
+      "ar": "صربيا",
+      "fr": "Serbie"
+    },
+    "dial_code": "+381",
+    "currency": {
+      "en": "RSD",
+      "ar": "دينار صربي",
+      "fr": "RSD"
+    }
+  },
+  {
+    "country": {
+      "en": "Seychelles",
+      "ar": "سيشيل",
+      "fr": "Seychelles"
+    },
+    "dial_code": "+248",
+    "currency": {
+      "en": "SCR",
+      "ar": "روبية سيشيلية",
+      "fr": "SCR"
+    }
+  },
+  {
+    "country": {
+      "en": "Sierra Leone",
+      "ar": "سيراليون",
+      "fr": "Sierra Leone"
+    },
+    "dial_code": "+232",
+    "currency": {
+      "en": "SLL",
+      "ar": "ليونة سيراليونية",
+      "fr": "SLL"
+    }
+  },
+  {
+    "country": {
+      "en": "Singapore",
+      "ar": "سنغافورة",
+      "fr": "Singapour"
+    },
+    "dial_code": "+65",
+    "currency": {
+      "en": "SGD",
+      "ar": "دولار سنغافوري",
+      "fr": "SGD"
+    }
+  },
+  {
+    "country": {
+      "en": "Sint Maarten",
+      "ar": "سينت مارتن",
+      "fr": "Sint Maarten"
+    },
+    "dial_code": "+1-721",
+    "currency": {
+      "en": "ANG",
+      "ar": "جلدر أنتيلي",
+      "fr": "ANG"
+    }
+  },
+  {
+    "country": {
+      "en": "Slovakia",
+      "ar": "سلوفاكيا",
+      "fr": "Slovaquie"
+    },
+    "dial_code": "+421",
+    "currency": {
+      "en": "EUR",
+      "ar": "يورو",
+      "fr": "EUR"
+    }
+  },
+  {
+    "country": {
+      "en": "Slovenia",
+      "ar": "سلوفينيا",
+      "fr": "Slovénie"
+    },
+    "dial_code": "+386",
+    "currency": {
+      "en": "EUR",
+      "ar": "يورو",
+      "fr": "EUR"
+    }
+  },
+  {
+    "country": {
+      "en": "Solomon Islands",
+      "ar": "جزر سولومون",
+      "fr": "Îles Salomon"
+    },
+    "dial_code": "+677",
+    "currency": {
+      "en": "SBD",
+      "ar": "دولار جزر سليمان",
+      "fr": "SBD"
+    }
+  },
+  {
+    "country": {
+      "en": "Somalia",
+      "ar": "الصومال",
+      "fr": "Somalie"
+    },
+    "dial_code": "+252",
+    "currency": {
+      "en": "SOS",
+      "ar": "شلينغ صومالي",
+      "fr": "SOS"
+    }
+  },
+  {
+    "country": {
+      "en": "South Africa",
+      "ar": "جنوب أفريقيا",
+      "fr": "Afrique du Sud"
+    },
+    "dial_code": "+27",
+    "currency": {
+      "en": "ZAR",
+      "ar": "راند جنوب أفريقي",
+      "fr": "ZAR"
+    }
+  },
+  {
+    "country": {
+      "en": "South Sudan",
+      "ar": "جنوب السودان",
+      "fr": "Soudan du Sud"
+    },
+    "dial_code": "+211",
+    "currency": {
+      "en": "SSP",
+      "ar": "جنيه سوداني",
+      "fr": "SSP"
+    }
+  },
+  {
+    "country": {
+      "en": "Spain",
+      "ar": "إسبانيا",
+      "fr": "Espagne"
+    },
+    "dial_code": "+34",
+    "currency": {
+      "en": "EUR",
+      "ar": "يورو",
+      "fr": "EUR"
+    }
+  },
+  {
+    "country": {
+      "en": "Sri Lanka",
+      "ar": "سريلانكا",
+      "fr": "Sri Lanka"
+    },
+    "dial_code": "+94",
+    "currency": {
+      "en": "LKR",
+      "ar": "روبية سريلانكية",
+      "fr": "LKR"
+    }
+  },
+  {
+    "country": {
+      "en": "Sudan",
+      "ar": "السودان",
+      "fr": "Soudan"
+    },
+    "dial_code": "+249",
+    "currency": {
+      "en": "SDG",
+      "ar": "جنيه سوداني",
+      "fr": "SDG"
+    }
+  },
+  {
+    "country": {
+      "en": "Suriname",
+      "ar": "سورينام",
+      "fr": "Suriname"
+    },
+    "dial_code": "+597",
+    "currency": {
+      "en": "SRD",
+      "ar": "دولار سورينامي",
+      "fr": "SRD"
+    }
+  },
+  {
+    "country": {
+      "en": "Sweden",
+      "ar": "السويد",
+      "fr": "Suède"
+    },
+    "dial_code": "+46",
+    "currency": {
+      "en": "SEK",
+      "ar": "كرونة سويدية",
+      "fr": "SEK"
+    }
+  },
+  {
+    "country": {
+      "en": "Switzerland",
+      "ar": "سويسرا",
+      "fr": "Suisse"
+    },
+    "dial_code": "+41",
+    "currency": {
+      "en": "CHF",
+      "ar": "فرنك سويسري",
+      "fr": "CHF"
+    }
+  },
+  {
+    "country": {
+      "en": "Syria",
+      "ar": "سوريا",
+      "fr": "Syrie"
+    },
+    "dial_code": "+963",
+    "currency": {
+      "en": "SYP",
+      "ar": "ليرة سورية",
+      "fr": "SYP"
+    }
+  },
+  {
+    "country": {
+      "en": "Taiwan",
+      "ar": "تايوان",
+      "fr": "Taïwan"
+    },
+    "dial_code": "+886",
+    "currency": {
+      "en": "TWD",
+      "ar": "دولار تايواني",
+      "fr": "TWD"
+    }
+  },
+  {
+    "country": {
+      "en": "Tajikistan",
+      "ar": "طاجيكستان",
+      "fr": "Tadjikistan"
+    },
+    "dial_code": "+992",
+    "currency": {
+      "en": "TJS",
+      "ar": "سوموني طاجيكي",
+      "fr": "TJS"
+    }
+  },
+  {
+    "country": {
+      "en": "Tanzania",
+      "ar": "تنزانيا",
+      "fr": "Tanzanie"
+    },
+    "dial_code": "+255",
+    "currency": {
+      "en": "TZS",
+      "ar": "شلينغ تنزاني",
+      "fr": "TZS"
+    }
+  },
+  {
+    "country": {
+      "en": "Thailand",
+      "ar": "تايلاند",
+      "fr": "Thaïlande"
+    },
+    "dial_code": "+66",
+    "currency": {
+      "en": "THB",
+      "ar": "بات تايلاندي",
+      "fr": "THB"
+    }
+  },
+  {
+    "country": {
+      "en": "Timor-Leste",
+      "ar": "تيمور الشرقية",
+      "fr": "Timor-Leste"
+    },
+    "dial_code": "+670",
+    "currency": {
+      "en": "USD",
+      "ar": "دولار أمريكي",
+      "fr": "USD"
+    }
+  },
+  {
+    "country": {
+      "en": "Togo",
+      "ar": "توغو",
+      "fr": "Togo"
+    },
+    "dial_code": "+228",
+    "currency": {
+      "en": "XOF",
+      "ar": "فرنك غرب أفريقي",
+      "fr": "XOF"
+    }
+  },
+  {
+    "country": {
+      "en": "Tonga",
+      "ar": "تونغا",
+      "fr": "Tonga"
+    },
+    "dial_code": "+676",
+    "currency": {
+      "en": "TOP",
+      "ar": "بانجا تونغي",
+      "fr": "TOP"
+    }
+  },
+  {
+    "country": {
+      "en": "Trinidad and Tobago",
+      "ar": "ترينيداد وتوباغو",
+      "fr": "Trinité-et-Tobago"
+    },
+    "dial_code": "+1-868",
+    "currency": {
+      "en": "TTD",
+      "ar": "دولار ترينيدادي وتوباغوي",
+      "fr": "TTD"
+    }
+  },
+  {
+    "country": {
+      "en": "Tunisia",
+      "ar": "تونس",
+      "fr": "Tunisie"
+    },
+    "dial_code": "+216",
+    "currency": {
+      "en": "TND",
+      "ar": "دينار تونسي",
+      "fr": "TND"
+    }
+  },
+  {
+    "country": {
+      "en": "Turkey",
+      "ar": "تركيا",
+      "fr": "Turquie"
+    },
+    "dial_code": "+90",
+    "currency": {
+      "en": "TRY",
+      "ar": "ليرة تركية",
+      "fr": "TRY"
+    }
+  },
+  {
+    "country": {
+      "en": "Turkmenistan",
+      "ar": "تركمانستان",
+      "fr": "Turkménistan"
+    },
+    "dial_code": "+993",
+    "currency": {
+      "en": "TMT",
+      "ar": "منغ",
+      "fr": "TMT"
+    }
+  },
+  {
+    "country": {
+      "en": "Tuvalu",
+      "ar": "توفالو",
+      "fr": "Tuvalu"
+    },
+    "dial_code": "+688",
+    "currency": {
+      "en": "AUD",
+      "ar": "دولار أسترالي",
+      "fr": "AUD"
+    }
+  },
+  {
+    "country": {
+      "en": "Uganda",
+      "ar": "أوغندا",
+      "fr": "Ouganda"
+    },
+    "dial_code": "+256",
+    "currency": {
+      "en": "UGX",
+      "ar": "شلن أوغندي",
+      "fr": "UGX"
+    }
+  },
+  {
+    "country": {
+      "en": "Ukraine",
+      "ar": "أوكرانيا",
+      "fr": "Ukraine"
+    },
+    "dial_code": "+380",
+    "currency": {
+      "en": "UAH",
+      "ar": "هريفنيا أوكرانية",
+      "fr": "UAH"
+    }
+  },
+  {
+    "country": {
+      "en": "United Arab Emirates",
+      "ar": "الإمارات العربية المتحدة",
+      "fr": "Émirats Arabes Unis"
+    },
+    "dial_code": "+971",
+    "currency": {
+      "en": "AED",
+      "ar": "درهم إماراتي",
+      "fr": "AED"
+    }
+  },
+  {
+    "country": {
+      "en": "United Kingdom",
+      "ar": "المملكة المتحدة",
+      "fr": "Royaume-Uni"
+    },
+    "dial_code": "+44",
+    "currency": {
+      "en": "GBP",
+      "ar": "جنيه إسترليني",
+      "fr": "GBP"
+    }
+  },
+  {
+    "country": {
+      "en": "United States",
+      "ar": "الولايات المتحدة",
+      "fr": "États-Unis"
+    },
+    "dial_code": "+1",
+    "currency": {
+      "en": "USD",
+      "ar": "دولار أمريكي",
+      "fr": "USD"
+    }
+  },
+  {
+    "country": {
+      "en": "Uruguay",
+      "ar": "أوروغواي",
+      "fr": "Uruguay"
+    },
+    "dial_code": "+598",
+    "currency": {
+      "en": "UYU",
+      "ar": "بيزو أوروغوياني",
+      "fr": "UYU"
+    }
+  },
+  {
+    "country": {
+      "en": "Uzbekistan",
+      "ar": "أوزبكستان",
+      "fr": "Ouzbékistan"
+    },
+    "dial_code": "+998",
+    "currency": {
+      "en": "UZS",
+      "ar": "سوم أوزبكي",
+      "fr": "UZS"
+    }
+  },
+  {
+    "country": {
+      "en": "Vanuatu",
+      "ar": "فانواتو",
+      "fr": "Vanuatu"
+    },
+    "dial_code": "+678",
+    "currency": {
+      "en": "VUV",
+      "ar": "فاتو فانواتو",
+      "fr": "VUV"
+    }
+  },
+  {
+    "country": {
+      "en": "Venezuela",
+      "ar": "فنزويلا",
+      "fr": "Venezuela"
+    },
+    "dial_code": "+58",
+    "currency": {
+      "en": "VES",
+      "ar": "بوليفار فنزويلي",
+      "fr": "VES"
+    }
+  },
+  {
+    "country": {
+      "en": "Vietnam",
+      "ar": "فيتنام",
+      "fr": "Vietnam"
+    },
+    "dial_code": "+84",
+    "currency": {
+      "en": "VND",
+      "ar": "دونغ فيتنامي",
+      "fr": "VND"
+    }
+  },
+  {
+    "country": {
+      "en": "Yemen",
+      "ar": "اليمن",
+      "fr": "Yémen"
+    },
+    "dial_code": "+967",
+    "currency": {
+      "en": "YER",
+      "ar": "ريال يمني",
+      "fr": "YER"
+    }
+  },
+  {
+    "country": {
+      "en": "Zambia",
+      "ar": "زامبيا",
+      "fr": "Zambie"
+    },
+    "dial_code": "+260",
+    "currency": {
+      "en": "ZMW",
+      "ar": "كواشا زامبي",
+      "fr": "ZMW"
+    }
+  },
+  {
+    "country": {
+      "en": "Zimbabwe",
+      "ar": "زمبابوي",
+      "fr": "Zimbabwe"
+    },
+    "dial_code": "+263",
+    "currency": {
+      "en": "ZWL",
+      "ar": "دولار زيمبابوي",
+      "fr": "ZWL"
+    }
+  }
+]
