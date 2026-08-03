@@ -83,32 +83,33 @@ Widget dashBoardFeatureItem({
     customBorder: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(12.r),
     ),
-    child: Container(
-      width: 180.w,
-      height: 130.h,
-      padding: EdgeInsets.only(bottom: 20.h),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
-      ),
-      child: Ink(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Text(
-              total,
-              style: TextStyle(fontSize: 22.sp, color: Colors.black),
-            ),
-            7.verticalSpace,
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Text(
-                title,
-                style: TextStyle(fontSize: 16.sp, color: Colors.black),
+    child: Card(
+      elevation: 1,
+      color: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+      child: SizedBox(
+        width: 180.w,
+        height: 130.h,
+        child: Padding(
+          padding: EdgeInsets.only(bottom: 20.h),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text(
+                total,
+                style: TextStyle(fontSize: 22.sp, color: Colors.black),
               ),
-            ),
-          ],
+              7.verticalSpace,
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Text(
+                  title,
+                  style: TextStyle(fontSize: 16.sp, color: Colors.black),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     ),

@@ -40,19 +40,15 @@ class HomeScreen extends StatelessWidget {
             left: 0,
             right: 0,
             bottom: 0,
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  begin: Alignment(0.00, -1.00),
-                  end: Alignment(0, 1),
-                  colors: [Color(0xFFE8EBF5), Color(0xFFFBFCFF)],
-                ),
+            child: Card(
+              margin: EdgeInsets.zero,
+              shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(30.r),
                   topRight: Radius.circular(30.r),
                 ),
               ),
-              child: DashBoardSheetWidget(),
+              child: const DashBoardSheetWidget(),
             ),
           ),
         ],

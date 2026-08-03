@@ -7,6 +7,7 @@ void main() {
     await tester.pumpWidget(const ProviderScope(child: TruckyApp()));
     await tester.pumpAndSettle();
 
-    expect(find.text('Welcome'), findsOneWidget);
+    expect(find.text('Hello, User'), findsOneWidget);
+    expect(find.text('Demo Version'), findsOneWidget);
   });
 }
