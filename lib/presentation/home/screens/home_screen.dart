@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trucky/core/constants/app_assets.dart';
+import 'package:trucky/core/constants/enums.dart';
 import 'package:trucky/core/constants/route_paths.dart';
+import 'package:trucky/presentation/client_supplier/bloc/client_supp_bloc.dart';
+import 'package:trucky/presentation/client_supplier/bloc/client_supp_event.dart';
 import 'package:trucky/presentation/home/widgets/dashboard_header_widget.dart';
 import 'package:trucky/presentation/home/widgets/dashboard_sheet_widget.dart';
 
@@ -52,6 +56,18 @@ class HomeScreen extends StatelessWidget {
               ),
               child: DashBoardSheetWidget(
                 onProductsTap: () => context.push(RoutePaths.products),
+                onSuppliersTap: () {
+                  context
+                      .read<ClientSuppBloc>()
+                      .add(const SetEntityTypeEvent(entityType: EntityType.supplier));
+                  context.push(RoutePaths.suppliers);
+                },
+                onClientsTap: () {
+                  context
+                      .read<ClientSuppBloc>()
+                      .add(const SetEntityTypeEvent(entityType: EntityType.client));
+                  context.push(RoutePaths.clients);
+                },
               ),
             ),
           ),

@@ -8,4 +8,8 @@ abstract final class RoutePaths {
   static const String products = '/products';
   static const String addProduct = '/products/add';
   static const String productDashboard = '/products/dashboard';
+  static const String clients = '/clients';
+  static const String suppliers = '/suppliers';
+  static const String addClientSupp = '/clients-suppliers/add';
+  static const String clientSuppDashboard = '/clients-suppliers/dashboard';
 }

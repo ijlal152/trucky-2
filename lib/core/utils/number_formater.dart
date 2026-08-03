@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 /// Formats numbers and amounts for display in the UI.
@@ -47,5 +48,18 @@ abstract final class NumberFormater {
     }
 
     return formattedAmount;
+  }
+
+  static Color getTextColorBasedOnAmount(double amount,
+      {bool isSupplier = false}) {
+    if (isSupplier) {
+      return amount > 0
+          ? const Color.fromRGBO(0, 177, 103, 1)
+          : const Color.fromRGBO(255, 124, 111, 1);
+    } else {
+      return amount > 0
+          ? const Color.fromRGBO(255, 124, 111, 1)
+          : const Color.fromRGBO(0, 177, 103, 1);
+    }
   }
 }

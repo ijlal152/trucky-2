@@ -4,9 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class DashBoardSheetWidget extends StatelessWidget {
-  const DashBoardSheetWidget({super.key, required this.onProductsTap});
+  const DashBoardSheetWidget({
+    super.key,
+    required this.onProductsTap,
+    required this.onSuppliersTap,
+    required this.onClientsTap,
+  });
 
   final VoidCallback onProductsTap;
+  final VoidCallback onSuppliersTap;
+  final VoidCallback onClientsTap;
 
   @override
   Widget build(BuildContext context) {
@@ -32,12 +39,10 @@ class DashBoardSheetWidget extends StatelessWidget {
               dashBoardFeatureItem(
                 title: "Suppliers",
                 total: "0",
-                onTap: () {
-                  // Navigate to suppliers screen
-                },
+                onTap: onSuppliersTap,
               ),
 
-              dashBoardFeatureItem(title: "Clients", total: "0", onTap: () {}),
+              dashBoardFeatureItem(title: "Clients", total: "0", onTap: onClientsTap),
             ],
           ),
           20.verticalSpace,
