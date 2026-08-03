@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:trucky/core/constants/app_assets.dart';
-import 'package:trucky/presentation/widgets/dashboard_header_widget.dart';
-import 'package:trucky/presentation/widgets/dashboard_sheet_widget.dart';
+import 'package:trucky/core/constants/route_paths.dart';
+import 'package:trucky/presentation/home/widgets/dashboard_header_widget.dart';
+import 'package:trucky/presentation/home/widgets/dashboard_sheet_widget.dart';
 
 /// Minimal placeholder screen so the app boots.
 /// Replace with your real screens under `presentation/screens/`.
@@ -48,7 +50,9 @@ class HomeScreen extends StatelessWidget {
                   topRight: Radius.circular(30.r),
                 ),
               ),
-              child: const DashBoardSheetWidget(),
+              child: DashBoardSheetWidget(
+                onProductsTap: () => context.push(RoutePaths.products),
+              ),
             ),
           ),
         ],

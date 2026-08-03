@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class DashBoardSheetWidget extends StatelessWidget {
-  const DashBoardSheetWidget({super.key});
+  const DashBoardSheetWidget({super.key, required this.onProductsTap});
+
+  final VoidCallback onProductsTap;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -41,7 +44,11 @@ class DashBoardSheetWidget extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              dashBoardFeatureItem(title: "Products", total: "0", onTap: () {}),
+              dashBoardFeatureItem(
+                title: "Products",
+                total: "0",
+                onTap: onProductsTap,
+              ),
               dashBoardFeatureItem(title: "Treasury", total: "0", onTap: () {}),
             ],
           ),

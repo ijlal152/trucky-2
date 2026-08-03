@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:trucky/presentation/widgets/dashboard_header_widget.dart';
+import 'package:trucky/presentation/home/widgets/dashboard_header_widget.dart';
 
 import '../../helpers/widget_harness.dart';
 
