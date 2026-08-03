@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
@@ -27,9 +25,7 @@ class ProductDetailsListWidget extends StatelessWidget {
             itemBuilder: (context, index) {
               final productDetail = list[index];
               return GestureDetector(
-                onTap: () {
-                  log('$productDetail');
-                },
+                onTap: () {},
                 child: Container(
                   color: Colors.white,
                   child: Padding(

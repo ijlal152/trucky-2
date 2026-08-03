@@ -140,7 +140,7 @@ class ProductInfoWidget extends StatelessWidget {
   }
 
   double calcAvailableStockValue() {
-    return selectedProduct.sellingPrice * mostRecentTxn.quantity.toDouble();
+    return selectedProduct.effectiveCost * mostRecentTxn.quantity.toDouble();
   }
 
   String formatStockDetails(String totalUnitsStr, String unitsPerPackageStr) {

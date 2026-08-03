@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:trucky/core/constants/app_assets.dart';
+import 'package:trucky/core/utils/image_utils.dart';
 import 'package:trucky/core/utils/regex_utils.dart';
 import 'package:trucky/core/utils/widget_extensions.dart';
 import 'package:trucky/presentation/products/bloc/product_bloc.dart';
@@ -104,7 +105,9 @@ class _AddProductScreenState extends State<AddProductScreen> {
         sellingPrice: double.tryParse(_sellingPriceController.text) ?? 0.0,
         initialQuantity: int.tryParse(_initialQtyController.text) ?? 0,
         quantityPerPackage: _qtyPerPackageController.text.trim(),
-        productImage: _productImage?.path,
+        productImage: _productImage != null
+            ? ImageUtils.convertImageToBase64(img: _productImage!)
+            : null,
       ),
     );
 

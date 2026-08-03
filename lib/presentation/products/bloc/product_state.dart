@@ -9,6 +9,7 @@ class ProductState {
     this.totalStockValue = 0,
     this.hideProductTotalBalance = false,
     this.hideDashboardTotalBalance = false,
+    this.isLoaded = false,
   });
 
   final List<Product> products;
@@ -18,6 +19,9 @@ class ProductState {
   final bool hideProductTotalBalance;
   final bool hideDashboardTotalBalance;
 
+  /// Whether the sample products have been loaded at least once.
+  final bool isLoaded;
+
   ProductState copyWith({
     List<Product>? products,
     List<ProductDetail>? productDetailsList,
@@ -25,16 +29,20 @@ class ProductState {
     double? totalStockValue,
     bool? hideProductTotalBalance,
     bool? hideDashboardTotalBalance,
+    bool? isLoaded,
+    bool clearSelectedProduct = false,
   }) {
     return ProductState(
       products: products ?? this.products,
       productDetailsList: productDetailsList ?? this.productDetailsList,
-      selectedProduct: selectedProduct ?? this.selectedProduct,
+      selectedProduct:
+          clearSelectedProduct ? null : (selectedProduct ?? this.selectedProduct),
       totalStockValue: totalStockValue ?? this.totalStockValue,
       hideProductTotalBalance:
           hideProductTotalBalance ?? this.hideProductTotalBalance,
       hideDashboardTotalBalance:
           hideDashboardTotalBalance ?? this.hideDashboardTotalBalance,
+      isLoaded: isLoaded ?? this.isLoaded,
     );
   }
 }

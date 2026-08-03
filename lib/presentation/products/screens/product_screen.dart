@@ -37,7 +37,7 @@ class _ProductScreenState extends State<ProductScreen> {
   void _dispatchLoad() {
     // Dispatch after the first frame so BlocProvider is available.
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted && context.read<ProductBloc>().state.products.isEmpty) {
+      if (mounted && !context.read<ProductBloc>().state.isLoaded) {
         context.read<ProductBloc>().add(const LoadProductsEvent());
       }
     });

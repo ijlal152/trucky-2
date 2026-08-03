@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trucky/presentation/products/bloc/product_event.dart';
 import 'package:trucky/presentation/products/bloc/product_state.dart';
+import 'package:trucky/presentation/widgets/custom_snackbar.dart';
 
 /// Product model used by the products screens.
 class Product {
@@ -13,6 +14,7 @@ class Product {
     this.quantityPerPackage,
     this.productImage,
     this.productSKU,
+    this.weightedAverageCost,
     this.createdAt,
   });
 
@@ -24,6 +26,7 @@ class Product {
   final String? quantityPerPackage;
   final String? productImage;
   final String? productSKU;
+  final double? weightedAverageCost;
   final DateTime? createdAt;
 
   double get profit => sellingPrice - purchasePrice;
@@ -34,6 +37,8 @@ class Product {
 
   double get purchaseValue => availableStock * sellingPrice;
 
+  double get effectiveCost => weightedAverageCost ?? purchasePrice;
+
   Product copyWith({
     int? id,
     String? productName,
@@ -43,6 +48,7 @@ class Product {
     String? quantityPerPackage,
     String? productImage,
     String? productSKU,
+    double? weightedAverageCost,
     DateTime? createdAt,
   }) {
     return Product(
@@ -54,6 +60,7 @@ class Product {
       quantityPerPackage: quantityPerPackage ?? this.quantityPerPackage,
       productImage: productImage ?? this.productImage,
       productSKU: productSKU ?? this.productSKU,
+      weightedAverageCost: weightedAverageCost ?? this.weightedAverageCost,
       createdAt: createdAt ?? this.createdAt,
     );
   }
@@ -113,12 +120,14 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
         sellingPrice: 99.9 + (index * 12),
         availableStock: 10 + (index * 5),
         quantityPerPackage: '6',
+        weightedAverageCost: 80.0 + (index * 10),
         createdAt: DateTime.now().subtract(Duration(days: index)),
       ),
     );
     emit(
       state.copyWith(
         products: products,
+        isLoaded: true,
         totalStockValue: products.fold<double>(
           0,
           (sum, product) => sum + product.totalValue,
@@ -128,24 +137,40 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   }
 
   void _onAdd(AddProductEvent event, Emitter<ProductState> emit) {
+    final productName = event.productName.trim();
+    if (productName.isEmpty) {
+      return;
+    }
+
+    final isDuplicate = state.products.any(
+      (p) => p.productName.toLowerCase() == productName.toLowerCase(),
+    );
+    if (isDuplicate) {
+      MySnackbarMessage.showErrorMessage(
+        title: 'Error!',
+        message: 'Product with the same name already exists.',
+      );
+      return;
+    }
+
     final now = DateTime.now();
     final product = Product(
       id: _nextId++,
-      productName: event.productName.isNotEmpty
-          ? event.productName
-          : _sampleNames[state.products.length % _sampleNames.length],
+      productName: productName,
       purchasePrice: event.purchasePrice,
       sellingPrice: event.sellingPrice,
       availableStock: event.initialQuantity,
       quantityPerPackage: event.quantityPerPackage,
       productImage: event.productImage,
       productSKU: event.productSKU,
+      weightedAverageCost: event.purchasePrice,
       createdAt: now,
     );
     final products = [...state.products, product];
     emit(
       state.copyWith(
         products: products,
+        isLoaded: true,
         totalStockValue: products.fold<double>(
           0,
           (sum, p) => sum + p.totalValue,
@@ -156,6 +181,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
 
   void _onRemove(RemoveProductEvent event, Emitter<ProductState> emit) {
     final products = state.products.where((p) => p.id != event.id).toList();
+    final removedSelected = state.selectedProduct?.id == event.id;
     emit(
       state.copyWith(
         products: products,
@@ -163,6 +189,10 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
           0,
           (sum, p) => sum + p.totalValue,
         ),
+        selectedProduct: removedSelected ? null : state.selectedProduct,
+        productDetailsList:
+            removedSelected ? const [] : state.productDetailsList,
+        clearSelectedProduct: removedSelected,
       ),
     );
   }
