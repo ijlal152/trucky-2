@@ -1,42 +1,57 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:trucky/presentation/products/provider/product_provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trucky/presentation/products/bloc/product_bloc.dart';
 
-/// Simple products screen backed by [productsProvider] (Riverpod).
-class ProductScreen extends ConsumerWidget {
+/// Simple products screen backed by [ProductBloc] (Bloc).
+class ProductScreen extends StatelessWidget {
   const ProductScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final products = ref.watch(productsProvider);
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => ProductBloc(),
+      child: const _ProductView(),
+    );
+  }
+}
 
+class _ProductView extends StatelessWidget {
+  const _ProductView();
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Products')),
-      body: Column(
-        children: [
-          _SummaryCard(total: products.length),
-          Expanded(
-            child: products.isEmpty
-                ? const _EmptyState()
-                : ListView.separated(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: products.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 8),
-                    itemBuilder: (context, index) {
-                      final product = products[index];
-                      return _ProductTile(
-                        product: product,
-                        onDelete: () => ref
-                            .read(productsProvider.notifier)
-                            .remove(product.id),
-                      );
-                    },
-                  ),
-          ),
-        ],
+      body: BlocBuilder<ProductBloc, ProductState>(
+        builder: (context, state) {
+          final products = state.products;
+          return Column(
+            children: [
+              _SummaryCard(total: products.length),
+              Expanded(
+                child: products.isEmpty
+                    ? const _EmptyState()
+                    : ListView.separated(
+                        padding: const EdgeInsets.all(16),
+                        itemCount: products.length,
+                        separatorBuilder: (_, __) => const SizedBox(height: 8),
+                        itemBuilder: (context, index) {
+                          final product = products[index];
+                          return _ProductTile(
+                            product: product,
+                            onDelete: () => context
+                                .read<ProductBloc>()
+                                .add(RemoveProductEvent(id: product.id)),
+                          );
+                        },
+                      ),
+              ),
+            ],
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => ref.read(productsProvider.notifier).add(),
+        onPressed: () => context.read<ProductBloc>().add(AddProductEvent()),
         tooltip: 'Add product',
         child: const Icon(Icons.add),
       ),
