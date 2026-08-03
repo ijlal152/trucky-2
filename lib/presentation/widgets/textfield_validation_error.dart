@@ -9,16 +9,17 @@ Widget textFieldValidationError({
   required bool isValid,
   required String requiredParameter,
 }) {
-  return !isValid
-      ? Align(
-          alignment: Alignment.centerLeft,
-          child: LabelWidget(
-            text: '* $requiredParameter',
-            textColor: Colors.red,
-            textSize: 12.sp,
-            fontFamily: FontConstants.roboto,
-            fontWeight: FontWeight.normal,
-          ).paddingSymmetric(horizontal: 10.w),
-        )
-      : const SizedBox.shrink();
+  if (isValid) {
+    return const SizedBox.shrink();
+  }
+  return Align(
+    alignment: Alignment.centerLeft,
+    child: LabelWidget(
+      text: '* $requiredParameter',
+      textColor: Colors.red,
+      textSize: 12.sp,
+      fontFamily: FontConstants.roboto,
+      fontWeight: FontWeight.normal,
+    ).paddingSymmetric(horizontal: 10.w),
+  );
 }
