@@ -8,12 +8,18 @@ import 'package:trucky/presentation/home/screens/home_screen.dart';
 import 'package:trucky/presentation/products/screens/add_product_screen.dart';
 import 'package:trucky/presentation/products/screens/product_dashboard_screen.dart';
 import 'package:trucky/presentation/products/screens/product_screen.dart';
+import 'package:trucky/presentation/splash/screens/splash_screen.dart';
 
 /// App-level router configuration (composition root).
 final appRouter = GoRouter(
-  initialLocation: RoutePaths.home,
+  initialLocation: RoutePaths.splash,
   navigatorKey: navigatorKey,
   routes: [
+    GoRoute(
+      path: RoutePaths.splash,
+      name: 'splash',
+      builder: (context, state) => const SplashScreen(),
+    ),
     GoRoute(
       path: RoutePaths.home,
       name: 'home',
