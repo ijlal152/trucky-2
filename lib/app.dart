@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trucky/core/constants/app_constants.dart';
 import 'package:trucky/core/router/app_router.dart';
 import 'package:trucky/core/theme/app_theme.dart';
+import 'package:trucky/presentation/products/bloc/product_bloc.dart';
 
 /// Root application widget.
 class TruckyApp extends StatelessWidget {
@@ -19,11 +21,14 @@ class TruckyApp extends StatelessWidget {
         data: MediaQuery.of(
           context,
         ).copyWith(textScaler: const TextScaler.linear(1)),
-        child: MaterialApp.router(
-          title: AppConstants.appName,
-          theme: AppTheme.light,
-          routerConfig: appRouter,
-          debugShowCheckedModeBanner: false,
+        child: BlocProvider(
+          create: (_) => ProductBloc(),
+          child: MaterialApp.router(
+            title: AppConstants.appName,
+            theme: AppTheme.light,
+            routerConfig: appRouter,
+            debugShowCheckedModeBanner: false,
+          ),
         ),
       ),
     );

@@ -19,6 +19,9 @@ dependencies:
   flutter_screenutil: ^5.9.3
   flutter_svg: ^2.3.0
   flutter_bloc: ^9.1.1
+  intl: ^0.20.2
+  image_picker: ^1.1.2
+  flutter_barcode_scanner_plus: ^3.0.8
 
 dev_dependencies:
   flutter_test:
@@ -31,10 +34,23 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/fonts/
     - assets/images/
     - assets/svgs/
     - assets/country_codes_currency.json
+
+  fonts:
+    - family: Inter-Regular
+      fonts:
+        - asset: assets/fonts/Inter-Regular.otf
+    - family: Inter-Bold
+      fonts:
+        - asset: assets/fonts/Inter-Bold.otf
+    - family: Inter-SemiBold
+      fonts:
+        - asset: assets/fonts/Inter-SemiBold.otf
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/Roboto_regular.ttf
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
