@@ -9,11 +9,15 @@ class DashBoardSheetWidget extends StatelessWidget {
     required this.onProductsTap,
     required this.onSuppliersTap,
     required this.onClientsTap,
+    required this.onSalesTap,
+    required this.onPurchasesTap,
   });
 
   final VoidCallback onProductsTap;
   final VoidCallback onSuppliersTap;
   final VoidCallback onClientsTap;
+  final VoidCallback onSalesTap;
+  final VoidCallback onPurchasesTap;
 
   @override
   Widget build(BuildContext context) {
@@ -24,11 +28,11 @@ class DashBoardSheetWidget extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              dashBoardFeatureItem(total: "0", title: "Sales", onTap: () {}),
+              dashBoardFeatureItem(total: "0", title: "Sales", onTap: onSalesTap),
               dashBoardFeatureItem(
                 total: "0",
                 title: "Purchases",
-                onTap: () {},
+                onTap: onPurchasesTap,
               ),
             ],
           ),

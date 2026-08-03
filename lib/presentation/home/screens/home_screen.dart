@@ -56,6 +56,18 @@ class HomeScreen extends StatelessWidget {
               ),
               child: DashBoardSheetWidget(
                 onProductsTap: () => context.push(RoutePaths.products),
+                onSalesTap: () {
+                  context
+                      .read<ClientSuppBloc>()
+                      .add(const SetEntityTypeEvent(entityType: EntityType.client));
+                  context.push(RoutePaths.salePurchase);
+                },
+                onPurchasesTap: () {
+                  context
+                      .read<ClientSuppBloc>()
+                      .add(const SetEntityTypeEvent(entityType: EntityType.supplier));
+                  context.push(RoutePaths.salePurchase);
+                },
                 onSuppliersTap: () {
                   context
                       .read<ClientSuppBloc>()

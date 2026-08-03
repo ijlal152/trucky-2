@@ -1,3 +1,5 @@
+import 'package:trucky/presentation/products/bloc/product_bloc.dart';
+
 /// Model representing a Client or Supplier.
 class ClientSuppEntity {
   const ClientSuppEntity({
@@ -67,7 +69,9 @@ class ClientSuppTxn {
     required this.txnData,
     required this.amount,
     required this.paymentType,
+    this.discountAmount = '0',
     this.note,
+    this.products = const [],
   });
 
   final int? id;
@@ -78,7 +82,37 @@ class ClientSuppTxn {
   final DateTime txnData;
   final String amount;
   final String paymentType;
+  final String discountAmount;
   final String? note;
+  final List<ProductDetail> products;
+
+  ClientSuppTxn copyWith({
+    int? id,
+    int? clientSuppId,
+    String? transactionId,
+    String? clientSupplierName,
+    String? role,
+    DateTime? txnData,
+    String? amount,
+    String? paymentType,
+    String? discountAmount,
+    String? note,
+    List<ProductDetail>? products,
+  }) {
+    return ClientSuppTxn(
+      id: id ?? this.id,
+      clientSuppId: clientSuppId ?? this.clientSuppId,
+      transactionId: transactionId ?? this.transactionId,
+      clientSupplierName: clientSupplierName ?? this.clientSupplierName,
+      role: role ?? this.role,
+      txnData: txnData ?? this.txnData,
+      amount: amount ?? this.amount,
+      paymentType: paymentType ?? this.paymentType,
+      discountAmount: discountAmount ?? this.discountAmount,
+      note: note ?? this.note,
+      products: products ?? this.products,
+    );
+  }
 
   /// Calculate current balance for a specific client/supplier.
   static double calculateCurrentBalance({

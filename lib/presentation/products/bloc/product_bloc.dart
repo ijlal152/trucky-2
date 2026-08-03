@@ -77,6 +77,8 @@ class ProductDetail {
     required this.quantity,
     required this.paymentType,
     required this.createdAt,
+    this.transactionId,
+    this.quantityPerPackage,
   });
 
   final int productId;
@@ -87,6 +89,11 @@ class ProductDetail {
   final int quantity;
   final String paymentType;
   final DateTime createdAt;
+
+  /// Shared id linking this detail to its parent transaction, if any.
+  final String? transactionId;
+
+  final String? quantityPerPackage;
 }
 
 /// Holds product state and exposes mutations for the UI.
@@ -98,6 +105,8 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     on<ToggleProductBalanceVisibilityEvent>(_onToggleProductBalance);
     on<ToggleDashboardBalanceVisibilityEvent>(_onToggleDashboardBalance);
     on<SelectProductEvent>(_onSelectProduct);
+    on<AddProductDetailsEvent>(_onAddProductDetails);
+    on<RemoveProductDetailsEvent>(_onRemoveProductDetails);
   }
 
   int _nextId = 1;
@@ -236,6 +245,85 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
 
     emit(
       state.copyWith(selectedProduct: product, productDetailsList: details),
+    );
+  }
+
+  void _onAddProductDetails(
+    AddProductDetailsEvent event,
+    Emitter<ProductState> emit,
+  ) {
+    final products = state.products.map((product) {
+      final matching = event.details.where((d) => d.productId == product.id);
+      if (matching.isEmpty) return product;
+      final totalDelta = matching.fold<int>(0, (sum, d) {
+        switch (d.paymentType) {
+          case 'Sale':
+            return sum - d.quantity;
+          case 'Purchase':
+          case 'Return':
+          case 'Initial Stock':
+            return sum + d.quantity;
+          default:
+            return sum;
+        }
+      });
+      return product.copyWith(
+        availableStock: product.availableStock + totalDelta,
+      );
+    }).toList();
+
+    emit(
+      state.copyWith(
+        products: products,
+        productDetailsList: [...state.productDetailsList, ...event.details],
+        totalStockValue: products.fold<double>(
+          0,
+          (sum, p) => sum + p.totalValue,
+        ),
+      ),
+    );
+  }
+
+  void _onRemoveProductDetails(
+    RemoveProductDetailsEvent event,
+    Emitter<ProductState> emit,
+  ) {
+    final removed = state.productDetailsList
+        .where((d) => d.transactionId == event.transactionId)
+        .toList();
+    if (removed.isEmpty) return;
+
+    final products = state.products.map((product) {
+      final matching = removed.where((d) => d.productId == product.id);
+      if (matching.isEmpty) return product;
+      final totalDelta = matching.fold<int>(0, (sum, d) {
+        switch (d.paymentType) {
+          case 'Sale':
+            return sum + d.quantity; // restore sold stock
+          case 'Purchase':
+          case 'Return':
+          case 'Initial Stock':
+            return sum - d.quantity;
+          default:
+            return sum;
+        }
+      });
+      return product.copyWith(
+        availableStock: product.availableStock + totalDelta,
+      );
+    }).toList();
+
+    emit(
+      state.copyWith(
+        products: products,
+        productDetailsList: state.productDetailsList
+            .where((d) => d.transactionId != event.transactionId)
+            .toList(),
+        totalStockValue: products.fold<double>(
+          0,
+          (sum, p) => sum + p.totalValue,
+        ),
+      ),
     );
   }
 }

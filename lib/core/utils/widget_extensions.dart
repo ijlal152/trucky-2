@@ -52,4 +52,12 @@ extension WidgetPadding on Widget {
       child: this,
     );
   }
+
+  /// Wraps the widget with symmetric margin.
+  Widget marginSymmetric({double vertical = 0, double horizontal = 0}) {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: vertical, horizontal: horizontal),
+      child: this,
+    );
+  }
 }

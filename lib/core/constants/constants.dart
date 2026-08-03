@@ -90,4 +90,36 @@ abstract final class Constants {
       paymentType: 'Refund',
     ),
   ];
+
+  /// Filter options on the Sales list page.
+  static List<PaymentTypeSelectorModel> salesPmtSelector = [
+    PaymentTypeSelectorModel(
+      img: AppAssets.images.checkIconBlack,
+      paymentType: 'All',
+    ),
+    PaymentTypeSelectorModel(
+      img: AppAssets.images.sellsIconOne,
+      paymentType: 'Sales',
+    ),
+    PaymentTypeSelectorModel(
+      img: AppAssets.images.returnIconOne,
+      paymentType: 'Return',
+    ),
+  ];
+
+  /// Filter options on the Purchases list page.
+  static List<PaymentTypeSelectorModel> purchasePmtSelector = [
+    PaymentTypeSelectorModel(
+      img: AppAssets.images.checkIconBlack,
+      paymentType: 'All',
+    ),
+    PaymentTypeSelectorModel(
+      img: AppAssets.images.supplierIcon,
+      paymentType: 'Purchases',
+    ),
+    PaymentTypeSelectorModel(
+      img: AppAssets.images.returnIconOne,
+      paymentType: 'Return',
+    ),
+  ];
 }

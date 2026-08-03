@@ -73,6 +73,32 @@ void main() {
 
       expect(tapped, isTrue);
     });
+
+    testWidgets('fires the callback when Sales is tapped', (tester) async {
+      var tapped = false;
+      await pumpWithApp(
+        tester,
+        _sheet(onSalesTap: () => tapped = true),
+      );
+
+      await tester.tap(find.text('Sales'));
+      await tester.pump();
+
+      expect(tapped, isTrue);
+    });
+
+    testWidgets('fires the callback when Purchases is tapped', (tester) async {
+      var tapped = false;
+      await pumpWithApp(
+        tester,
+        _sheet(onPurchasesTap: () => tapped = true),
+      );
+
+      await tester.tap(find.text('Purchases'));
+      await tester.pump();
+
+      expect(tapped, isTrue);
+    });
   });
 }
 
@@ -80,11 +106,15 @@ DashBoardSheetWidget _sheet({
   VoidCallback onProductsTap = _noop,
   VoidCallback onSuppliersTap = _noop,
   VoidCallback onClientsTap = _noop,
+  VoidCallback onSalesTap = _noop,
+  VoidCallback onPurchasesTap = _noop,
 }) {
   return DashBoardSheetWidget(
     onProductsTap: onProductsTap,
     onSuppliersTap: onSuppliersTap,
     onClientsTap: onClientsTap,
+    onSalesTap: onSalesTap,
+    onPurchasesTap: onPurchasesTap,
   );
 }
 

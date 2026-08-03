@@ -1,3 +1,5 @@
+import 'package:trucky/presentation/products/bloc/product_bloc.dart';
+
 /// Events accepted by [ProductBloc].
 sealed class ProductEvent {
   const ProductEvent();
@@ -45,4 +47,19 @@ class SelectProductEvent extends ProductEvent {
   const SelectProductEvent({required this.id});
 
   final int id;
+}
+
+/// Appends product detail rows (from a sale/purchase/return) and adjusts the
+/// affected products' available stock.
+class AddProductDetailsEvent extends ProductEvent {
+  const AddProductDetailsEvent({required this.details});
+
+  final List<ProductDetail> details;
+}
+
+/// Removes product detail rows sharing a transaction id and restores stock.
+class RemoveProductDetailsEvent extends ProductEvent {
+  const RemoveProductDetailsEvent({required this.transactionId});
+
+  final String transactionId;
 }

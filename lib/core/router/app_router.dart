@@ -8,6 +8,14 @@ import 'package:trucky/presentation/home/screens/home_screen.dart';
 import 'package:trucky/presentation/products/screens/add_product_screen.dart';
 import 'package:trucky/presentation/products/screens/product_dashboard_screen.dart';
 import 'package:trucky/presentation/products/screens/product_screen.dart';
+import 'package:trucky/presentation/sales_purchases/screens/choose_client_supp_page.dart';
+import 'package:trucky/presentation/sales_purchases/screens/choose_products_page.dart';
+import 'package:trucky/presentation/sales_purchases/screens/invoice_page.dart';
+import 'package:trucky/presentation/sales_purchases/screens/payment_details_page.dart';
+import 'package:trucky/presentation/sales_purchases/screens/product_qty_page.dart';
+import 'package:trucky/presentation/sales_purchases/screens/sale_purchase_page.dart';
+import 'package:trucky/presentation/sales_purchases/screens/sell_purchase_cart_page.dart';
+import 'package:trucky/presentation/sales_purchases/screens/set_discount_page.dart';
 import 'package:trucky/presentation/splash/screens/splash_screen.dart';
 
 /// App-level router configuration (composition root).
@@ -59,6 +67,46 @@ final appRouter = GoRouter(
       path: RoutePaths.clientSuppDashboard,
       name: 'clientSuppDashboard',
       builder: (context, state) => const ClientSuppDashboardScreen(),
+    ),
+    GoRoute(
+      path: RoutePaths.salePurchase,
+      name: 'salePurchase',
+      builder: (context, state) => const SalePurchasePage(),
+    ),
+    GoRoute(
+      path: RoutePaths.chooseClientSupp,
+      name: 'chooseClientSupp',
+      builder: (context, state) => const ChooseClientSuppPage(),
+    ),
+    GoRoute(
+      path: RoutePaths.chooseProducts,
+      name: 'chooseProducts',
+      builder: (context, state) => const ChooseProductsPage(),
+    ),
+    GoRoute(
+      path: RoutePaths.productQty,
+      name: 'productQty',
+      builder: (context, state) => const ProductQtyPage(),
+    ),
+    GoRoute(
+      path: RoutePaths.sellPurchaseCart,
+      name: 'sellPurchaseCart',
+      builder: (context, state) => const SellPurchaseCartPage(),
+    ),
+    GoRoute(
+      path: RoutePaths.setDiscount,
+      name: 'setDiscount',
+      builder: (context, state) => const SetDiscountPage(),
+    ),
+    GoRoute(
+      path: RoutePaths.paymentDetails,
+      name: 'paymentDetails',
+      builder: (context, state) => const PaymentDetailsPage(),
+    ),
+    GoRoute(
+      path: RoutePaths.invoice,
+      name: 'invoice',
+      builder: (context, state) => const InvoicePage(),
     ),
   ],
 );

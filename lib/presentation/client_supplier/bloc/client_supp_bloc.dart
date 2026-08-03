@@ -17,6 +17,8 @@ class ClientSuppBloc extends Bloc<ClientSuppEvent, ClientSuppState> {
     on<SelectClientSuppEvent>(_onSelect);
     on<AddClientSuppEvent>(_onAdd);
     on<FilterTxnsByPaymentTypeEvent>(_onFilterTxns);
+    on<AddTransactionEvent>(_onAddTransaction);
+    on<RemoveTransactionsEvent>(_onRemoveTransactions);
   }
 
   int _nextClientId = 1;
@@ -272,6 +274,68 @@ class ClientSuppBloc extends Bloc<ClientSuppEvent, ClientSuppState> {
         homeBalance: _calcHomeBalance(
           clients,
           suppliers,
+          clientTxns,
+          supplierTxns,
+          state.entityType,
+        ),
+      ),
+    );
+  }
+
+  void _onAddTransaction(
+    AddTransactionEvent event,
+    Emitter<ClientSuppState> emit,
+  ) {
+    final txn = event.txn.id == null
+        ? event.txn.copyWith(id: _nextTxnId++)
+        : event.txn;
+    final isClient = txn.role == EntityType.client.name;
+
+    final clientTxns = isClient ? [...state.clientTxns, txn] : state.clientTxns;
+    final supplierTxns =
+        isClient ? state.supplierTxns : [...state.supplierTxns, txn];
+
+    emit(
+      state.copyWith(
+        allTransactions: [...state.allTransactions, txn],
+        clientTxns: clientTxns,
+        supplierTxns: supplierTxns,
+        homeBalance: _calcHomeBalance(
+          state.clients,
+          state.suppliers,
+          clientTxns,
+          supplierTxns,
+          state.entityType,
+        ),
+      ),
+    );
+  }
+
+  void _onRemoveTransactions(
+    RemoveTransactionsEvent event,
+    Emitter<ClientSuppState> emit,
+  ) {
+    final remaining = state.allTransactions
+        .where((t) => t.transactionId != event.transactionId)
+        .toList();
+    final clientTxns = remaining
+        .where((t) => t.role == EntityType.client.name)
+        .toList();
+    final supplierTxns = remaining
+        .where((t) => t.role == EntityType.supplier.name)
+        .toList();
+
+    emit(
+      state.copyWith(
+        allTransactions: remaining,
+        clientTxns: clientTxns,
+        supplierTxns: supplierTxns,
+        selectedCSTxns: state.selectedCSTxns
+            .where((t) => t.transactionId != event.transactionId)
+            .toList(),
+        homeBalance: _calcHomeBalance(
+          state.clients,
+          state.suppliers,
           clientTxns,
           supplierTxns,
           state.entityType,

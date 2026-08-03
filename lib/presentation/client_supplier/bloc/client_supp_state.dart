@@ -57,6 +57,19 @@ class ClientSuppState {
   List<ClientSuppTxn> get currentTxnList =>
       entityType == EntityType.client ? clientTxns : supplierTxns;
 
+  /// Sale/Return transactions for clients, Purchase/Return for suppliers,
+  /// newest first. Used by the Sale/Purchase list and home counts.
+  List<ClientSuppTxn> get salePurchaseTxns {
+    final txns = currentTxnList.where((txn) {
+      if (entityType == EntityType.client) {
+        return txn.paymentType == 'Sale' || txn.paymentType == 'Return';
+      }
+      return txn.paymentType == 'Purchase' || txn.paymentType == 'Return';
+    }).toList()
+      ..sort((a, b) => b.txnData.compareTo(a.txnData));
+    return txns;
+  }
+
   ClientSuppState copyWith({
     EntityType? entityType,
     List<ClientSuppEntity>? clients,

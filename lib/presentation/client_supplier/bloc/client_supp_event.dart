@@ -1,4 +1,5 @@
 import 'package:trucky/core/constants/enums.dart';
+import 'package:trucky/presentation/client_supplier/bloc/client_supp_models.dart';
 
 /// Events accepted by [ClientSuppBloc].
 sealed class ClientSuppEvent {
@@ -65,4 +66,18 @@ class FilterTxnsByPaymentTypeEvent extends ClientSuppEvent {
   const FilterTxnsByPaymentTypeEvent({required this.index});
 
   final int index;
+}
+
+/// Appends a transaction (used when a sale/purchase/payment/return completes).
+class AddTransactionEvent extends ClientSuppEvent {
+  const AddTransactionEvent({required this.txn});
+
+  final ClientSuppTxn txn;
+}
+
+/// Removes every transaction sharing the given id (edit/delete flow).
+class RemoveTransactionsEvent extends ClientSuppEvent {
+  const RemoveTransactionsEvent({required this.transactionId});
+
+  final String transactionId;
 }
