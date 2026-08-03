@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trucky/presentation/products/bloc/product_bloc.dart';
+import 'package:trucky/presentation/products/bloc/product_event.dart';
+import 'package:trucky/presentation/products/bloc/product_state.dart';
 
 /// Simple products screen backed by [ProductBloc] (Bloc).
 class ProductScreen extends StatelessWidget {

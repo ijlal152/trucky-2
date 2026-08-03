@@ -1,4 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trucky/presentation/products/bloc/product_event.dart';
+import 'package:trucky/presentation/products/bloc/product_state.dart';
 
 /// Simple product model used by the products screen.
 class Product {
@@ -11,32 +13,6 @@ class Product {
   final String id;
   final String name;
   final double price;
-}
-
-/// State exposed by [ProductBloc].
-class ProductState {
-  const ProductState({this.products = const []});
-
-  final List<Product> products;
-
-  ProductState copyWith({List<Product>? products}) {
-    return ProductState(products: products ?? this.products);
-  }
-}
-
-/// Events accepted by [ProductBloc].
-sealed class ProductEvent {
-  const ProductEvent();
-}
-
-class AddProductEvent extends ProductEvent {
-  const AddProductEvent();
-}
-
-class RemoveProductEvent extends ProductEvent {
-  const RemoveProductEvent({required this.id});
-
-  final String id;
 }
 
 /// Holds the list of products and exposes mutations for the UI.
