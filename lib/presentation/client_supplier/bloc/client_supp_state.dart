@@ -73,6 +73,7 @@ class ClientSuppState {
     bool? isNameRequired,
     String? searchQuery,
     double? homeBalance,
+    bool clearSelectedCS = false,
   }) {
     return ClientSuppState(
       entityType: entityType ?? this.entityType,
@@ -82,7 +83,7 @@ class ClientSuppState {
       clientTxns: clientTxns ?? this.clientTxns,
       supplierTxns: supplierTxns ?? this.supplierTxns,
       selectedCSTxns: selectedCSTxns ?? this.selectedCSTxns,
-      selectedCS: selectedCS ?? this.selectedCS,
+      selectedCS: clearSelectedCS ? null : (selectedCS ?? this.selectedCS),
       selectedIndex: selectedIndex ?? this.selectedIndex,
       sortType: sortType ?? this.sortType,
       showSearchField: showSearchField ?? this.showSearchField,

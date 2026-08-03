@@ -62,26 +62,18 @@ class ClientSuppCommonDashboardView extends StatelessWidget {
           titleColor: Colors.white,
           actionWidgets: [
             PopupMenuButton<int>(
-              itemBuilder: (context) => double.parse(totalBalance) < 0
-                  ? [
-                      PopupMenuItem(
-                        value: 1,
-                        onTap: onEdit ?? () {},
-                        child: const Text('Edit'),
-                      ),
-                    ]
-                  : [
-                      PopupMenuItem(
-                        value: 1,
-                        onTap: onEdit ?? () {},
-                        child: const Text('Edit'),
-                      ),
-                      PopupMenuItem(
-                        value: 2,
-                        onTap: onDelete ?? () {},
-                        child: const Text('Delete'),
-                      ),
-                    ],
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  value: 1,
+                  onTap: onEdit ?? () {},
+                  child: const Text('Edit'),
+                ),
+                PopupMenuItem(
+                  value: 2,
+                  onTap: onDelete ?? () {},
+                  child: const Text('Delete'),
+                ),
+              ],
               offset: const Offset(0, 50),
               color: Colors.white,
               elevation: 5,

@@ -3,6 +3,7 @@ import 'package:trucky/core/constants/enums.dart';
 import 'package:trucky/presentation/client_supplier/bloc/client_supp_event.dart';
 import 'package:trucky/presentation/client_supplier/bloc/client_supp_models.dart';
 import 'package:trucky/presentation/client_supplier/bloc/client_supp_state.dart';
+import 'package:trucky/presentation/widgets/custom_snackbar.dart';
 
 /// Holds clients/suppliers state and exposes mutations for the UI.
 class ClientSuppBloc extends Bloc<ClientSuppEvent, ClientSuppState> {
@@ -103,7 +104,9 @@ class ClientSuppBloc extends Bloc<ClientSuppEvent, ClientSuppState> {
 
     emit(
       state.copyWith(
-        entityType: event.entityType,
+        // Keep the caller's entity type (set from the home dashboard) rather
+        // than resetting it to the event default of `client`.
+        entityType: state.entityType,
         clients: clients,
         suppliers: suppliers,
         allTransactions: transactions,
@@ -115,7 +118,7 @@ class ClientSuppBloc extends Bloc<ClientSuppEvent, ClientSuppState> {
           suppliers,
           clientTxns,
           supplierTxns,
-          event.entityType,
+          state.entityType,
         ),
       ),
     );
@@ -125,8 +128,8 @@ class ClientSuppBloc extends Bloc<ClientSuppEvent, ClientSuppState> {
     emit(
       state.copyWith(
         entityType: event.entityType,
-        selectedCS: null,
         selectedCSTxns: const [],
+        clearSelectedCS: true,
         homeBalance: _calcHomeBalance(
           state.clients,
           state.suppliers,
@@ -149,7 +152,14 @@ class ClientSuppBloc extends Bloc<ClientSuppEvent, ClientSuppState> {
     ToggleSearchFieldEvent event,
     Emitter<ClientSuppState> emit,
   ) {
-    emit(state.copyWith(showSearchField: event.isVisible));
+    emit(
+      state.copyWith(
+        showSearchField: event.isVisible,
+        // Programmatic controller clears do not fire onChanged, so drop any
+        // stale query when the field is closed.
+        searchQuery: event.isVisible ? state.searchQuery : '',
+      ),
+    );
   }
 
   void _onSearch(SearchClientSuppEvent event, Emitter<ClientSuppState> emit) {
@@ -175,12 +185,19 @@ class ClientSuppBloc extends Bloc<ClientSuppEvent, ClientSuppState> {
   }
 
   void _onSelect(SelectClientSuppEvent event, Emitter<ClientSuppState> emit) {
-    if (event.index < 0 || event.index >= state.currentEntityList.length) return;
-    final selected = state.currentEntityList[event.index];
+    // The list screen renders `searchResults` while a query is active, so the
+    // tap index must be resolved against the same list.
+    final list = state.searchQuery.trim().isNotEmpty
+        ? state.searchResults
+        : state.currentEntityList;
+    if (event.index < 0 || event.index >= list.length) return;
+    final selected = list[event.index];
 
-    final txns = state.currentTxnList
-        .where((t) => t.clientSuppId == selected.id)
-        .toList();
+    // Newest-first so running balances (calculateBalanceAtIndex) and the
+    // dashboard total reflect the current balance.
+    final txns = _sortTxnsNewestFirst(
+      state.currentTxnList.where((t) => t.clientSuppId == selected.id),
+    );
 
     emit(
       state.copyWith(
@@ -198,6 +215,20 @@ class ClientSuppBloc extends Bloc<ClientSuppEvent, ClientSuppState> {
       return;
     }
     emit(state.copyWith(isNameRequired: false));
+
+    final existing = state.entityType == EntityType.client
+        ? state.clients
+        : state.suppliers;
+    final isDuplicate = existing.any(
+      (e) => e.name.toLowerCase() == name.toLowerCase(),
+    );
+    if (isDuplicate) {
+      MySnackbarMessage.showErrorMessage(
+        title: 'Error!',
+        message: 'Entity with this name already exists.',
+      );
+      return;
+    }
 
     final now = DateTime.now();
     final isClient = state.entityType == EntityType.client;
@@ -257,9 +288,9 @@ class ClientSuppBloc extends Bloc<ClientSuppEvent, ClientSuppState> {
     if (selected == null) return;
 
     final paymentType = PaymentType.values[event.index];
-    final all = state.currentTxnList
-        .where((t) => t.clientSuppId == selected.id)
-        .toList();
+    final all = _sortTxnsNewestFirst(
+      state.currentTxnList.where((t) => t.clientSuppId == selected.id),
+    );
 
     final filtered = paymentType == PaymentType.all
         ? all
@@ -271,6 +302,16 @@ class ClientSuppBloc extends Bloc<ClientSuppEvent, ClientSuppState> {
         selectedIndex: event.index,
       ),
     );
+  }
+
+  /// Sorts transactions newest-first, matching how the old app displayed
+  /// them and how [ClientSuppTxn.calculateBalanceAtIndex] expects its input.
+  List<ClientSuppTxn> _sortTxnsNewestFirst(
+    Iterable<ClientSuppTxn> transactions,
+  ) {
+    final sorted = transactions.toList()
+      ..sort((a, b) => b.txnData.compareTo(a.txnData));
+    return sorted;
   }
 
   bool _matchesPaymentType(ClientSuppTxn txn, PaymentType type) {

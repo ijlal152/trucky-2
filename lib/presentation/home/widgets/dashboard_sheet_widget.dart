@@ -42,7 +42,11 @@ class DashBoardSheetWidget extends StatelessWidget {
                 onTap: onSuppliersTap,
               ),
 
-              dashBoardFeatureItem(title: "Clients", total: "0", onTap: onClientsTap),
+              dashBoardFeatureItem(
+                title: "Clients",
+                total: "0",
+                onTap: onClientsTap,
+              ),
             ],
           ),
           20.verticalSpace,
@@ -89,14 +93,10 @@ Widget dashBoardFeatureItem({
   required String title,
   required VoidCallback onTap,
 }) {
-  return InkWell(
+  return GestureDetector(
     onTap: onTap,
-    splashColor: Colors.blue,
-    customBorder: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(12.r),
-    ),
     child: Card(
-      elevation: 1,
+      elevation: 0,
       color: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
       child: SizedBox(
