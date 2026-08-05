@@ -1,10 +1,16 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trucky/core/di/injector.dart';
 import 'package:trucky/core/errors/failures.dart';
-import 'package:trucky/core/utils/result.dart';
-import 'package:trucky/domain/entities/product_entity.dart';
+import 'package:trucky/core/usecase/usecase.dart';
 import 'package:trucky/domain/entities/product_transaction_type.dart';
-import 'package:trucky/domain/repositories/product_repository.dart';
+import 'package:trucky/domain/usecases/create_product_usecase.dart';
+import 'package:trucky/domain/usecases/delete_product_usecase.dart';
+import 'package:trucky/domain/usecases/get_all_products_usecase.dart';
+import 'package:trucky/domain/usecases/get_product_transactions_usecase.dart';
+import 'package:trucky/domain/usecases/record_purchase_usecase.dart';
+import 'package:trucky/domain/usecases/record_return_usecase.dart';
+import 'package:trucky/domain/usecases/record_sale_usecase.dart';
+import 'package:trucky/domain/usecases/record_transaction_params.dart';
 import 'package:trucky/presentation/products/bloc/product_event.dart';
 import 'package:trucky/presentation/products/bloc/product_models.dart';
 import 'package:trucky/presentation/products/bloc/product_state.dart';
@@ -14,13 +20,28 @@ export 'product_models.dart';
 
 /// Holds product state and exposes mutations for the UI.
 ///
-/// This bloc is now **DB-backed**: every mutation goes through
-/// [ProductRepository] which writes the ledger and the snapshot atomically.
-/// In-memory sample data has been removed; the UI now reads from SQLite.
+/// This bloc is now **DB-backed**: every mutation goes through a domain
+/// use case which delegates to [ProductRepository] to write the ledger and
+/// the snapshot atomically. In-memory sample data has been removed; the UI
+/// now reads from SQLite.
 class ProductBloc extends Bloc<ProductEvent, ProductState> {
-  ProductBloc({ProductRepository? repository})
-    : _repository = repository ?? Injector.productRepository,
-      super(const ProductState()) {
+  ProductBloc({
+    GetAllProductsUsecase? getAllProducts,
+    CreateProductUsecase? createProduct,
+    DeleteProductUsecase? deleteProduct,
+    GetProductTransactionsUsecase? getProductTransactions,
+    RecordPurchaseUsecase? recordPurchase,
+    RecordSaleUsecase? recordSale,
+    RecordReturnUsecase? recordReturn,
+  }) : _getAllProducts = getAllProducts ?? Injector.getAllProductsUsecase,
+       _createProduct = createProduct ?? Injector.createProductUsecase,
+       _deleteProduct = deleteProduct ?? Injector.deleteProductUsecase,
+       _getProductTransactions =
+           getProductTransactions ?? Injector.getProductTransactionsUsecase,
+       _recordPurchase = recordPurchase ?? Injector.recordPurchaseUsecase,
+       _recordSale = recordSale ?? Injector.recordSaleUsecase,
+       _recordReturn = recordReturn ?? Injector.recordReturnUsecase,
+       super(const ProductState()) {
     on<LoadProductsEvent>(_onLoadProducts);
     on<AddProductEvent>(_onAdd);
     on<RemoveProductEvent>(_onRemove);
@@ -31,13 +52,19 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     on<RemoveProductDetailsEvent>(_onRemoveProductDetails);
   }
 
-  final ProductRepository _repository;
+  final GetAllProductsUsecase _getAllProducts;
+  final CreateProductUsecase _createProduct;
+  final DeleteProductUsecase _deleteProduct;
+  final GetProductTransactionsUsecase _getProductTransactions;
+  final RecordPurchaseUsecase _recordPurchase;
+  final RecordSaleUsecase _recordSale;
+  final RecordReturnUsecase _recordReturn;
 
   Future<void> _onLoadProducts(
     LoadProductsEvent event,
     Emitter<ProductState> emit,
   ) async {
-    final result = await _repository.getAllProducts();
+    final result = await _getAllProducts(const NoParams());
     final products = result.when(
       success: (rows) => rows.map(Product.fromEntity).toList(),
       failure: (failure) {
@@ -85,12 +112,14 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
         ? event.productSKU!.trim()
         : 'SKU-${DateTime.now().millisecondsSinceEpoch}';
 
-    final result = await _repository.createProduct(
-      name: productName,
-      sku: sku,
-      sellingPrice: event.sellingPrice,
-      initialQuantity: event.initialQuantity.toDouble(),
-      initialPurchasePrice: event.purchasePrice,
+    final result = await _createProduct(
+      CreateProductParams(
+        name: productName,
+        sku: sku,
+        sellingPrice: event.sellingPrice,
+        initialQuantity: event.initialQuantity.toDouble(),
+        initialPurchasePrice: event.purchasePrice,
+      ),
     );
 
     await result.when(
@@ -121,7 +150,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     Emitter<ProductState> emit,
   ) async {
     final id = event.id;
-    final result = await _repository.deleteProduct(id);
+    final result = await _deleteProduct(id);
     await result.when(
       success: (_) async {
         final products = state.products.where((p) => p.id != id).toList();
@@ -135,9 +164,8 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
             ),
             selectedProduct: removedSelected ? null : state.selectedProduct,
             productDetailsList: removedSelected
-                ? const []
+                ? const <ProductDetail>[]
                 : state.productDetailsList,
-            clearSelectedProduct: removedSelected,
           ),
         );
       },
@@ -177,7 +205,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     final product = state.products.where((p) => p.id == event.id).firstOrNull;
     if (product == null) return;
 
-    final result = await _repository.getTransactionsForProduct(event.id);
+    final result = await _getProductTransactions(event.id);
     final details = result.when(
       success: (rows) => rows.map(ProductDetail.fromEntity).toList(),
       failure: (_) => const <ProductDetail>[],
@@ -200,31 +228,19 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       final op = _opFromPaymentType(detail.paymentType);
       if (op == null) continue;
 
-      late final Future<Result<ProductEntity>> futureResult;
-      switch (op) {
-        case ProductTransactionType.purchase:
-          futureResult = _repository.recordPurchase(
-            productId: detail.productId,
-            quantity: detail.quantity.toDouble(),
-            unitPrice: detail.purchasePrice,
-          );
-          break;
-        case ProductTransactionType.sale:
-          futureResult = _repository.recordSale(
-            productId: detail.productId,
-            quantity: detail.quantity.toDouble(),
-            unitPrice: detail.sellingPrice,
-          );
-          break;
-        case ProductTransactionType.returned:
-          futureResult = _repository.recordReturn(
-            productId: detail.productId,
-            quantity: detail.quantity.toDouble(),
-            unitPrice: detail.purchasePrice,
-          );
-          break;
-      }
-      final result = await futureResult;
+      final params = RecordTransactionParams(
+        productId: detail.productId,
+        quantity: detail.quantity.toDouble(),
+        unitPrice: op == ProductTransactionType.sale
+            ? detail.sellingPrice
+            : detail.purchasePrice,
+      );
+
+      final result = switch (op) {
+        ProductTransactionType.purchase => await _recordPurchase(params),
+        ProductTransactionType.sale => await _recordSale(params),
+        ProductTransactionType.returned => await _recordReturn(params),
+      };
 
       result.when(
         success: (entity) async {
@@ -232,7 +248,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
           if (idx >= 0) {
             updatedProducts[idx] = Product.fromEntity(entity);
           }
-          final txns = await _repository.getTransactionsForProduct(entity.id);
+          final txns = await _getProductTransactions(entity.id);
           txns.when(
             success: (rows) {
               if (rows.isNotEmpty) {

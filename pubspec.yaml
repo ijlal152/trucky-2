@@ -24,12 +24,16 @@ dependencies:
   flutter_barcode_scanner_plus: ^3.0.8
   url_launcher: ^6.3.2
   fl_chart: ^1.2.0
+  freezed_annotation: ^3.1.0
+  equatable: ^2.0.5
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
   flutter_lints: ^5.0.0
+  freezed: ^3.2.5
+  build_runner: ^2.15.1
 
 flutter:
   uses-material-design: true

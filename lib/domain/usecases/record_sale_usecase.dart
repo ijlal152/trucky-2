@@ -1,0 +1,23 @@
+import 'package:trucky/core/usecase/usecase.dart';
+import 'package:trucky/core/utils/result.dart';
+import 'package:trucky/core/utils/typedefs.dart';
+import 'package:trucky/domain/entities/product_entity.dart';
+import 'package:trucky/domain/repositories/product_repository.dart';
+import 'package:trucky/domain/usecases/record_transaction_params.dart';
+
+/// Records a sale. Fails with a validation failure when stock is insufficient.
+class RecordSaleUsecase
+    extends UseCase<RecordTransactionParams, Result<ProductEntity>> {
+  const RecordSaleUsecase(this._repository);
+
+  final ProductRepository _repository;
+
+  @override
+  ResultFuture<ProductEntity> call(RecordTransactionParams params) {
+    return _repository.recordSale(
+      productId: params.productId,
+      quantity: params.quantity,
+      unitPrice: params.unitPrice,
+    );
+  }
+}

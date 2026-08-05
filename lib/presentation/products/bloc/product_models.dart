@@ -1,39 +1,32 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:trucky/domain/entities/product_entity.dart';
 import 'package:trucky/domain/entities/product_transaction_entity.dart';
+
+part 'product_models.freezed.dart';
 
 /// Presentation model: the product snapshot used by the UI.
 ///
 /// This is a 1:1 mirror of [ProductEntity] but uses `double` for stock and
 /// keeps `purchaseValue` derived from `selling_price` to match the existing
 /// product list rendering.
-class Product {
-  const Product({
-    this.id,
-    required this.productName,
-    required this.purchasePrice,
-    required this.sellingPrice,
-    this.availableStock = 0,
-    this.quantityPerPackage,
-    this.productImage,
-    this.productSKU,
-    this.weightedAverageCost,
-    this.createdAt,
-    this.averageCost,
-  });
+@freezed
+abstract class Product with _$Product {
+  const factory Product({
+    String? id,
+    required String productName,
+    required double purchasePrice,
+    required double sellingPrice,
+    @Default(0) double availableStock,
+    String? quantityPerPackage,
+    String? productImage,
+    String? productSKU,
+    double? weightedAverageCost,
+    DateTime? createdAt,
+    /// Authoritative WAC from the snapshot (preferred over purchasePrice).
+    double? averageCost,
+  }) = _Product;
 
-  final String? id;
-  final String productName;
-  final double purchasePrice;
-  final double sellingPrice;
-  final double availableStock;
-  final String? quantityPerPackage;
-  final String? productImage;
-  final String? productSKU;
-  final double? weightedAverageCost;
-  final DateTime? createdAt;
-
-  /// Authoritative WAC from the snapshot (preferred over purchasePrice).
-  final double? averageCost;
+  const Product._();
 
   double get profit => sellingPrice - purchasePrice;
 
@@ -50,11 +43,10 @@ class Product {
   /// avoid touching every widget.
   double get purchaseValue => totalValue;
 
-  double get effectiveCost =>
-      averageCost ?? weightedAverageCost ?? purchasePrice;
+  double get effectiveCost => averageCost ?? weightedAverageCost ?? purchasePrice;
 
   /// Build a presentation [Product] from the domain entity.
-  factory Product.fromEntity(ProductEntity e) {
+  static Product fromEntity(ProductEntity e) {
     return Product(
       id: e.id,
       productName: e.name,
@@ -70,67 +62,29 @@ class Product {
       createdAt: e.createdAt,
     );
   }
-
-  Product copyWith({
-    String? id,
-    String? productName,
-    double? purchasePrice,
-    double? sellingPrice,
-    double? availableStock,
-    String? quantityPerPackage,
-    String? productImage,
-    String? productSKU,
-    double? weightedAverageCost,
-    DateTime? createdAt,
-    double? averageCost,
-  }) {
-    return Product(
-      id: id ?? this.id,
-      productName: productName ?? this.productName,
-      purchasePrice: purchasePrice ?? this.purchasePrice,
-      sellingPrice: sellingPrice ?? this.sellingPrice,
-      availableStock: availableStock ?? this.availableStock,
-      quantityPerPackage: quantityPerPackage ?? this.quantityPerPackage,
-      productImage: productImage ?? this.productImage,
-      productSKU: productSKU ?? this.productSKU,
-      weightedAverageCost: weightedAverageCost ?? this.weightedAverageCost,
-      createdAt: createdAt ?? this.createdAt,
-      averageCost: averageCost ?? this.averageCost,
-    );
-  }
 }
 
 /// A single product transaction used on the product dashboard.
-class ProductDetail {
-  const ProductDetail({
-    required this.productId,
-    this.sourceName,
-    this.sourceType,
-    required this.purchasePrice,
-    required this.sellingPrice,
-    required this.quantity,
-    required this.paymentType,
-    required this.createdAt,
-    this.transactionId,
-    this.quantityPerPackage,
-  });
+@freezed
+abstract class ProductDetail with _$ProductDetail {
+  const factory ProductDetail({
+    required String productId,
+    String? sourceName,
+    String? sourceType,
+    required double purchasePrice,
+    required double sellingPrice,
+    required double quantity,
+    required String paymentType,
+    required DateTime createdAt,
+    /// Shared id linking this detail to its parent transaction, if any.
+    String? transactionId,
+    String? quantityPerPackage,
+  }) = _ProductDetail;
 
-  final String productId;
-  final String? sourceName;
-  final String? sourceType;
-  final double purchasePrice;
-  final double sellingPrice;
-  final double quantity;
-  final String paymentType;
-  final DateTime createdAt;
-
-  /// Shared id linking this detail to its parent transaction, if any.
-  final String? transactionId;
-
-  final String? quantityPerPackage;
+  const ProductDetail._();
 
   /// Build a presentation [ProductDetail] from the domain entity.
-  factory ProductDetail.fromEntity(ProductTransactionEntity e) {
+  static ProductDetail fromEntity(ProductTransactionEntity e) {
     return ProductDetail(
       productId: e.productId,
       sourceName: e.type.name,

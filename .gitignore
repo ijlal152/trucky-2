@@ -45,3 +45,6 @@ app.*.map.json
 /android/app/release
 .metadata
 pubspec.lock
+/graphify-out
+.agents/skills/skill/SKILL.md
+/.github/agents

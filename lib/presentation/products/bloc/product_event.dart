@@ -1,69 +1,47 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:trucky/presentation/products/bloc/product_models.dart';
 
+part 'product_event.freezed.dart';
+
 /// Events accepted by [ProductBloc].
-sealed class ProductEvent {
-  const ProductEvent();
-}
+@freezed
+abstract class ProductEvent with _$ProductEvent {
+  const factory ProductEvent.loadProducts() = LoadProductsEvent;
 
-class LoadProductsEvent extends ProductEvent {
-  const LoadProductsEvent();
-}
+  const factory ProductEvent.addProduct({
+    @Default('') String productName,
+    String? productSKU,
+    @Default(99.9) double purchasePrice,
+    @Default(99.9) double sellingPrice,
+    @Default(0) int initialQuantity,
+    String? quantityPerPackage,
+    String? productImage,
+  }) = AddProductEvent;
 
-class AddProductEvent extends ProductEvent {
-  const AddProductEvent({
-    this.productName = '',
-    this.productSKU,
-    this.purchasePrice = 99.9,
-    this.sellingPrice = 99.9,
-    this.initialQuantity = 0,
-    this.quantityPerPackage,
-    this.productImage,
-  });
+  const factory ProductEvent.removeProduct({required String id}) =
+      RemoveProductEvent;
 
-  final String productName;
-  final String? productSKU;
-  final double purchasePrice;
-  final double sellingPrice;
-  final int initialQuantity;
-  final String? quantityPerPackage;
-  final String? productImage;
-}
+  const factory ProductEvent.toggleProductBalanceVisibility() =
+      ToggleProductBalanceVisibilityEvent;
 
-class RemoveProductEvent extends ProductEvent {
-  const RemoveProductEvent({required this.id});
+  const factory ProductEvent.toggleDashboardBalanceVisibility() =
+      ToggleDashboardBalanceVisibilityEvent;
 
-  final String id;
-}
+  const factory ProductEvent.selectProduct({required String id}) =
+      SelectProductEvent;
 
-class ToggleProductBalanceVisibilityEvent extends ProductEvent {
-  const ToggleProductBalanceVisibilityEvent();
-}
+  /// Appends product detail rows (from a sale/purchase/return) and adjusts the
+  /// affected products' available stock.
+  const factory ProductEvent.addProductDetails({
+    required List<ProductDetail> details,
+  }) = AddProductDetailsEvent;
 
-class ToggleDashboardBalanceVisibilityEvent extends ProductEvent {
-  const ToggleDashboardBalanceVisibilityEvent();
-}
-
-class SelectProductEvent extends ProductEvent {
-  const SelectProductEvent({required this.id});
-
-  final String id;
-}
-
-/// Appends product detail rows (from a sale/purchase/return) and adjusts the
-/// affected products' available stock.
-class AddProductDetailsEvent extends ProductEvent {
-  const AddProductDetailsEvent({required this.details});
-
-  final List<ProductDetail> details;
-}
-
-/// Removes product detail rows sharing a transaction id.
-///
-/// Note: this event does NOT delete the underlying ledger row. Transactions
-/// are append-only by design. It only filters the row out of the current UI
-/// view.
-class RemoveProductDetailsEvent extends ProductEvent {
-  const RemoveProductDetailsEvent({required this.transactionId});
-
-  final String transactionId;
+  /// Removes product detail rows sharing a transaction id.
+  ///
+  /// Note: this event does NOT delete the underlying ledger row. Transactions
+  /// are append-only by design. It only filters the row out of the current UI
+  /// view.
+  const factory ProductEvent.removeProductDetails({
+    required String transactionId,
+  }) = RemoveProductDetailsEvent;
 }
