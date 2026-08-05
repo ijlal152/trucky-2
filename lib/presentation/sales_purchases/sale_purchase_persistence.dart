@@ -27,12 +27,12 @@ abstract final class SalePurchasePersistence {
     final now = data.dateTime ?? DateTime.now();
     final products = (data.products ?? const <CartItem>[]).map((item) {
       return ProductDetail(
-        productId: item.product.id ?? -1,
+        productId: item.product.id ?? '',
         sourceName: entity?.name,
         sourceType: entity?.role,
         purchasePrice: item.product.purchasePrice,
         sellingPrice: item.product.sellingPrice,
-        quantity: item.quantity,
+        quantity: item.quantity.toDouble(),
         paymentType: data.paymentTypeString,
         createdAt: now,
         transactionId: transactionId,
@@ -52,9 +52,7 @@ abstract final class SalePurchasePersistence {
       txnData: now,
       // Direct payments/refunds persist the paid amount; orders persist the
       // order total (matching the old app's _addClientTxn behaviour).
-      amount: (isOrder
-              ? data.currentOrderAmount
-              : data.paymentAmount)
+      amount: (isOrder ? data.currentOrderAmount : data.paymentAmount)
           .toStringAsFixed(2),
       paymentType: data.paymentTypeString,
       discountAmount: data.discount.toStringAsFixed(2),
@@ -83,10 +81,7 @@ abstract final class SalePurchasePersistence {
   }
 
   /// Adds a new transaction (add-mode).
-  static void addTransaction(
-    BuildContext context,
-    PaymentDataModel data,
-  ) {
+  static void addTransaction(BuildContext context, PaymentDataModel data) {
     final clientSuppBloc = context.read<ClientSuppBloc>();
     final productBloc = context.read<ProductBloc>();
 
@@ -96,9 +91,7 @@ abstract final class SalePurchasePersistence {
 
     if (!isOrder) {
       clientSuppBloc.add(
-        AddTransactionEvent(
-          txn: _buildMainTxn(data, _newTransactionId()),
-        ),
+        AddTransactionEvent(txn: _buildMainTxn(data, _newTransactionId())),
       );
       return;
     }
@@ -127,7 +120,9 @@ abstract final class SalePurchasePersistence {
         data.paymentType == PaymentTransactionType.salePayment ||
         data.paymentType == PaymentTransactionType.returnPayment;
 
-    clientSuppBloc.add(RemoveTransactionsEvent(transactionId: oldTxn.transactionId));
+    clientSuppBloc.add(
+      RemoveTransactionsEvent(transactionId: oldTxn.transactionId),
+    );
     if (isOrder) {
       productBloc.add(
         RemoveProductDetailsEvent(transactionId: oldTxn.transactionId),

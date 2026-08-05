@@ -1,6 +1,6 @@
 import 'package:trucky/core/constants/enums.dart';
 import 'package:trucky/presentation/client_supplier/bloc/client_supp_models.dart';
-import 'package:trucky/presentation/products/bloc/product_bloc.dart';
+import 'package:trucky/presentation/products/bloc/product_models.dart';
 
 /// The kind of payment/settlement being recorded.
 enum PaymentTransactionType {

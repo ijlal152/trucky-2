@@ -31,16 +31,19 @@ void main() {
     });
 
     group('LoadProductsEvent', () {
-      test('seeds the sample products and computes total stock value', () async {
-        bloc.add(const LoadProductsEvent());
-        await pumpEventQueue();
+      test(
+        'seeds the sample products and computes total stock value',
+        () async {
+          bloc.add(const LoadProductsEvent());
+          await pumpEventQueue();
 
-        expect(bloc.state.isLoaded, isTrue);
-        expect(bloc.state.products.length, 5);
-        expect(bloc.state.products.first.productName, 'Engine Oil');
-        // sum of (availableStock * sellingPrice)
-        expect(bloc.state.totalStockValue, closeTo(12990.0, 0.001));
-      });
+          expect(bloc.state.isLoaded, isTrue);
+          expect(bloc.state.products.length, 5);
+          expect(bloc.state.products.first.productName, 'Engine Oil');
+          // sum of (availableStock * sellingPrice)
+          expect(bloc.state.totalStockValue, closeTo(12990.0, 0.001));
+        },
+      );
 
       test('assigns weightedAverageCost from purchase price', () async {
         bloc.add(const LoadProductsEvent());
@@ -131,29 +134,29 @@ void main() {
         await pumpEventQueue();
       });
 
-      test('removes the product and recomputes the total stock value', () async {
-        final removedId = bloc.state.products.first.id!;
-        final removedValue = bloc.state.products.first.totalValue;
-        final expected = bloc.state.totalStockValue - removedValue;
+      test(
+        'removes the product and recomputes the total stock value',
+        () async {
+          final removedId = bloc.state.products.first.id!;
+          final removedValue = bloc.state.products.first.totalValue;
+          final expected = bloc.state.totalStockValue - removedValue;
 
-        bloc.add(RemoveProductEvent(id: removedId));
-        await pumpEventQueue();
+          bloc.add(RemoveProductEvent(id: removedId));
+          await pumpEventQueue();
 
-        expect(bloc.state.products.length, 4);
-        expect(
-          bloc.state.products.any((p) => p.id == removedId),
-          isFalse,
-        );
-        expect(bloc.state.totalStockValue, closeTo(expected, 0.001));
-      });
+          expect(bloc.state.products.length, 4);
+          expect(bloc.state.products.any((p) => p.id == removedId), isFalse);
+          expect(bloc.state.totalStockValue, closeTo(expected, 0.001));
+        },
+      );
 
       test('clears the selected product when it is the removed one', () async {
-        bloc.add(const SelectProductEvent(id: 1));
+        bloc.add(const SelectProductEvent(id: '1'));
         await pumpEventQueue();
         expect(bloc.state.selectedProduct, isNotNull);
         expect(bloc.state.productDetailsList, isNotEmpty);
 
-        bloc.add(const RemoveProductEvent(id: 1));
+        bloc.add(const RemoveProductEvent(id: '1'));
         await pumpEventQueue();
 
         expect(bloc.state.selectedProduct, isNull);
@@ -161,13 +164,13 @@ void main() {
       });
 
       test('keeps the selection when a different product is removed', () async {
-        bloc.add(const SelectProductEvent(id: 1));
+        bloc.add(const SelectProductEvent(id: '1'));
         await pumpEventQueue();
 
-        bloc.add(const RemoveProductEvent(id: 2));
+        bloc.add(const RemoveProductEvent(id: '2'));
         await pumpEventQueue();
 
-        expect(bloc.state.selectedProduct?.id, 1);
+        expect(bloc.state.selectedProduct?.id, '1');
       });
     });
 
@@ -178,19 +181,19 @@ void main() {
       });
 
       test('sets the selected product and its initial stock detail', () async {
-        bloc.add(const SelectProductEvent(id: 1));
+        bloc.add(const SelectProductEvent(id: '1'));
         await pumpEventQueue();
 
-        expect(bloc.state.selectedProduct?.id, 1);
+        expect(bloc.state.selectedProduct?.id, '1');
         expect(bloc.state.productDetailsList.length, 1);
         final detail = bloc.state.productDetailsList.first;
-        expect(detail.productId, 1);
+        expect(detail.productId, '1');
         expect(detail.paymentType, 'Initial Stock');
         expect(detail.quantity, bloc.state.selectedProduct!.availableStock);
       });
 
       test('ignores an unknown product id', () async {
-        bloc.add(const SelectProductEvent(id: 999));
+        bloc.add(const SelectProductEvent(id: '999'));
         await pumpEventQueue();
 
         expect(bloc.state.selectedProduct, isNull);

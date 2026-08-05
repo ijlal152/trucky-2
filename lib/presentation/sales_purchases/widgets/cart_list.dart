@@ -45,12 +45,12 @@ class CartList extends StatelessWidget {
                     return Column(
                       children: [
                         InkWell(
-                          onTap: () => context
-                              .read<SalePurchaseBloc>()
-                              .add(ToggleCartExpansionEvent(
-                                index: index,
-                                expanded: !isExpanded,
-                              )),
+                          onTap: () => context.read<SalePurchaseBloc>().add(
+                            ToggleCartExpansionEvent(
+                              index: index,
+                              expanded: !isExpanded,
+                            ),
+                          ),
                           child: ListTile(
                             leading: Text.rich(
                               TextSpan(
@@ -119,9 +119,9 @@ class CartList extends StatelessWidget {
                                   children: [
                                     _editDeleteWidget(
                                       () {
-                                        context
-                                            .read<SalePurchaseBloc>()
-                                            .add(SetEditingItemEvent(item));
+                                        context.read<SalePurchaseBloc>().add(
+                                          SetEditingItemEvent(item),
+                                        );
                                         context.push(RoutePaths.productQty);
                                       },
                                       AppAssets.svgs.editIcon,
@@ -130,10 +130,7 @@ class CartList extends StatelessWidget {
                                     ),
                                     100.horizontalSpace,
                                     _editDeleteWidget(
-                                      () => _confirmRemove(
-                                        context,
-                                        item,
-                                      ),
+                                      () => _confirmRemove(context, item),
                                       AppAssets.svgs.trashIcon,
                                       'Delete',
                                       const Color.fromRGBO(255, 124, 111, 1),
@@ -171,9 +168,9 @@ class CartList extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
-              context
-                  .read<SalePurchaseBloc>()
-                  .add(RemoveCartItemEvent(productId: item.product.id ?? -1));
+              context.read<SalePurchaseBloc>().add(
+                RemoveCartItemEvent(productId: item.product.id ?? ''),
+              );
               Navigator.pop(dialogContext);
             },
             child: const Text('Yes'),

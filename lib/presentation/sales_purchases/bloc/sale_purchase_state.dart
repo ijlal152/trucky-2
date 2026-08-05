@@ -28,9 +28,9 @@ class SalePurchaseState {
   final double discountPercentage;
   final ClientSuppTxn? selectedTxn;
 
-  double get totalQuantity =>
-      selectedProdList.fold<int>(0, (sum, item) => sum + item.quantity)
-          .toDouble();
+  double get totalQuantity => selectedProdList
+      .fold<int>(0, (sum, item) => sum + item.quantity)
+      .toDouble();
 
   double get subtotal =>
       selectedProdList.fold<double>(0, (sum, item) => sum + item.lineTotal);
@@ -40,7 +40,7 @@ class SalePurchaseState {
 
   double get totalAfterDiscount => subtotal - discountAmount;
 
-  bool isInCart(int productId) =>
+  bool isInCart(String productId) =>
       selectedProdList.any((item) => item.product.id == productId);
 
   SalePurchaseState copyWith({

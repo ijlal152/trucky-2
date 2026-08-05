@@ -135,13 +135,13 @@ void main() {
       });
 
       test('SetCartItemDataEvent applies quantity and price', () async {
-        final product = _product(id: 7, sellingPrice: 10);
+        final product = _product(id: '7', sellingPrice: 10);
         bloc.add(ToggleProductEvent(product: product));
         await pumpEventQueue();
 
         bloc.add(
           SetCartItemDataEvent(
-            productId: 7,
+            productId: '7',
             quantity: 3,
             unitPrice: 12,
             quantityPerPackage: '6',
@@ -184,11 +184,15 @@ void main() {
 
     group('RemoveCartItemEvent', () {
       test('removes only the given product', () async {
-        bloc.add(ToggleProductEvent(product: _product(id: 1, sellingPrice: 10)));
-        bloc.add(ToggleProductEvent(product: _product(id: 2, sellingPrice: 20)));
+        bloc.add(
+          ToggleProductEvent(product: _product(id: '1', sellingPrice: 10)),
+        );
+        bloc.add(
+          ToggleProductEvent(product: _product(id: '2', sellingPrice: 20)),
+        );
         await pumpEventQueue();
 
-        bloc.add(const RemoveCartItemEvent(productId: 1));
+        bloc.add(const RemoveCartItemEvent(productId: '1'));
         await pumpEventQueue();
 
         expect(bloc.state.selectedProdList.length, 1);
@@ -360,7 +364,10 @@ void main() {
         oldBalance: 1000,
       ).copyWith(paymentAmount: 300, notes: 'paid');
 
-      SalePurchasePersistence.addTransaction(tester.element(find.byType(SizedBox)), data);
+      SalePurchasePersistence.addTransaction(
+        tester.element(find.byType(SizedBox)),
+        data,
+      );
       await tester.pump();
 
       final txns = clientSuppBloc.state.allTransactions;
@@ -370,21 +377,24 @@ void main() {
       expect(txns.first.note, 'paid');
     });
 
-    testWidgets('sale writes the main txn, settlement and product details', (tester) async {
+    testWidgets('sale writes the main txn, settlement and product details', (
+      tester,
+    ) async {
       await pumpContext(tester);
       final client = _clientEntity();
-      final product = _product(id: 5, sellingPrice: 100);
+      final product = _product(id: '5', sellingPrice: 100);
       final data = PaymentDataModel.fromTransaction(
         clientSupplier: client,
         oldBalance: 1000,
         totalAmount: 100,
         transactionType: TransactionType.sale,
-        products: [
-          CartItem(product: product, quantity: 1, unitPrice: 100),
-        ],
+        products: [CartItem(product: product, quantity: 1, unitPrice: 100)],
       ).copyWith(paymentAmount: 40);
 
-      SalePurchasePersistence.addTransaction(tester.element(find.byType(SizedBox)), data);
+      SalePurchasePersistence.addTransaction(
+        tester.element(find.byType(SizedBox)),
+        data,
+      );
       await tester.pump();
 
       final txns = clientSuppBloc.state.allTransactions
@@ -421,20 +431,24 @@ void main() {
         oldBalance: 0,
         totalAmount: 100,
         transactionType: TransactionType.sale,
-        products: [
-          CartItem(product: product, quantity: 2, unitPrice: 100),
-        ],
+        products: [CartItem(product: product, quantity: 2, unitPrice: 100)],
       );
 
-      SalePurchasePersistence.addTransaction(tester.element(find.byType(SizedBox)), data);
+      SalePurchasePersistence.addTransaction(
+        tester.element(find.byType(SizedBox)),
+        data,
+      );
       await tester.pump();
 
-      final updated =
-          productBloc.state.products.where((p) => p.id == product.id).first;
+      final updated = productBloc.state.products
+          .where((p) => p.id == product.id)
+          .first;
       expect(updated.availableStock, before - 2);
     });
 
-    testWidgets('return writes a Refund settlement and restores stock', (tester) async {
+    testWidgets('return writes a Refund settlement and restores stock', (
+      tester,
+    ) async {
       await pumpContext(tester);
       productBloc.add(const LoadProductsEvent());
       await tester.pump();
@@ -446,24 +460,28 @@ void main() {
         oldBalance: 500,
         totalAmount: 50,
         transactionType: TransactionType.returnTransaction,
-        products: [
-          CartItem(product: product, quantity: 1, unitPrice: 50),
-        ],
+        products: [CartItem(product: product, quantity: 1, unitPrice: 50)],
       ).copyWith(paymentAmount: 50);
 
-      SalePurchasePersistence.addTransaction(tester.element(find.byType(SizedBox)), data);
+      SalePurchasePersistence.addTransaction(
+        tester.element(find.byType(SizedBox)),
+        data,
+      );
       await tester.pump();
 
       final txns = clientSuppBloc.state.allTransactions;
       expect(txns.where((t) => t.paymentType == 'Return').length, 1);
       expect(txns.where((t) => t.paymentType == 'Refund').length, 1);
 
-      final updated =
-          productBloc.state.products.where((p) => p.id == product.id).first;
+      final updated = productBloc.state.products
+          .where((p) => p.id == product.id)
+          .first;
       expect(updated.availableStock, before + 1);
     });
 
-    testWidgets('editPaymentTransaction replaces the old record', (tester) async {
+    testWidgets('editPaymentTransaction replaces the old record', (
+      tester,
+    ) async {
       await pumpContext(tester);
       final client = _clientEntity();
       final oldTxn = _txn(paymentType: 'Payment', amount: '100');
@@ -503,7 +521,11 @@ ClientSuppEntity _clientEntity({String role = 'client'}) {
   );
 }
 
-Product _product({int id = 1, double sellingPrice = 10, double purchasePrice = 8}) {
+Product _product({
+  String id = '1',
+  double sellingPrice = 10,
+  double purchasePrice = 8,
+}) {
   return Product(
     id: id,
     productName: 'Engine Oil',

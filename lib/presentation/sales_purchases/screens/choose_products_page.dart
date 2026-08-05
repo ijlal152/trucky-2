@@ -28,9 +28,7 @@ class ChooseProductsPage extends StatelessWidget {
         final products = context.read<ProductBloc>().state.products;
         final entityType = context.read<SalePurchaseBloc>().state.entityType;
         final isClient = entityType == EntityType.client;
-        final priceTitle = isClient
-            ? 'Selling Price : '
-            : 'Purchase Price : ';
+        final priceTitle = isClient ? 'Selling Price : ' : 'Purchase Price : ';
 
         return CustomScaffold(
           appBar: CustomAppBar(
@@ -62,8 +60,9 @@ class ChooseProductsPage extends StatelessWidget {
                           ),
                           child: BlocBuilder<SalePurchaseBloc, dynamic>(
                             builder: (context, _) {
-                              final state =
-                                  context.read<SalePurchaseBloc>().state;
+                              final state = context
+                                  .read<SalePurchaseBloc>()
+                                  .state;
                               return ListView.separated(
                                 shrinkWrap: true,
                                 padding: EdgeInsets.zero,
@@ -72,14 +71,17 @@ class ChooseProductsPage extends StatelessWidget {
                                   final product = products[index];
                                   final availableStock = product.availableStock;
                                   final outOfStock = availableStock <= 0;
-                                  final added = state.isInCart(product.id ?? -1);
+                                  final added = state.isInCart(
+                                    product.id ?? '',
+                                  );
                                   final price = isClient
                                       ? product.sellingPrice
                                       : product.purchasePrice;
                                   return InkWell(
-                                    onTap: () => context
-                                        .read<SalePurchaseBloc>()
-                                        .add(ToggleProductEvent(product: product)),
+                                    onTap: () =>
+                                        context.read<SalePurchaseBloc>().add(
+                                          ToggleProductEvent(product: product),
+                                        ),
                                     child: Container(
                                       color: Colors.transparent,
                                       padding: EdgeInsets.symmetric(
@@ -137,11 +139,12 @@ class ChooseProductsPage extends StatelessWidget {
                                                         textSize: 17.sp,
                                                       ),
                                                       LabelWidget(
-                                                        text: NumberFormater
-                                                            .formatAmount(
-                                                          price.toString(),
-                                                          showCurrency: true,
-                                                        ),
+                                                        text:
+                                                            NumberFormater.formatAmount(
+                                                              price.toString(),
+                                                              showCurrency:
+                                                                  true,
+                                                            ),
                                                         textSize: 17.sp,
                                                         textColor: Colors.black,
                                                         fontWeight:
@@ -170,25 +173,23 @@ class ChooseProductsPage extends StatelessWidget {
                                                             FontWeight.w400,
                                                         textColor: outOfStock
                                                             ? Colors.red
-                                                            : const Color
-                                                                .fromRGBO(
-                                                              0,
-                                                              177,
-                                                              103,
-                                                              1,
-                                                            ),
+                                                            : const Color.fromRGBO(
+                                                                0,
+                                                                177,
+                                                                103,
+                                                                1,
+                                                              ),
                                                       ),
                                                       LabelWidget(
                                                         text: 'Pcs',
                                                         textColor: outOfStock
                                                             ? Colors.red
-                                                            : const Color
-                                                                .fromRGBO(
-                                                              0,
-                                                              177,
-                                                              103,
-                                                              1,
-                                                            ),
+                                                            : const Color.fromRGBO(
+                                                                0,
+                                                                177,
+                                                                103,
+                                                                1,
+                                                              ),
                                                         textSize: 17.sp,
                                                         fontWeight:
                                                             FontWeight.w400,
@@ -214,7 +215,8 @@ class ChooseProductsPage extends StatelessWidget {
                                           ),
                                           added
                                               ? Image.asset(
-                                                  AppAssets.images
+                                                  AppAssets
+                                                      .images
                                                       .checkIconGreen,
                                                   height: 12.h,
                                                 )
@@ -225,8 +227,9 @@ class ChooseProductsPage extends StatelessWidget {
                                   );
                                 },
                                 separatorBuilder: (context, index) => Padding(
-                                  padding:
-                                      EdgeInsets.symmetric(horizontal: 15.w),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 15.w,
+                                  ),
                                   child: dividerWidget(),
                                 ),
                               ).paddingOnly(top: 10.h);

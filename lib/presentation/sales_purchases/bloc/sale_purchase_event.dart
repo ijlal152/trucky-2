@@ -1,6 +1,6 @@
 import 'package:trucky/core/constants/enums.dart';
 import 'package:trucky/presentation/client_supplier/bloc/client_supp_models.dart';
-import 'package:trucky/presentation/products/bloc/product_bloc.dart';
+import 'package:trucky/presentation/products/bloc/product_models.dart';
 import 'package:trucky/presentation/sales_purchases/bloc/sale_purchase_models.dart';
 
 /// Events accepted by [SalePurchaseBloc].
@@ -46,7 +46,7 @@ class SetCartItemDataEvent extends SalePurchaseEvent {
     this.quantityPerPackage,
   });
 
-  final int productId;
+  final String productId;
   final int quantity;
   final double unitPrice;
   final String? quantityPerPackage;
@@ -62,7 +62,7 @@ class ToggleCartExpansionEvent extends SalePurchaseEvent {
 /// Removes an item from the cart.
 class RemoveCartItemEvent extends SalePurchaseEvent {
   const RemoveCartItemEvent({required this.productId});
-  final int productId;
+  final String productId;
 }
 
 /// Sets the cash + percentage discount.
@@ -97,10 +97,7 @@ class BeginEditCartEvent extends SalePurchaseEvent {
 
 /// Begins editing an existing Payment/Refund transaction.
 class BeginEditPaymentEvent extends SalePurchaseEvent {
-  const BeginEditPaymentEvent({
-    required this.txn,
-    required this.clientSupp,
-  });
+  const BeginEditPaymentEvent({required this.txn, required this.clientSupp});
 
   final ClientSuppTxn txn;
   final ClientSuppEntity clientSupp;

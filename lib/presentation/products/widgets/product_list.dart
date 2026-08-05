@@ -8,6 +8,7 @@ import 'package:trucky/core/utils/image_utils.dart';
 import 'package:trucky/core/utils/number_formater.dart';
 import 'package:trucky/core/utils/widget_extensions.dart';
 import 'package:trucky/presentation/products/bloc/product_bloc.dart';
+import 'package:trucky/presentation/products/bloc/product_models.dart';
 import 'package:trucky/presentation/widgets/custom_divider.dart';
 import 'package:trucky/presentation/widgets/label_widget.dart';
 
@@ -15,7 +16,7 @@ class ProductList extends StatelessWidget {
   final List<Product> list;
   final bool showBalance;
   final ScrollController? scrollController;
-  final void Function(int productID)? onProductTap;
+  final void Function(String productID)? onProductTap;
 
   const ProductList({
     super.key,
@@ -38,8 +39,9 @@ class ProductList extends StatelessWidget {
               final product = list[index];
               return GestureDetector(
                 onTap: () {
-                  if (onProductTap != null) {
-                    onProductTap!(product.id ?? -1);
+                  final id = product.id;
+                  if (onProductTap != null && id != null) {
+                    onProductTap!(id);
                   }
                 },
                 child: Container(
@@ -72,8 +74,7 @@ class ProductList extends StatelessWidget {
                                         text: product.availableStock.toString(),
                                         textSize: 16.sp,
                                         fontWeight: FontWeight.w600,
-                                        textColor:
-                                            product.availableStock == 0
+                                        textColor: product.availableStock == 0
                                             ? const Color.fromRGBO(
                                                 255,
                                                 124,
@@ -87,10 +88,7 @@ class ProductList extends StatelessWidget {
                                                 1,
                                               ),
                                       ),
-                                      LabelWidget(
-                                        text: ' x ',
-                                        textSize: 16.sp,
-                                      ),
+                                      LabelWidget(text: ' x ', textSize: 16.sp),
                                       Flexible(
                                         child: LabelWidget(
                                           text: product.productName,

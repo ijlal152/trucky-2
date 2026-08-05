@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trucky/core/constants/font_constants.dart';
 import 'package:trucky/core/utils/number_formater.dart';
 import 'package:trucky/core/utils/widget_extensions.dart';
-import 'package:trucky/presentation/products/bloc/product_bloc.dart';
+import 'package:trucky/presentation/products/bloc/product_models.dart';
 import 'package:trucky/presentation/products/widgets/product_list.dart';
 import 'package:trucky/presentation/widgets/label_widget.dart';
 
@@ -19,7 +19,7 @@ class ProductInfoWidget extends StatelessWidget {
     this.currency = '',
   });
 
-  int get availableStock => selectedProduct.availableStock;
+  double get availableStock => selectedProduct.availableStock;
 
   @override
   Widget build(BuildContext context) {

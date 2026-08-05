@@ -32,3 +32,18 @@ class ValidationFailure extends AppFailure {
 class UnknownFailure extends AppFailure {
   const UnknownFailure([super.message = 'Something went wrong.']);
 }
+
+class InsufficientStockFailure extends AppFailure {
+  const InsufficientStockFailure({
+    required this.productId,
+    required this.available,
+    required this.requested,
+  }) : super(
+         'Insufficient stock for product $productId: available=$available, '
+         'requested=$requested',
+       );
+
+  final String productId;
+  final double available;
+  final double requested;
+}

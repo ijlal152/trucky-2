@@ -1,104 +1,26 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trucky/core/di/injector.dart';
+import 'package:trucky/core/errors/failures.dart';
+import 'package:trucky/core/utils/result.dart';
+import 'package:trucky/domain/entities/product_entity.dart';
+import 'package:trucky/domain/entities/product_transaction_type.dart';
+import 'package:trucky/domain/repositories/product_repository.dart';
 import 'package:trucky/presentation/products/bloc/product_event.dart';
+import 'package:trucky/presentation/products/bloc/product_models.dart';
 import 'package:trucky/presentation/products/bloc/product_state.dart';
 import 'package:trucky/presentation/widgets/custom_snackbar.dart';
 
-/// Product model used by the products screens.
-class Product {
-  const Product({
-    this.id,
-    required this.productName,
-    required this.purchasePrice,
-    required this.sellingPrice,
-    this.availableStock = 0,
-    this.quantityPerPackage,
-    this.productImage,
-    this.productSKU,
-    this.weightedAverageCost,
-    this.createdAt,
-  });
-
-  final int? id;
-  final String productName;
-  final double purchasePrice;
-  final double sellingPrice;
-  final int availableStock;
-  final String? quantityPerPackage;
-  final String? productImage;
-  final String? productSKU;
-  final double? weightedAverageCost;
-  final DateTime? createdAt;
-
-  double get profit => sellingPrice - purchasePrice;
-
-  bool get isInStock => availableStock > 0;
-
-  double get totalValue => availableStock * sellingPrice;
-
-  double get purchaseValue => availableStock * sellingPrice;
-
-  double get effectiveCost => weightedAverageCost ?? purchasePrice;
-
-  Product copyWith({
-    int? id,
-    String? productName,
-    double? purchasePrice,
-    double? sellingPrice,
-    int? availableStock,
-    String? quantityPerPackage,
-    String? productImage,
-    String? productSKU,
-    double? weightedAverageCost,
-    DateTime? createdAt,
-  }) {
-    return Product(
-      id: id ?? this.id,
-      productName: productName ?? this.productName,
-      purchasePrice: purchasePrice ?? this.purchasePrice,
-      sellingPrice: sellingPrice ?? this.sellingPrice,
-      availableStock: availableStock ?? this.availableStock,
-      quantityPerPackage: quantityPerPackage ?? this.quantityPerPackage,
-      productImage: productImage ?? this.productImage,
-      productSKU: productSKU ?? this.productSKU,
-      weightedAverageCost: weightedAverageCost ?? this.weightedAverageCost,
-      createdAt: createdAt ?? this.createdAt,
-    );
-  }
-}
-
-/// A single product transaction used on the product dashboard.
-class ProductDetail {
-  const ProductDetail({
-    required this.productId,
-    this.sourceName,
-    this.sourceType,
-    required this.purchasePrice,
-    required this.sellingPrice,
-    required this.quantity,
-    required this.paymentType,
-    required this.createdAt,
-    this.transactionId,
-    this.quantityPerPackage,
-  });
-
-  final int productId;
-  final String? sourceName;
-  final String? sourceType;
-  final double purchasePrice;
-  final double sellingPrice;
-  final int quantity;
-  final String paymentType;
-  final DateTime createdAt;
-
-  /// Shared id linking this detail to its parent transaction, if any.
-  final String? transactionId;
-
-  final String? quantityPerPackage;
-}
+export 'product_models.dart';
 
 /// Holds product state and exposes mutations for the UI.
+///
+/// This bloc is now **DB-backed**: every mutation goes through
+/// [ProductRepository] which writes the ledger and the snapshot atomically.
+/// In-memory sample data has been removed; the UI now reads from SQLite.
 class ProductBloc extends Bloc<ProductEvent, ProductState> {
-  ProductBloc() : super(const ProductState()) {
+  ProductBloc({ProductRepository? repository})
+    : _repository = repository ?? Injector.productRepository,
+      super(const ProductState()) {
     on<LoadProductsEvent>(_onLoadProducts);
     on<AddProductEvent>(_onAdd);
     on<RemoveProductEvent>(_onRemove);
@@ -109,29 +31,22 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     on<RemoveProductDetailsEvent>(_onRemoveProductDetails);
   }
 
-  int _nextId = 1;
+  final ProductRepository _repository;
 
-  static const List<String> _sampleNames = [
-    'Engine Oil',
-    'Brake Pads',
-    'Air Filter',
-    'Tires',
-    'Battery',
-  ];
-
-  void _onLoadProducts(LoadProductsEvent event, Emitter<ProductState> emit) {
-    final products = List<Product>.generate(
-      _sampleNames.length,
-      (index) => Product(
-        id: _nextId++,
-        productName: _sampleNames[index],
-        purchasePrice: 80.0 + (index * 10),
-        sellingPrice: 99.9 + (index * 12),
-        availableStock: 10 + (index * 5),
-        quantityPerPackage: '6',
-        weightedAverageCost: 80.0 + (index * 10),
-        createdAt: DateTime.now().subtract(Duration(days: index)),
-      ),
+  Future<void> _onLoadProducts(
+    LoadProductsEvent event,
+    Emitter<ProductState> emit,
+  ) async {
+    final result = await _repository.getAllProducts();
+    final products = result.when(
+      success: (rows) => rows.map(Product.fromEntity).toList(),
+      failure: (failure) {
+        MySnackbarMessage.showErrorMessage(
+          title: 'Error!',
+          message: failure.message,
+        );
+        return const <Product>[];
+      },
     );
     emit(
       state.copyWith(
@@ -145,9 +60,13 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     );
   }
 
-  void _onAdd(AddProductEvent event, Emitter<ProductState> emit) {
+  Future<void> _onAdd(AddProductEvent event, Emitter<ProductState> emit) async {
     final productName = event.productName.trim();
     if (productName.isEmpty) {
+      MySnackbarMessage.showErrorMessage(
+        title: 'Error!',
+        message: 'Product name is required.',
+      );
       return;
     }
 
@@ -162,47 +81,72 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       return;
     }
 
-    final now = DateTime.now();
-    final product = Product(
-      id: _nextId++,
-      productName: productName,
-      purchasePrice: event.purchasePrice,
+    final sku = (event.productSKU?.trim().isNotEmpty ?? false)
+        ? event.productSKU!.trim()
+        : 'SKU-${DateTime.now().millisecondsSinceEpoch}';
+
+    final result = await _repository.createProduct(
+      name: productName,
+      sku: sku,
       sellingPrice: event.sellingPrice,
-      availableStock: event.initialQuantity,
-      quantityPerPackage: event.quantityPerPackage,
-      productImage: event.productImage,
-      productSKU: event.productSKU,
-      weightedAverageCost: event.purchasePrice,
-      createdAt: now,
+      initialQuantity: event.initialQuantity.toDouble(),
+      initialPurchasePrice: event.purchasePrice,
     );
-    final products = [...state.products, product];
-    emit(
-      state.copyWith(
-        products: products,
-        isLoaded: true,
-        totalStockValue: products.fold<double>(
-          0,
-          (sum, p) => sum + p.totalValue,
-        ),
-      ),
+
+    await result.when(
+      success: (entity) async {
+        final products = [...state.products, Product.fromEntity(entity)];
+        emit(
+          state.copyWith(
+            products: products,
+            isLoaded: true,
+            totalStockValue: products.fold<double>(
+              0,
+              (sum, p) => sum + p.totalValue,
+            ),
+          ),
+        );
+      },
+      failure: (failure) {
+        MySnackbarMessage.showErrorMessage(
+          title: 'Error!',
+          message: failure.message,
+        );
+      },
     );
   }
 
-  void _onRemove(RemoveProductEvent event, Emitter<ProductState> emit) {
-    final products = state.products.where((p) => p.id != event.id).toList();
-    final removedSelected = state.selectedProduct?.id == event.id;
-    emit(
-      state.copyWith(
-        products: products,
-        totalStockValue: products.fold<double>(
-          0,
-          (sum, p) => sum + p.totalValue,
-        ),
-        selectedProduct: removedSelected ? null : state.selectedProduct,
-        productDetailsList:
-            removedSelected ? const [] : state.productDetailsList,
-        clearSelectedProduct: removedSelected,
-      ),
+  Future<void> _onRemove(
+    RemoveProductEvent event,
+    Emitter<ProductState> emit,
+  ) async {
+    final id = event.id;
+    final result = await _repository.deleteProduct(id);
+    await result.when(
+      success: (_) async {
+        final products = state.products.where((p) => p.id != id).toList();
+        final removedSelected = state.selectedProduct?.id == id;
+        emit(
+          state.copyWith(
+            products: products,
+            totalStockValue: products.fold<double>(
+              0,
+              (sum, p) => sum + p.totalValue,
+            ),
+            selectedProduct: removedSelected ? null : state.selectedProduct,
+            productDetailsList: removedSelected
+                ? const []
+                : state.productDetailsList,
+            clearSelectedProduct: removedSelected,
+          ),
+        );
+      },
+      failure: (failure) {
+        MySnackbarMessage.showErrorMessage(
+          title: 'Error!',
+          message: failure.message,
+        );
+      },
     );
   }
 
@@ -226,57 +170,94 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     );
   }
 
-  void _onSelectProduct(SelectProductEvent event, Emitter<ProductState> emit) {
+  Future<void> _onSelectProduct(
+    SelectProductEvent event,
+    Emitter<ProductState> emit,
+  ) async {
     final product = state.products.where((p) => p.id == event.id).firstOrNull;
     if (product == null) return;
 
-    final details = <ProductDetail>[
-      ProductDetail(
-        productId: product.id!,
-        sourceName: 'Initial Stock',
-        sourceType: 'supplier',
-        purchasePrice: product.purchasePrice,
-        sellingPrice: product.sellingPrice,
-        quantity: product.availableStock,
-        paymentType: 'Initial Stock',
-        createdAt: product.createdAt ?? DateTime.now(),
-      ),
-    ];
-
-    emit(
-      state.copyWith(selectedProduct: product, productDetailsList: details),
+    final result = await _repository.getTransactionsForProduct(event.id);
+    final details = result.when(
+      success: (rows) => rows.map(ProductDetail.fromEntity).toList(),
+      failure: (_) => const <ProductDetail>[],
     );
+
+    emit(state.copyWith(selectedProduct: product, productDetailsList: details));
   }
 
-  void _onAddProductDetails(
+  Future<void> _onAddProductDetails(
     AddProductDetailsEvent event,
     Emitter<ProductState> emit,
-  ) {
-    final products = state.products.map((product) {
-      final matching = event.details.where((d) => d.productId == product.id);
-      if (matching.isEmpty) return product;
-      final totalDelta = matching.fold<int>(0, (sum, d) {
-        switch (d.paymentType) {
-          case 'Sale':
-            return sum - d.quantity;
-          case 'Purchase':
-          case 'Return':
-          case 'Initial Stock':
-            return sum + d.quantity;
-          default:
-            return sum;
-        }
-      });
-      return product.copyWith(
-        availableStock: product.availableStock + totalDelta,
+  ) async {
+    final details = event.details;
+    if (details.isEmpty) return;
+
+    final updatedProducts = List<Product>.from(state.products);
+    final newLedgerRows = <ProductDetail>[];
+
+    for (final detail in details) {
+      final op = _opFromPaymentType(detail.paymentType);
+      if (op == null) continue;
+
+      late final Future<Result<ProductEntity>> futureResult;
+      switch (op) {
+        case ProductTransactionType.purchase:
+          futureResult = _repository.recordPurchase(
+            productId: detail.productId,
+            quantity: detail.quantity.toDouble(),
+            unitPrice: detail.purchasePrice,
+          );
+          break;
+        case ProductTransactionType.sale:
+          futureResult = _repository.recordSale(
+            productId: detail.productId,
+            quantity: detail.quantity.toDouble(),
+            unitPrice: detail.sellingPrice,
+          );
+          break;
+        case ProductTransactionType.returned:
+          futureResult = _repository.recordReturn(
+            productId: detail.productId,
+            quantity: detail.quantity.toDouble(),
+            unitPrice: detail.purchasePrice,
+          );
+          break;
+      }
+      final result = await futureResult;
+
+      result.when(
+        success: (entity) async {
+          final idx = updatedProducts.indexWhere((p) => p.id == entity.id);
+          if (idx >= 0) {
+            updatedProducts[idx] = Product.fromEntity(entity);
+          }
+          final txns = await _repository.getTransactionsForProduct(entity.id);
+          txns.when(
+            success: (rows) {
+              if (rows.isNotEmpty) {
+                newLedgerRows.add(ProductDetail.fromEntity(rows.first));
+              }
+            },
+            failure: (_) {},
+          );
+        },
+        failure: (failure) {
+          MySnackbarMessage.showErrorMessage(
+            title: 'Error!',
+            message: failure is InsufficientStockFailure
+                ? 'Insufficient stock for ${detail.productId}.'
+                : failure.message,
+          );
+        },
       );
-    }).toList();
+    }
 
     emit(
       state.copyWith(
-        products: products,
-        productDetailsList: [...state.productDetailsList, ...event.details],
-        totalStockValue: products.fold<double>(
+        products: updatedProducts,
+        productDetailsList: [...state.productDetailsList, ...newLedgerRows],
+        totalStockValue: updatedProducts.fold<double>(
           0,
           (sum, p) => sum + p.totalValue,
         ),
@@ -284,46 +265,31 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     );
   }
 
-  void _onRemoveProductDetails(
+  Future<void> _onRemoveProductDetails(
     RemoveProductDetailsEvent event,
     Emitter<ProductState> emit,
   ) {
-    final removed = state.productDetailsList
-        .where((d) => d.transactionId == event.transactionId)
+    // Transactions are append-only by design (audit + sync). Removing them
+    // would violate the design contract. Instead, this event simply hides
+    // the row from the current view; the ledger stays intact.
+    final filtered = state.productDetailsList
+        .where((d) => d.transactionId != event.transactionId)
         .toList();
-    if (removed.isEmpty) return;
+    emit(state.copyWith(productDetailsList: filtered));
+    return Future.value();
+  }
 
-    final products = state.products.map((product) {
-      final matching = removed.where((d) => d.productId == product.id);
-      if (matching.isEmpty) return product;
-      final totalDelta = matching.fold<int>(0, (sum, d) {
-        switch (d.paymentType) {
-          case 'Sale':
-            return sum + d.quantity; // restore sold stock
-          case 'Purchase':
-          case 'Return':
-          case 'Initial Stock':
-            return sum - d.quantity;
-          default:
-            return sum;
-        }
-      });
-      return product.copyWith(
-        availableStock: product.availableStock + totalDelta,
-      );
-    }).toList();
-
-    emit(
-      state.copyWith(
-        products: products,
-        productDetailsList: state.productDetailsList
-            .where((d) => d.transactionId != event.transactionId)
-            .toList(),
-        totalStockValue: products.fold<double>(
-          0,
-          (sum, p) => sum + p.totalValue,
-        ),
-      ),
-    );
+  ProductTransactionType? _opFromPaymentType(String paymentType) {
+    switch (paymentType) {
+      case 'Sale':
+        return ProductTransactionType.sale;
+      case 'Purchase':
+      case 'Initial Stock':
+        return ProductTransactionType.purchase;
+      case 'Return':
+        return ProductTransactionType.returned;
+      default:
+        return null;
+    }
   }
 }

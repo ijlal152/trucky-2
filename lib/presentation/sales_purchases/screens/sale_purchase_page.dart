@@ -42,9 +42,9 @@ class _SalePurchasePageState extends State<SalePurchasePage>
     super.initState();
     fabCont = CustomFabController(this);
     final entityType = context.read<ClientSuppBloc>().state.entityType;
-    context
-        .read<SalePurchaseBloc>()
-        .add(InitSalePurchaseEvent(entityType: entityType));
+    context.read<SalePurchaseBloc>().add(
+      InitSalePurchaseEvent(entityType: entityType),
+    );
   }
 
   @override
@@ -62,22 +62,24 @@ class _SalePurchasePageState extends State<SalePurchasePage>
         .firstOrNull;
     if (entity == null) return;
 
-    final isPayment = txn.paymentType == 'Payment' ||
-        txn.paymentType == 'Refund';
+    final isPayment =
+        txn.paymentType == 'Payment' || txn.paymentType == 'Refund';
     if (isPayment) {
       context.read<SalePurchaseBloc>().add(
-            BeginEditPaymentEvent(txn: txn, clientSupp: entity),
-          );
+        BeginEditPaymentEvent(txn: txn, clientSupp: entity),
+      );
       context.push(RoutePaths.paymentDetails);
       return;
     }
 
     final products = context.read<ProductBloc>().state.products;
     final items = txn.products.map((detail) {
-      final product =
-          products.where((p) => p.id == detail.productId).firstOrNull;
+      final product = products
+          .where((p) => p.id == detail.productId)
+          .firstOrNull;
       return CartItem(
-        product: product ??
+        product:
+            product ??
             Product(
               id: detail.productId,
               productName: detail.sourceName ?? '',
@@ -85,7 +87,7 @@ class _SalePurchasePageState extends State<SalePurchasePage>
               sellingPrice: detail.sellingPrice,
               availableStock: detail.quantity,
             ),
-        quantity: detail.quantity,
+        quantity: detail.quantity.toInt(),
         unitPrice: clientSuppBloc.state.entityType == EntityType.supplier
             ? detail.purchasePrice
             : detail.sellingPrice,
@@ -94,8 +96,8 @@ class _SalePurchasePageState extends State<SalePurchasePage>
     }).toList();
 
     context.read<SalePurchaseBloc>().add(
-          BeginEditCartEvent(txn: txn, clientSupp: entity, items: items),
-        );
+      BeginEditCartEvent(txn: txn, clientSupp: entity, items: items),
+    );
     context.push(RoutePaths.sellPurchaseCart);
   }
 
@@ -115,11 +117,11 @@ class _SalePurchasePageState extends State<SalePurchasePage>
               itemName: isClient ? 'Sale' : 'Purchase',
               onTap: () {
                 context.read<SalePurchaseBloc>().add(
-                      InitSalePurchaseEvent(
-                        entityType: entityType,
-                        transactionType: TransactionType.sale,
-                      ),
-                    );
+                  InitSalePurchaseEvent(
+                    entityType: entityType,
+                    transactionType: TransactionType.sale,
+                  ),
+                );
                 Navigator.pop(sheetContext);
                 context.push(RoutePaths.chooseClientSupp);
               },
@@ -129,11 +131,11 @@ class _SalePurchasePageState extends State<SalePurchasePage>
               itemName: 'Return',
               onTap: () {
                 context.read<SalePurchaseBloc>().add(
-                      InitSalePurchaseEvent(
-                        entityType: entityType,
-                        transactionType: TransactionType.returnTransaction,
-                      ),
-                    );
+                  InitSalePurchaseEvent(
+                    entityType: entityType,
+                    transactionType: TransactionType.returnTransaction,
+                  ),
+                );
                 Navigator.pop(sheetContext);
                 context.push(RoutePaths.chooseClientSupp);
               },

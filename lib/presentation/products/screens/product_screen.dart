@@ -75,9 +75,8 @@ class _ProductView extends StatelessWidget {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 15.w),
             child: GestureDetector(
-              onTap: () => bloc.add(
-                const ToggleProductBalanceVisibilityEvent(),
-              ),
+              onTap: () =>
+                  bloc.add(const ToggleProductBalanceVisibilityEvent()),
               child: state.hideProductTotalBalance
                   ? Image.asset(
                       AppAssets.images.visibilityOn,
@@ -122,7 +121,7 @@ class _ProductView extends StatelessWidget {
                       list: state.products,
                       showBalance: state.hideProductTotalBalance,
                       scrollController: scrollController,
-                      onProductTap: (int productID) {
+                      onProductTap: (String productID) {
                         bloc.add(SelectProductEvent(id: productID));
                         context.push(RoutePaths.productDashboard);
                       },

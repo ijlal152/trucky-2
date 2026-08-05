@@ -35,10 +35,12 @@ class _ProductQtyPageState extends State<ProductQtyPage> {
     final item = state.editingItem ?? state.selectedProdList.first;
 
     _quantityController = TextEditingController(text: item.quantity.toString());
-    _qtyPerPkgController =
-        TextEditingController(text: item.quantityPerPackage ?? '');
-    _unitPriceController =
-        TextEditingController(text: item.unitPrice.toString());
+    _qtyPerPkgController = TextEditingController(
+      text: item.quantityPerPackage ?? '',
+    );
+    _unitPriceController = TextEditingController(
+      text: item.unitPrice.toString(),
+    );
   }
 
   @override
@@ -54,16 +56,17 @@ class _ProductQtyPageState extends State<ProductQtyPage> {
     final item = state.editingItem ?? state.selectedProdList.first;
 
     context.read<SalePurchaseBloc>().add(
-          SetCartItemDataEvent(
-            productId: item.product.id ?? -1,
-            quantity:
-                int.tryParse(_quantityController.text.isEmpty ? '1' : _quantityController.text) ??
-                    1,
-            unitPrice:
-                double.tryParse(_unitPriceController.text) ?? item.unitPrice,
-            quantityPerPackage: _qtyPerPkgController.text,
-          ),
-        );
+      SetCartItemDataEvent(
+        productId: item.product.id ?? '',
+        quantity:
+            int.tryParse(
+              _quantityController.text.isEmpty ? '1' : _quantityController.text,
+            ) ??
+            1,
+        unitPrice: double.tryParse(_unitPriceController.text) ?? item.unitPrice,
+        quantityPerPackage: _qtyPerPkgController.text,
+      ),
+    );
 
     if (state.editingItem != null || state.selectedProdList.length > 1) {
       context.pop();

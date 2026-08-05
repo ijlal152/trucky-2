@@ -9,7 +9,7 @@ class AppDatabase {
 
   static final AppDatabase instance = AppDatabase._();
 
-  static const int schemaVersion = 2;
+  static const int schemaVersion = 3;
 
   Database? _database;
 
@@ -84,37 +84,31 @@ class AppDatabase {
   }
 
   Future<void> _createProductTables(Database db) async {
+    // products_table: cached snapshot of inventory aggregates.
     await db.execute('''
       CREATE TABLE ${TableNames.productsTable} (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER NOT NULL,
-        product_name TEXT,
-        product_sku TEXT,
-        purchase_price TEXT,
-        selling_price TEXT,
-        quantity_per_package TEXT,
-        product_image TEXT,
-        is_synced INTEGER NOT NULL DEFAULT 0,
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        sku TEXT NOT NULL UNIQUE,
+        selling_price REAL NOT NULL DEFAULT 0,
+        stock_quantity REAL NOT NULL DEFAULT 0,
+        stock_value REAL NOT NULL DEFAULT 0,
+        average_cost REAL NOT NULL DEFAULT 0,
         created_at INTEGER NOT NULL,
-        updated_at INTEGER
+        updated_at INTEGER NOT NULL
       )
     ''');
+
+    // product_transactions_table: append-only ledger (source of truth).
     await db.execute('''
       CREATE TABLE ${TableNames.productTransactionTable} (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER NOT NULL,
-        product_id INTEGER NOT NULL,
-        source_id INTEGER,
-        source_name TEXT,
-        transaction_id TEXT NOT NULL,
-        source_type TEXT,
-        purchase_price TEXT NOT NULL DEFAULT '0',
-        selling_price TEXT NOT NULL DEFAULT '0',
-        quantity TEXT NOT NULL DEFAULT '0',
-        quantity_per_package TEXT,
-        payment_type TEXT NOT NULL,
+        id TEXT PRIMARY KEY,
+        product_id TEXT NOT NULL,
+        type TEXT NOT NULL,
+        quantity REAL NOT NULL,
+        unit_price REAL NOT NULL,
+        total_price REAL NOT NULL,
         created_at INTEGER NOT NULL,
-        updated_at INTEGER NOT NULL,
         is_synced INTEGER NOT NULL DEFAULT 0,
         FOREIGN KEY (product_id) REFERENCES ${TableNames.productsTable} (id)
           ON DELETE CASCADE
@@ -124,12 +118,19 @@ class AppDatabase {
       'CREATE INDEX idx_product_txn_product_id '
       'ON ${TableNames.productTransactionTable} (product_id)',
     );
+    await db.execute(
+      'CREATE INDEX idx_product_txn_is_synced '
+      'ON ${TableNames.productTransactionTable} (is_synced)',
+    );
   }
 
   /// Apply incremental migrations.
   Future<void> _migrate(Database db, int oldVersion) async {
     if (oldVersion < 2) {
       await _migrateToV2(db);
+    }
+    if (oldVersion < 3) {
+      await _migrateToV3(db);
     }
   }
 
@@ -154,6 +155,16 @@ class AppDatabase {
       'ALTER TABLE ${TableNames.clientSuppTransactionsTable} '
       'ADD COLUMN is_synced INTEGER NOT NULL DEFAULT 0',
     );
+    await _createProductTables(db);
+  }
+
+  /// v3: replace the legacy product tables with the inventory snapshot +
+  /// append-only ledger schema (WAC, stock_value, type-based transactions).
+  Future<void> _migrateToV3(Database db) async {
+    await db.execute(
+      'DROP TABLE IF EXISTS ${TableNames.productTransactionTable}',
+    );
+    await db.execute('DROP TABLE IF EXISTS ${TableNames.productsTable}');
     await _createProductTables(db);
   }
 

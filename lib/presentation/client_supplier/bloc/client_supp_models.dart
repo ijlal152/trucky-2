@@ -1,4 +1,4 @@
-import 'package:trucky/presentation/products/bloc/product_bloc.dart';
+import 'package:trucky/presentation/products/bloc/product_models.dart';
 
 /// Model representing a Client or Supplier.
 class ClientSuppEntity {
@@ -119,10 +119,11 @@ class ClientSuppTxn {
     required int clientSupplierId,
     required List<ClientSuppTxn> allTransactions,
   }) {
-    final transactions = allTransactions
-        .where((txn) => txn.clientSuppId == clientSupplierId)
-        .toList()
-      ..sort((a, b) => a.txnData.compareTo(b.txnData));
+    final transactions =
+        allTransactions
+            .where((txn) => txn.clientSuppId == clientSupplierId)
+            .toList()
+          ..sort((a, b) => a.txnData.compareTo(b.txnData));
 
     if (transactions.isEmpty) return 0.0;
 

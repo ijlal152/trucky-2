@@ -5,7 +5,7 @@ import 'package:trucky/core/constants/app_assets.dart';
 import 'package:trucky/core/constants/font_constants.dart';
 import 'package:trucky/core/utils/number_formater.dart';
 import 'package:trucky/core/utils/widget_extensions.dart';
-import 'package:trucky/presentation/products/bloc/product_bloc.dart';
+import 'package:trucky/presentation/products/bloc/product_models.dart';
 import 'package:trucky/presentation/widgets/custom_divider.dart';
 import 'package:trucky/presentation/widgets/label_widget.dart';
 
@@ -47,9 +47,9 @@ class ProductDetailsListWidget extends StatelessWidget {
                                 LabelWidget(
                                   text:
                                       productDetail.sourceName?.isNotEmpty ==
-                                              true
-                                          ? productDetail.sourceName.toString()
-                                          : productDetail.paymentType,
+                                          true
+                                      ? productDetail.sourceName.toString()
+                                      : productDetail.paymentType,
                                   textSize: 16.sp,
                                   fontWeight: FontWeight.w600,
                                 ),

@@ -35,9 +35,8 @@ class ProductDashboardScreen extends StatelessWidget {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 15.w),
             child: GestureDetector(
-              onTap: () => bloc.add(
-                const ToggleDashboardBalanceVisibilityEvent(),
-              ),
+              onTap: () =>
+                  bloc.add(const ToggleDashboardBalanceVisibilityEvent()),
               child: !state.hideDashboardTotalBalance
                   ? Image.asset(
                       AppAssets.images.visibilityOn,
@@ -58,8 +57,9 @@ class ProductDashboardScreen extends StatelessWidget {
                 value: 2,
                 child: const Text('Delete'),
                 onTap: () {
-                  if (selectedProduct?.id != null) {
-                    bloc.add(RemoveProductEvent(id: selectedProduct!.id!));
+                  final id = selectedProduct?.id;
+                  if (id != null) {
+                    bloc.add(RemoveProductEvent(id: id));
                     context.pop();
                   }
                 },
@@ -87,13 +87,13 @@ class ProductDashboardScreen extends StatelessWidget {
                     mostRecentTxn: state.productDetailsList.isNotEmpty
                         ? state.productDetailsList.first
                         : ProductDetail(
-                            productId: selectedProduct.id ?? 0,
+                            productId: selectedProduct.id ?? '',
                             purchasePrice: selectedProduct.purchasePrice,
                             sellingPrice: selectedProduct.sellingPrice,
                             quantity: selectedProduct.availableStock,
                             paymentType: 'Initial Stock',
-                            createdAt: selectedProduct.createdAt ??
-                                DateTime.now(),
+                            createdAt:
+                                selectedProduct.createdAt ?? DateTime.now(),
                           ),
                   ),
                 30.verticalSpace,

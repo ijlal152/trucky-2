@@ -1,4 +1,4 @@
-import 'package:trucky/presentation/products/bloc/product_bloc.dart';
+import 'package:trucky/presentation/products/bloc/product_models.dart';
 
 /// State exposed by [ProductBloc].
 class ProductState {
@@ -19,7 +19,7 @@ class ProductState {
   final bool hideProductTotalBalance;
   final bool hideDashboardTotalBalance;
 
-  /// Whether the sample products have been loaded at least once.
+  /// Whether products have been loaded at least once.
   final bool isLoaded;
 
   ProductState copyWith({
@@ -35,8 +35,9 @@ class ProductState {
     return ProductState(
       products: products ?? this.products,
       productDetailsList: productDetailsList ?? this.productDetailsList,
-      selectedProduct:
-          clearSelectedProduct ? null : (selectedProduct ?? this.selectedProduct),
+      selectedProduct: clearSelectedProduct
+          ? null
+          : (selectedProduct ?? this.selectedProduct),
       totalStockValue: totalStockValue ?? this.totalStockValue,
       hideProductTotalBalance:
           hideProductTotalBalance ?? this.hideProductTotalBalance,

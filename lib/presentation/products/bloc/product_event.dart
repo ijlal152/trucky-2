@@ -1,4 +1,4 @@
-import 'package:trucky/presentation/products/bloc/product_bloc.dart';
+import 'package:trucky/presentation/products/bloc/product_models.dart';
 
 /// Events accepted by [ProductBloc].
 sealed class ProductEvent {
@@ -32,7 +32,7 @@ class AddProductEvent extends ProductEvent {
 class RemoveProductEvent extends ProductEvent {
   const RemoveProductEvent({required this.id});
 
-  final int id;
+  final String id;
 }
 
 class ToggleProductBalanceVisibilityEvent extends ProductEvent {
@@ -46,7 +46,7 @@ class ToggleDashboardBalanceVisibilityEvent extends ProductEvent {
 class SelectProductEvent extends ProductEvent {
   const SelectProductEvent({required this.id});
 
-  final int id;
+  final String id;
 }
 
 /// Appends product detail rows (from a sale/purchase/return) and adjusts the
@@ -57,7 +57,11 @@ class AddProductDetailsEvent extends ProductEvent {
   final List<ProductDetail> details;
 }
 
-/// Removes product detail rows sharing a transaction id and restores stock.
+/// Removes product detail rows sharing a transaction id.
+///
+/// Note: this event does NOT delete the underlying ledger row. Transactions
+/// are append-only by design. It only filters the row out of the current UI
+/// view.
 class RemoveProductDetailsEvent extends ProductEvent {
   const RemoveProductDetailsEvent({required this.transactionId});
 
