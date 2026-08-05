@@ -11,6 +11,7 @@ class DashBoardSheetWidget extends StatelessWidget {
     required this.onClientsTap,
     required this.onSalesTap,
     required this.onPurchasesTap,
+    required this.onTreasuryTap,
   });
 
   final VoidCallback onProductsTap;
@@ -18,6 +19,7 @@ class DashBoardSheetWidget extends StatelessWidget {
   final VoidCallback onClientsTap;
   final VoidCallback onSalesTap;
   final VoidCallback onPurchasesTap;
+  final VoidCallback onTreasuryTap;
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +64,11 @@ class DashBoardSheetWidget extends StatelessWidget {
                 total: "0",
                 onTap: onProductsTap,
               ),
-              dashBoardFeatureItem(title: "Treasury", total: "0", onTap: () {}),
+              dashBoardFeatureItem(
+                title: "Treasury",
+                total: "0",
+                onTap: onTreasuryTap,
+              ),
             ],
           ),
           20.verticalSpace,

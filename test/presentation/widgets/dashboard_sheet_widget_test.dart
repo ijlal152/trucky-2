@@ -108,6 +108,7 @@ DashBoardSheetWidget _sheet({
   VoidCallback onClientsTap = _noop,
   VoidCallback onSalesTap = _noop,
   VoidCallback onPurchasesTap = _noop,
+  VoidCallback onTreasuryTap = _noop,
 }) {
   return DashBoardSheetWidget(
     onProductsTap: onProductsTap,
@@ -115,6 +116,7 @@ DashBoardSheetWidget _sheet({
     onClientsTap: onClientsTap,
     onSalesTap: onSalesTap,
     onPurchasesTap: onPurchasesTap,
+    onTreasuryTap: onTreasuryTap,
   );
 }
 

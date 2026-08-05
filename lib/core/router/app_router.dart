@@ -27,6 +27,9 @@ import 'package:trucky/presentation/settings/screens/security_screen.dart';
 import 'package:trucky/presentation/settings/screens/settings_screen.dart';
 import 'package:trucky/presentation/settings/screens/subscription_screen.dart';
 import 'package:trucky/presentation/splash/screens/splash_screen.dart';
+import 'package:trucky/presentation/treasury/screens/add_payment_from_client_screen.dart';
+import 'package:trucky/presentation/treasury/screens/select_client_screen.dart';
+import 'package:trucky/presentation/treasury/screens/treasury_screen.dart';
 
 /// App-level router configuration (composition root).
 final appRouter = GoRouter(
@@ -167,6 +170,21 @@ final appRouter = GoRouter(
       path: RoutePaths.backup,
       name: 'backup',
       builder: (context, state) => const BackupStatusScreen(),
+    ),
+    GoRoute(
+      path: RoutePaths.treasury,
+      name: 'treasury',
+      builder: (context, state) => const TreasuryScreen(),
+    ),
+    GoRoute(
+      path: RoutePaths.addPaymentFromClient,
+      name: 'addPaymentFromClient',
+      builder: (context, state) => const AddPaymentFromClientScreen(),
+    ),
+    GoRoute(
+      path: RoutePaths.selectClient,
+      name: 'selectClient',
+      builder: (context, state) => const SelectionScreen(),
     ),
   ],
 );

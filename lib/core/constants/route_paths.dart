@@ -31,4 +31,7 @@ abstract final class RoutePaths {
   static const String printer = '/settings/printer';
   static const String subscription = '/settings/subscription';
   static const String backup = '/settings/backup';
+  static const String treasury = '/treasury';
+  static const String addPaymentFromClient = '/treasury/add-payment-from-client';
+  static const String selectClient = '/treasury/select-client';
 }

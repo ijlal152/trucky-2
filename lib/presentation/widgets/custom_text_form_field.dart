@@ -23,6 +23,8 @@ class CustomTextFormField extends StatelessWidget {
   final int? maxLength;
   final TextCapitalization textCapitalization;
   final bool enabled;
+  final bool readOnly;
+  final VoidCallback? onTap;
 
   const CustomTextFormField({
     super.key,
@@ -43,6 +45,8 @@ class CustomTextFormField extends StatelessWidget {
     this.onChanged,
     this.maxLength,
     this.enabled = true,
+    this.readOnly = false,
+    this.onTap,
     this.textCapitalization = TextCapitalization.sentences,
     this.onFieldSubmitted,
   });
@@ -66,7 +70,9 @@ class CustomTextFormField extends StatelessWidget {
           alignment: Alignment.center,
           child: TextFormField(
             enabled: enabled,
-            showCursor: enabled,
+            showCursor: enabled && !readOnly,
+            readOnly: readOnly,
+            onTap: enabled ? onTap : null,
             textCapitalization: textCapitalization,
             style: TextStyle(
               fontSize: 17.sp,
