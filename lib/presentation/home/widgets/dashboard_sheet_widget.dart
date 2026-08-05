@@ -12,6 +12,7 @@ class DashBoardSheetWidget extends StatelessWidget {
     required this.onSalesTap,
     required this.onPurchasesTap,
     required this.onTreasuryTap,
+    required this.onAnalysisTap,
   });
 
   final VoidCallback onProductsTap;
@@ -20,6 +21,7 @@ class DashBoardSheetWidget extends StatelessWidget {
   final VoidCallback onSalesTap;
   final VoidCallback onPurchasesTap;
   final VoidCallback onTreasuryTap;
+  final VoidCallback onAnalysisTap;
 
   @override
   Widget build(BuildContext context) {
@@ -72,16 +74,16 @@ class DashBoardSheetWidget extends StatelessWidget {
             ],
           ),
           20.verticalSpace,
-          analysisWidget(),
+          analysisWidget(onAnalysisTap),
         ],
       ),
     );
   }
 }
 
-Widget analysisWidget() {
+Widget analysisWidget(VoidCallback onAnalysisTap) {
   return InkWell(
-    onTap: () {},
+    onTap: onAnalysisTap,
     child: Container(
       height: 130.h,
       decoration: BoxDecoration(

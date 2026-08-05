@@ -5,6 +5,7 @@ import 'package:trucky/core/constants/app_constants.dart';
 import 'package:trucky/core/router/app_router.dart';
 import 'package:trucky/core/theme/app_theme.dart';
 import 'package:trucky/presentation/client_supplier/bloc/client_supp_bloc.dart';
+import 'package:trucky/presentation/analysis/bloc/analysis_bloc.dart';
 import 'package:trucky/presentation/products/bloc/product_bloc.dart';
 import 'package:trucky/presentation/sales_purchases/bloc/sale_purchase_bloc.dart';
 import 'package:trucky/presentation/settings/bloc/settings_bloc.dart';
@@ -32,6 +33,7 @@ class TruckyApp extends StatelessWidget {
             BlocProvider(create: (_) => SalePurchaseBloc()),
             BlocProvider(create: (_) => SettingsBloc()),
             BlocProvider(create: (_) => TreasuryBloc()),
+            BlocProvider(create: (_) => AnalysisBloc()),
           ],
           child: MaterialApp.router(
             title: AppConstants.appName,

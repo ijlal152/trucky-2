@@ -34,4 +34,5 @@ abstract final class RoutePaths {
   static const String treasury = '/treasury';
   static const String addPaymentFromClient = '/treasury/add-payment-from-client';
   static const String selectClient = '/treasury/select-client';
+  static const String analysis = '/analysis';
 }
