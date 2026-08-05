@@ -32,7 +32,11 @@ class DashBoardSheetWidget extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              dashBoardFeatureItem(total: "0", title: "Sales", onTap: onSalesTap),
+              dashBoardFeatureItem(
+                total: "0",
+                title: "Sales",
+                onTap: onSalesTap,
+              ),
               dashBoardFeatureItem(
                 total: "0",
                 title: "Purchases",

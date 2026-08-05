@@ -11,8 +11,6 @@ import 'package:trucky/presentation/client_supplier/bloc/client_supp_event.dart'
 import 'package:trucky/presentation/home/widgets/dashboard_header_widget.dart';
 import 'package:trucky/presentation/home/widgets/dashboard_sheet_widget.dart';
 
-/// Minimal placeholder screen so the app boots.
-/// Replace with your real screens under `presentation/screens/`.
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -61,27 +59,27 @@ class HomeScreen extends StatelessWidget {
                 onTreasuryTap: () => context.push(RoutePaths.treasury),
                 onAnalysisTap: () => context.push(RoutePaths.analysis),
                 onSalesTap: () {
-                  context
-                      .read<ClientSuppBloc>()
-                      .add(const SetEntityTypeEvent(entityType: EntityType.client));
+                  context.read<ClientSuppBloc>().add(
+                    const SetEntityTypeEvent(entityType: EntityType.client),
+                  );
                   context.push(RoutePaths.salePurchase);
                 },
                 onPurchasesTap: () {
-                  context
-                      .read<ClientSuppBloc>()
-                      .add(const SetEntityTypeEvent(entityType: EntityType.supplier));
+                  context.read<ClientSuppBloc>().add(
+                    const SetEntityTypeEvent(entityType: EntityType.supplier),
+                  );
                   context.push(RoutePaths.salePurchase);
                 },
                 onSuppliersTap: () {
-                  context
-                      .read<ClientSuppBloc>()
-                      .add(const SetEntityTypeEvent(entityType: EntityType.supplier));
+                  context.read<ClientSuppBloc>().add(
+                    const SetEntityTypeEvent(entityType: EntityType.supplier),
+                  );
                   context.push(RoutePaths.suppliers);
                 },
                 onClientsTap: () {
-                  context
-                      .read<ClientSuppBloc>()
-                      .add(const SetEntityTypeEvent(entityType: EntityType.client));
+                  context.read<ClientSuppBloc>().add(
+                    const SetEntityTypeEvent(entityType: EntityType.client),
+                  );
                   context.push(RoutePaths.clients);
                 },
               ),
