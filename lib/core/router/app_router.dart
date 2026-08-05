@@ -16,6 +16,16 @@ import 'package:trucky/presentation/sales_purchases/screens/product_qty_page.dar
 import 'package:trucky/presentation/sales_purchases/screens/sale_purchase_page.dart';
 import 'package:trucky/presentation/sales_purchases/screens/sell_purchase_cart_page.dart';
 import 'package:trucky/presentation/sales_purchases/screens/set_discount_page.dart';
+import 'package:trucky/presentation/settings/screens/backup_status_screen.dart';
+import 'package:trucky/presentation/settings/screens/currency_screen.dart';
+import 'package:trucky/presentation/settings/screens/edit_password_screen.dart';
+import 'package:trucky/presentation/settings/screens/edit_personal_info_screen.dart';
+import 'package:trucky/presentation/settings/screens/languages_screen.dart';
+import 'package:trucky/presentation/settings/screens/personal_information_screen.dart';
+import 'package:trucky/presentation/settings/screens/printer_screen.dart';
+import 'package:trucky/presentation/settings/screens/security_screen.dart';
+import 'package:trucky/presentation/settings/screens/settings_screen.dart';
+import 'package:trucky/presentation/settings/screens/subscription_screen.dart';
 import 'package:trucky/presentation/splash/screens/splash_screen.dart';
 
 /// App-level router configuration (composition root).
@@ -107,6 +117,56 @@ final appRouter = GoRouter(
       path: RoutePaths.invoice,
       name: 'invoice',
       builder: (context, state) => const InvoicePage(),
+    ),
+    GoRoute(
+      path: RoutePaths.settings,
+      name: 'settings',
+      builder: (context, state) => const SettingsScreen(),
+    ),
+    GoRoute(
+      path: RoutePaths.personalInformation,
+      name: 'personalInformation',
+      builder: (context, state) => const PersonalInformationScreen(),
+    ),
+    GoRoute(
+      path: RoutePaths.editPersonalInfo,
+      name: 'editPersonalInfo',
+      builder: (context, state) => const EditPersonalInfoScreen(),
+    ),
+    GoRoute(
+      path: RoutePaths.editPassword,
+      name: 'editPassword',
+      builder: (context, state) => const EditPasswordScreen(),
+    ),
+    GoRoute(
+      path: RoutePaths.security,
+      name: 'security',
+      builder: (context, state) => const SecurityScreen(),
+    ),
+    GoRoute(
+      path: RoutePaths.languages,
+      name: 'languages',
+      builder: (context, state) => const LanguagesScreen(),
+    ),
+    GoRoute(
+      path: RoutePaths.currency,
+      name: 'currency',
+      builder: (context, state) => const CurrencyScreen(),
+    ),
+    GoRoute(
+      path: RoutePaths.printer,
+      name: 'printer',
+      builder: (context, state) => const BlueToothDevicesScreen(),
+    ),
+    GoRoute(
+      path: RoutePaths.subscription,
+      name: 'subscription',
+      builder: (context, state) => const SubscriptionStatusScreen(),
+    ),
+    GoRoute(
+      path: RoutePaths.backup,
+      name: 'backup',
+      builder: (context, state) => const BackupStatusScreen(),
     ),
   ],
 );

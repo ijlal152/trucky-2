@@ -21,4 +21,14 @@ abstract final class RoutePaths {
   static const String setDiscount = '/sale-purchase/set-discount';
   static const String paymentDetails = '/sale-purchase/payment-details';
   static const String invoice = '/sale-purchase/invoice';
+  static const String settings = '/settings';
+  static const String personalInformation = '/settings/personal-information';
+  static const String editPersonalInfo = '/settings/edit-personal-info';
+  static const String editPassword = '/settings/edit-password';
+  static const String security = '/settings/security';
+  static const String languages = '/settings/languages';
+  static const String currency = '/settings/currency';
+  static const String printer = '/settings/printer';
+  static const String subscription = '/settings/subscription';
+  static const String backup = '/settings/backup';
 }

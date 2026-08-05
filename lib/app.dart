@@ -7,6 +7,7 @@ import 'package:trucky/core/theme/app_theme.dart';
 import 'package:trucky/presentation/client_supplier/bloc/client_supp_bloc.dart';
 import 'package:trucky/presentation/products/bloc/product_bloc.dart';
 import 'package:trucky/presentation/sales_purchases/bloc/sale_purchase_bloc.dart';
+import 'package:trucky/presentation/settings/bloc/settings_bloc.dart';
 
 /// Root application widget.
 class TruckyApp extends StatelessWidget {
@@ -28,6 +29,7 @@ class TruckyApp extends StatelessWidget {
             BlocProvider(create: (_) => ProductBloc()),
             BlocProvider(create: (_) => ClientSuppBloc()),
             BlocProvider(create: (_) => SalePurchaseBloc()),
+            BlocProvider(create: (_) => SettingsBloc()),
           ],
           child: MaterialApp.router(
             title: AppConstants.appName,

@@ -39,7 +39,9 @@ class HomeScreen extends StatelessWidget {
             top: 80.h,
             left: 0,
             right: 0,
-            child: HomeHeaderWidget(settingOnTap: () {}),
+            child: HomeHeaderWidget(
+              settingOnTap: () => context.push(RoutePaths.settings),
+            ),
           ),
           Positioned(
             top: 170.h,
