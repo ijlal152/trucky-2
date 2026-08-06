@@ -10,12 +10,15 @@ import 'package:trucky/presentation/client_supplier/bloc/client_supp_bloc.dart';
 import 'package:trucky/presentation/client_supplier/bloc/client_supp_event.dart';
 import 'package:trucky/presentation/home/widgets/dashboard_header_widget.dart';
 import 'package:trucky/presentation/home/widgets/dashboard_sheet_widget.dart';
+import 'package:trucky/presentation/products/bloc/product_bloc.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final productCount = context.watch<ProductBloc>().state.products.length;
+
     return Scaffold(
       body: Stack(
         children: [
@@ -55,6 +58,7 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
               child: DashBoardSheetWidget(
+                productCount: productCount,
                 onProductsTap: () => context.push(RoutePaths.products),
                 onTreasuryTap: () => context.push(RoutePaths.treasury),
                 onAnalysisTap: () => context.push(RoutePaths.analysis),

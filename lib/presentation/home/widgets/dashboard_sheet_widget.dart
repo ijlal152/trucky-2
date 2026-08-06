@@ -13,6 +13,7 @@ class DashBoardSheetWidget extends StatelessWidget {
     required this.onPurchasesTap,
     required this.onTreasuryTap,
     required this.onAnalysisTap,
+    this.productCount = 0,
   });
 
   final VoidCallback onProductsTap;
@@ -22,6 +23,7 @@ class DashBoardSheetWidget extends StatelessWidget {
   final VoidCallback onPurchasesTap;
   final VoidCallback onTreasuryTap;
   final VoidCallback onAnalysisTap;
+  final int productCount;
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +69,7 @@ class DashBoardSheetWidget extends StatelessWidget {
             children: [
               dashBoardFeatureItem(
                 title: "Products",
-                total: "0",
+                total: productCount.toString(),
                 onTap: onProductsTap,
               ),
               dashBoardFeatureItem(

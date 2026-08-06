@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
@@ -6,6 +9,10 @@ import 'package:trucky/core/constants/app_assets.dart';
 import 'package:trucky/core/constants/app_constants.dart';
 import 'package:trucky/core/constants/font_constants.dart';
 import 'package:trucky/core/constants/route_paths.dart';
+import 'package:trucky/presentation/client_supplier/bloc/client_supp_bloc.dart';
+import 'package:trucky/presentation/client_supplier/bloc/client_supp_event.dart';
+import 'package:trucky/presentation/products/bloc/product_bloc.dart';
+import 'package:trucky/presentation/products/bloc/product_event.dart';
 import 'package:trucky/presentation/widgets/horizontal_loader.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -16,13 +23,29 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  Timer? _timer;
+
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 2), () {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      context.go(RoutePaths.home);
+      // Preload all data so the home dashboard shows live counts immediately.
+      context.read<ProductBloc>().add(const LoadProductsEvent());
+      context.read<ClientSuppBloc>().add(const LoadClientSuppEvent());
     });
+    _timer = Timer(const Duration(seconds: 3), _navigateHome);
+  }
+
+  void _navigateHome() {
+    if (!mounted) return;
+    context.go(RoutePaths.home);
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   @override
