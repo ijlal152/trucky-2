@@ -207,11 +207,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     final product = state.products.where((p) => p.id == event.id).firstOrNull;
     if (product == null) return;
 
-    final result = await _getProductTransactions(event.id);
-    final details = result.when(
-      success: (rows) => rows.map(ProductDetail.fromEntity).toList(),
-      failure: (_) => const <ProductDetail>[],
-    );
+    final details = await _detailsFor(event.id);
 
     emit(
       state.copyWith(
@@ -234,20 +230,33 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
         updated.add(product);
         continue;
       }
-      final result = await _getProductTransactions(id);
-      final details = result.when(
-        success: (rows) => rows.map(ProductDetail.fromEntity).toList(),
-        failure: (_) => const <ProductDetail>[],
+      final details = await _detailsFor(id);
+      updated.add(
+        product.copyWith(availableStock: _availableStockFrom(details)),
       );
-      updated.add(product.copyWith(availableStock: _availableStockFrom(details)));
     }
     return updated;
+  }
+
+  /// Returns the product's transaction details, reusing the in-memory cache
+  /// when available so tapping a product does not re-read the database.
+  Future<List<ProductDetail>> _detailsFor(String productId) async {
+    final cached = _txnCache[productId];
+    if (cached != null) return cached;
+    final result = await _getProductTransactions(productId);
+    final details = result.when(
+      success: (rows) => rows.map(ProductDetail.fromEntity).toList(),
+      failure: (_) => const <ProductDetail>[],
+    );
+    _txnCache[productId] = details;
+    return details;
   }
 
   int _availableStockFrom(List<ProductDetail> details) {
     return details.fold<int>(
       0,
-      (sum, detail) => sum + _stockSignFor(detail.paymentType) * detail.quantity,
+      (sum, detail) =>
+          sum + _stockSignFor(detail.paymentType) * detail.quantity,
     );
   }
 
@@ -317,6 +326,10 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       if (idx >= 0) {
         updatedProducts[idx] = Product.fromEntity(entity);
       }
+
+      // The ledger changed; drop the cached details so the next read reflects
+      // the new transaction.
+      _txnCache.remove(entity.id);
 
       final txns = await _getProductTransactions(entity.id);
       txns.when(
