@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:sqflite/sqflite.dart';
 import 'package:trucky/core/database/app_database.dart';
 import 'package:trucky/core/database/product_table.dart';
@@ -22,6 +25,11 @@ class ProductLocalDataSource {
       ProductTable.name,
       orderBy: '${ProductTable.createdAt} ASC',
     );
+    log(
+      'getAllProducts:'
+      'from ${ProductTable.name} -> ${jsonEncode(rows)}',
+      name: 'DB-READ',
+    );
     return rows.map(ProductModel.fromMap).toList(growable: false);
   }
 
@@ -33,6 +41,11 @@ class ProductLocalDataSource {
       whereArgs: [id],
       limit: 1,
     );
+    log(
+      'getProductById:'
+      '-> ${jsonEncode(rows)}',
+      name: 'DB-READ',
+    );
     if (rows.isEmpty) return null;
     return ProductModel.fromMap(rows.first);
   }
@@ -43,6 +56,11 @@ class ProductLocalDataSource {
       where: '${ProductTable.id} = ?',
       whereArgs: [id],
       limit: 1,
+    );
+    log(
+      'getProductByIdInTxn: read ${rows.length} row(s) for id=$id '
+      '-> ${jsonEncode(rows)}',
+      name: 'DB-READ',
     );
     if (rows.isEmpty) return null;
     return ProductModel.fromMap(rows.first);
@@ -58,6 +76,11 @@ class ProductLocalDataSource {
       whereArgs: [productId],
       orderBy: '${ProductTransactionTable.createdAt} DESC',
     );
+    log(
+      'getTransactionsForProduct: '
+      '${jsonEncode(rows)}',
+      name: 'DB-READ',
+    );
     return rows.map(ProductTransactionModel.fromMap).toList(growable: false);
   }
 
@@ -70,6 +93,11 @@ class ProductLocalDataSource {
       where: '${ProductTransactionTable.isSynced} = 0',
       orderBy: '${ProductTransactionTable.createdAt} ASC',
       limit: limit,
+    );
+    log(
+      'getUnsyncedTransactions: '
+      '-> ${jsonEncode(rows)}',
+      name: 'DB-READ',
     );
     return rows.map(ProductTransactionModel.fromMap).toList(growable: false);
   }
