@@ -12,13 +12,6 @@ import 'package:trucky/domain/repositories/product_repository.dart';
 import 'package:trucky/domain/usecases/calculate_wac.dart';
 import 'package:uuid/uuid.dart';
 
-/// Concrete inventory repository.
-///
-/// Every write runs in a single SQLite transaction that:
-///   1. appends the immutable transaction row (`is_synced = 0`), and
-///   2. recomputes and persists the snapshot aggregates (WAC, stock_value).
-///
-/// All failures are returned as [Result.failure]; exceptions never leak.
 class ProductRepositoryImpl implements ProductRepository {
   ProductRepositoryImpl({
     required ProductLocalDataSource local,
@@ -126,7 +119,7 @@ class ProductRepositoryImpl implements ProductRepository {
       final openingTxn = ProductTransactionModel(
         id: _uuid.v4(),
         productId: productId,
-        type: ProductTransactionType.purchase,
+        type: ProductTransactionType.initialStock,
         quantity: openingQty,
         unitPrice: openingPrice,
         totalPrice: openingTotal,

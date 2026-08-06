@@ -82,20 +82,7 @@ class ProductDashboardScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 if (selectedProduct != null)
-                  ProductInfoWidget(
-                    selectedProduct: selectedProduct,
-                    mostRecentTxn: state.productDetailsList.isNotEmpty
-                        ? state.productDetailsList.first
-                        : ProductDetail(
-                            productId: selectedProduct.id ?? '',
-                            purchasePrice: selectedProduct.purchasePrice,
-                            sellingPrice: selectedProduct.sellingPrice,
-                            quantity: selectedProduct.availableStock,
-                            paymentType: 'Initial Stock',
-                            createdAt:
-                                selectedProduct.createdAt ?? DateTime.now(),
-                          ),
-                  ),
+                  ProductInfoWidget(selectedProduct: selectedProduct),
                 30.verticalSpace,
                 Expanded(
                   child: ContentSheet(

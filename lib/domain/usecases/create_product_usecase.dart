@@ -5,23 +5,6 @@ import 'package:trucky/domain/entities/product_entity.dart';
 import 'package:trucky/domain/repositories/product_repository.dart';
 
 /// Input for [CreateProductUsecase].
-class CreateProductParams {
-  const CreateProductParams({
-    required this.name,
-    required this.sku,
-    required this.sellingPrice,
-    required this.initialQuantity,
-    required this.initialPurchasePrice,
-  });
-
-  final String name;
-  final String sku;
-  final double sellingPrice;
-  final double initialQuantity;
-  final double initialPurchasePrice;
-}
-
-/// Creates a new product with an opening purchase transaction.
 class CreateProductUsecase
     extends UseCase<CreateProductParams, Result<ProductEntity>> {
   const CreateProductUsecase(this._repository);
@@ -38,4 +21,20 @@ class CreateProductUsecase
       initialPurchasePrice: params.initialPurchasePrice,
     );
   }
+}
+
+class CreateProductParams {
+  const CreateProductParams({
+    required this.name,
+    required this.sku,
+    required this.sellingPrice,
+    required this.initialQuantity,
+    required this.initialPurchasePrice,
+  });
+
+  final String name;
+  final String sku;
+  final double sellingPrice;
+  final double initialQuantity;
+  final double initialPurchasePrice;
 }

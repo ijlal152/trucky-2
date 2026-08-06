@@ -1,32 +1,42 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:trucky/domain/entities/product_entity.dart';
 import 'package:trucky/domain/entities/product_transaction_entity.dart';
-
-part 'product_models.freezed.dart';
+import 'package:trucky/domain/entities/product_transaction_type.dart';
 
 /// Presentation model: the product snapshot used by the UI.
 ///
 /// This is a 1:1 mirror of [ProductEntity] but uses `double` for stock and
 /// keeps `purchaseValue` derived from `selling_price` to match the existing
 /// product list rendering.
-@freezed
-abstract class Product with _$Product {
-  const factory Product({
-    String? id,
-    required String productName,
-    required double purchasePrice,
-    required double sellingPrice,
-    @Default(0) double availableStock,
-    String? quantityPerPackage,
-    String? productImage,
-    String? productSKU,
-    double? weightedAverageCost,
-    DateTime? createdAt,
-    /// Authoritative WAC from the snapshot (preferred over purchasePrice).
-    double? averageCost,
-  }) = _Product;
+class Product {
+  const Product({
+    this.id,
+    required this.productName,
+    required this.purchasePrice,
+    required this.sellingPrice,
+    this.availableStock = 0,
+    this.quantityPerPackage,
+    this.productImage,
+    this.productSKU,
+    this.weightedAverageCost,
+    this.createdAt,
+    this.averageCost,
+  });
 
-  const Product._();
+  final String? id;
+  final String productName;
+  final double purchasePrice;
+  final double sellingPrice;
+  final double availableStock;
+  final String? quantityPerPackage;
+  final String? productImage;
+  final String? productSKU;
+
+  /// Authoritative WAC from the snapshot (preferred over purchasePrice).
+  final double? weightedAverageCost;
+  final DateTime? createdAt;
+
+  /// Canonical per-unit cost (WAC) from the snapshot.
+  final double? averageCost;
 
   double get profit => sellingPrice - purchasePrice;
 
@@ -43,7 +53,8 @@ abstract class Product with _$Product {
   /// avoid touching every widget.
   double get purchaseValue => totalValue;
 
-  double get effectiveCost => averageCost ?? weightedAverageCost ?? purchasePrice;
+  double get effectiveCost =>
+      averageCost ?? weightedAverageCost ?? purchasePrice;
 
   /// Build a presentation [Product] from the domain entity.
   static Product fromEntity(ProductEntity e) {
@@ -62,37 +73,82 @@ abstract class Product with _$Product {
       createdAt: e.createdAt,
     );
   }
+
+  Product copyWith({
+    String? id,
+    String? productName,
+    double? purchasePrice,
+    double? sellingPrice,
+    double? availableStock,
+    String? quantityPerPackage,
+    String? productImage,
+    String? productSKU,
+    double? weightedAverageCost,
+    DateTime? createdAt,
+    double? averageCost,
+  }) {
+    return Product(
+      id: id ?? this.id,
+      productName: productName ?? this.productName,
+      purchasePrice: purchasePrice ?? this.purchasePrice,
+      sellingPrice: sellingPrice ?? this.sellingPrice,
+      availableStock: availableStock ?? this.availableStock,
+      quantityPerPackage: quantityPerPackage ?? this.quantityPerPackage,
+      productImage: productImage ?? this.productImage,
+      productSKU: productSKU ?? this.productSKU,
+      weightedAverageCost: weightedAverageCost ?? this.weightedAverageCost,
+      createdAt: createdAt ?? this.createdAt,
+      averageCost: averageCost ?? this.averageCost,
+    );
+  }
 }
 
 /// A single product transaction used on the product dashboard.
-@freezed
-abstract class ProductDetail with _$ProductDetail {
-  const factory ProductDetail({
-    required String productId,
-    String? sourceName,
-    String? sourceType,
-    required double purchasePrice,
-    required double sellingPrice,
-    required double quantity,
-    required String paymentType,
-    required DateTime createdAt,
-    /// Shared id linking this detail to its parent transaction, if any.
-    String? transactionId,
-    String? quantityPerPackage,
-  }) = _ProductDetail;
+class ProductDetail {
+  const ProductDetail({
+    required this.productId,
+    this.sourceName,
+    this.sourceType,
+    required this.purchasePrice,
+    required this.sellingPrice,
+    required this.quantity,
+    required this.paymentType,
+    required this.createdAt,
+    this.transactionId,
+    this.quantityPerPackage,
+  });
 
-  const ProductDetail._();
+  final String productId;
+
+  /// Human-readable counterparty label (client/supplier name). Null when the
+  /// detail is derived from the product ledger (no counterparty attached), so
+  /// the UI falls back to [paymentType].
+  final String? sourceName;
+  final String? sourceType;
+  final double purchasePrice;
+  final double sellingPrice;
+  final double quantity;
+  final String paymentType;
+  final DateTime createdAt;
+
+  /// Shared id linking this detail to its parent transaction, if any.
+  final String? transactionId;
+  final String? quantityPerPackage;
 
   /// Build a presentation [ProductDetail] from the domain entity.
   static ProductDetail fromEntity(ProductTransactionEntity e) {
     return ProductDetail(
       productId: e.productId,
-      sourceName: e.type.name,
-      sourceType: e.type.name,
+      // Product-ledger rows have no counterparty; leave sourceName null so the
+      // widget renders the humanized `paymentType` instead of a raw enum name.
+      sourceName: null,
+      sourceType: _humanize(e.type.value),
       purchasePrice: e.unitPrice,
       sellingPrice: e.unitPrice,
       quantity: e.quantity,
-      paymentType: _humanize(e.type.name),
+      // `e.type.value` maps `returned` -> 'return' so the humanizer matches
+      // the 'Return' icon/color/sign branches.
+      paymentType: _humanize(e.type.value),
       createdAt: e.createdAt,
       transactionId: e.id,
     );
@@ -100,6 +156,9 @@ abstract class ProductDetail with _$ProductDetail {
 
   static String _humanize(String raw) {
     switch (raw) {
+      case 'initial_stock':
+      case 'initialStock':
+        return 'Initial Stock';
       case 'purchase':
         return 'Purchase';
       case 'sale':

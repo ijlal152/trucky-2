@@ -9,13 +9,11 @@ import 'package:trucky/presentation/widgets/label_widget.dart';
 
 class ProductInfoWidget extends StatelessWidget {
   final Product selectedProduct;
-  final ProductDetail mostRecentTxn;
   final String currency;
 
   const ProductInfoWidget({
     super.key,
     required this.selectedProduct,
-    required this.mostRecentTxn,
     this.currency = '',
   });
 
@@ -140,7 +138,7 @@ class ProductInfoWidget extends StatelessWidget {
   }
 
   double calcAvailableStockValue() {
-    return selectedProduct.effectiveCost * mostRecentTxn.quantity.toDouble();
+    return selectedProduct.availableStock * selectedProduct.effectiveCost;
   }
 
   String formatStockDetails(String totalUnitsStr, String unitsPerPackageStr) {

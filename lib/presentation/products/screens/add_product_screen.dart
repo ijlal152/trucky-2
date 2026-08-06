@@ -17,11 +17,11 @@ import 'package:trucky/presentation/widgets/bottom_sheet_widget.dart';
 import 'package:trucky/presentation/widgets/custom_app_bar.dart';
 import 'package:trucky/presentation/widgets/custom_bottom_nav_bar.dart';
 import 'package:trucky/presentation/widgets/custom_decorated_container.dart';
+import 'package:trucky/presentation/widgets/custom_divider.dart';
 import 'package:trucky/presentation/widgets/custom_elevated_button.dart';
 import 'package:trucky/presentation/widgets/custom_image_picker.dart';
 import 'package:trucky/presentation/widgets/custom_scaffold.dart';
 import 'package:trucky/presentation/widgets/custom_text_form_field.dart';
-import 'package:trucky/presentation/widgets/custom_divider.dart';
 import 'package:trucky/presentation/widgets/textfield_validation_error.dart';
 
 class AddProductScreen extends StatefulWidget {
@@ -187,10 +187,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 controller: _productSKUController,
                 suffixIcon: GestureDetector(
                   onTap: _scanQRCode,
-                  child: Image.asset(
-                    AppAssets.images.barCodeScanner,
-                    scale: 3,
-                  ),
+                  child: Image.asset(AppAssets.images.barCodeScanner, scale: 3),
                 ),
               ),
               10.verticalSpace,
@@ -272,10 +269,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
         widget: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            CustomElevatedButton(
-              onTap: _addProduct,
-              btnTitle: 'Add Product',
-            ),
+            CustomElevatedButton(onTap: _addProduct, btnTitle: 'Add Product'),
           ],
         ),
       ),

@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trucky/core/di/injector.dart';
 import 'package:trucky/core/errors/failures.dart';
 import 'package:trucky/core/usecase/usecase.dart';
+import 'package:trucky/domain/entities/product_entity.dart';
 import 'package:trucky/domain/entities/product_transaction_type.dart';
 import 'package:trucky/domain/usecases/create_product_usecase.dart';
 import 'package:trucky/domain/usecases/delete_product_usecase.dart';
@@ -18,12 +19,6 @@ import 'package:trucky/presentation/widgets/custom_snackbar.dart';
 
 export 'product_models.dart';
 
-/// Holds product state and exposes mutations for the UI.
-///
-/// This bloc is now **DB-backed**: every mutation goes through a domain
-/// use case which delegates to [ProductRepository] to write the ledger and
-/// the snapshot atomically. In-memory sample data has been removed; the UI
-/// now reads from SQLite.
 class ProductBloc extends Bloc<ProductEvent, ProductState> {
   ProductBloc({
     GetAllProductsUsecase? getAllProducts,
@@ -237,27 +232,18 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       );
 
       final result = switch (op) {
+        ProductTransactionType.initialStock => await _recordPurchase(params),
         ProductTransactionType.purchase => await _recordPurchase(params),
         ProductTransactionType.sale => await _recordSale(params),
         ProductTransactionType.returned => await _recordReturn(params),
       };
 
-      result.when(
-        success: (entity) async {
-          final idx = updatedProducts.indexWhere((p) => p.id == entity.id);
-          if (idx >= 0) {
-            updatedProducts[idx] = Product.fromEntity(entity);
-          }
-          final txns = await _getProductTransactions(entity.id);
-          txns.when(
-            success: (rows) {
-              if (rows.isNotEmpty) {
-                newLedgerRows.add(ProductDetail.fromEntity(rows.first));
-              }
-            },
-            failure: (_) {},
-          );
-        },
+      // Await the success path explicitly so the product snapshot and ledger
+      // rows are updated BEFORE the single emit below. The previous
+      // `result.when(success: (entity) async { ... })` never awaited the
+      // callback, so the emitted state could be stale (lost stock updates).
+      final entity = result.when<ProductEntity?>(
+        success: (value) => value,
         failure: (failure) {
           MySnackbarMessage.showErrorMessage(
             title: 'Error!',
@@ -265,7 +251,24 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
                 ? 'Insufficient stock for ${detail.productId}.'
                 : failure.message,
           );
+          return null;
         },
+      );
+      if (entity == null) continue;
+
+      final idx = updatedProducts.indexWhere((p) => p.id == entity.id);
+      if (idx >= 0) {
+        updatedProducts[idx] = Product.fromEntity(entity);
+      }
+
+      final txns = await _getProductTransactions(entity.id);
+      txns.when(
+        success: (rows) {
+          if (rows.isNotEmpty) {
+            newLedgerRows.add(ProductDetail.fromEntity(rows.first));
+          }
+        },
+        failure: (_) {},
       );
     }
 
