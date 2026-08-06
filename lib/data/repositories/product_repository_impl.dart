@@ -58,7 +58,11 @@ class ProductRepositoryImpl implements ProductRepository {
   ) async {
     try {
       final rows = await _local.getTransactionsForProduct(productId);
-      return Result.success(rows.map((m) => m.toEntity()).toList());
+      final entities = rows.map((m) => m.toEntity()).toList()
+        ..sort(
+          (a, b) => b.createdAt.compareTo(a.createdAt),
+        );
+      return Result.success(entities);
     } catch (e) {
       return Result.failure(CacheFailure(e.toString()));
     }
