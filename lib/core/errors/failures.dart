@@ -44,6 +44,6 @@ class InsufficientStockFailure extends AppFailure {
        );
 
   final String productId;
-  final double available;
-  final double requested;
+  final int available;
+  final int requested;
 }

@@ -20,7 +20,7 @@ class ProductEntity {
   final String name;
   final String sku;
   final double sellingPrice;
-  final double stockQuantity;
+  final int stockQuantity;
   final double stockValue;
   final double averageCost;
   final DateTime createdAt;

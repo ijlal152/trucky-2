@@ -7,6 +7,6 @@ class RecordTransactionParams {
   });
 
   final String productId;
-  final double quantity;
+  final int quantity;
   final double unitPrice;
 }

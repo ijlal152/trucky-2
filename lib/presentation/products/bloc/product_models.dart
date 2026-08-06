@@ -26,7 +26,7 @@ class Product {
   final String productName;
   final double purchasePrice;
   final double sellingPrice;
-  final double availableStock;
+  final int availableStock;
   final String? quantityPerPackage;
   final String? productImage;
   final String? productSKU;
@@ -79,7 +79,7 @@ class Product {
     String? productName,
     double? purchasePrice,
     double? sellingPrice,
-    double? availableStock,
+    int? availableStock,
     String? quantityPerPackage,
     String? productImage,
     String? productSKU,
@@ -127,7 +127,7 @@ class ProductDetail {
   final String? sourceType;
   final double purchasePrice;
   final double sellingPrice;
-  final double quantity;
+  final int quantity;
   final String paymentType;
   final DateTime createdAt;
 

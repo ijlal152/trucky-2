@@ -20,7 +20,7 @@ class ProductTransactionEntity {
   final String id;
   final String productId;
   final ProductTransactionType type;
-  final double quantity;
+  final int quantity;
   final double unitPrice;
   final double totalPrice;
   final DateTime createdAt;

@@ -9,7 +9,7 @@ class AppDatabase {
 
   static final AppDatabase instance = AppDatabase._();
 
-  static const int schemaVersion = 3;
+  static const int schemaVersion = 4;
 
   Database? _database;
 
@@ -91,7 +91,7 @@ class AppDatabase {
         name TEXT NOT NULL,
         sku TEXT NOT NULL UNIQUE,
         selling_price REAL NOT NULL DEFAULT 0,
-        stock_quantity REAL NOT NULL DEFAULT 0,
+        stock_quantity INTEGER NOT NULL DEFAULT 0,
         stock_value REAL NOT NULL DEFAULT 0,
         average_cost REAL NOT NULL DEFAULT 0,
         created_at INTEGER NOT NULL,
@@ -105,7 +105,7 @@ class AppDatabase {
         id TEXT PRIMARY KEY,
         product_id TEXT NOT NULL,
         type TEXT NOT NULL,
-        quantity REAL NOT NULL,
+        quantity INTEGER NOT NULL,
         unit_price REAL NOT NULL,
         total_price REAL NOT NULL,
         created_at INTEGER NOT NULL,
@@ -131,6 +131,9 @@ class AppDatabase {
     }
     if (oldVersion < 3) {
       await _migrateToV3(db);
+    }
+    if (oldVersion < 4) {
+      await _migrateToV4(db);
     }
   }
 
@@ -161,6 +164,16 @@ class AppDatabase {
   /// v3: replace the legacy product tables with the inventory snapshot +
   /// append-only ledger schema (WAC, stock_value, type-based transactions).
   Future<void> _migrateToV3(Database db) async {
+    await db.execute(
+      'DROP TABLE IF EXISTS ${TableNames.productTransactionTable}',
+    );
+    await db.execute('DROP TABLE IF EXISTS ${TableNames.productsTable}');
+    await _createProductTables(db);
+  }
+
+  /// v4: quantity and stock_quantity are whole units, so store them as
+  /// INTEGER rather than REAL (matching the int-typed models).
+  Future<void> _migrateToV4(Database db) async {
     await db.execute(
       'DROP TABLE IF EXISTS ${TableNames.productTransactionTable}',
     );

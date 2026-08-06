@@ -19,14 +19,14 @@ abstract interface class ProductRepository {
     required String name,
     required String sku,
     required double sellingPrice,
-    required double initialQuantity,
+    required int initialQuantity,
     required double initialPurchasePrice,
   });
 
   /// Records a purchase, blending new stock into the existing WAC.
   Future<Result<ProductEntity>> recordPurchase({
     required String productId,
-    required double quantity,
+    required int quantity,
     required double unitPrice,
   });
 
@@ -34,7 +34,7 @@ abstract interface class ProductRepository {
   /// enough stock.
   Future<Result<ProductEntity>> recordSale({
     required String productId,
-    required double quantity,
+    required int quantity,
     required double unitPrice,
   });
 
@@ -42,7 +42,7 @@ abstract interface class ProductRepository {
   /// the **current** WAC. `unitPrice` is informational (audit only).
   Future<Result<ProductEntity>> recordReturn({
     required String productId,
-    required double quantity,
+    required int quantity,
     required double unitPrice,
   });
 

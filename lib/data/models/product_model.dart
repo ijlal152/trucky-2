@@ -23,7 +23,7 @@ class ProductModel {
   final String name;
   final String sku;
   final double sellingPrice;
-  final double stockQuantity;
+  final int stockQuantity;
   final double stockValue;
   final double averageCost;
   final DateTime createdAt;
@@ -35,7 +35,7 @@ class ProductModel {
       name: map[ProductTable.productName] as String,
       sku: map[ProductTable.sku] as String,
       sellingPrice: (map[ProductTable.sellingPrice] as num).toDouble(),
-      stockQuantity: (map[ProductTable.stockQuantity] as num).toDouble(),
+      stockQuantity: map[ProductTable.stockQuantity] as int,
       stockValue: (map[ProductTable.stockValue] as num).toDouble(),
       averageCost: (map[ProductTable.averageCost] as num).toDouble(),
       createdAt: DateTime.fromMillisecondsSinceEpoch(
@@ -76,7 +76,7 @@ class ProductModel {
     String? name,
     String? sku,
     double? sellingPrice,
-    double? stockQuantity,
+    int? stockQuantity,
     double? stockValue,
     double? averageCost,
     DateTime? createdAt,

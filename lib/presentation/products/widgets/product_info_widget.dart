@@ -17,7 +17,7 @@ class ProductInfoWidget extends StatelessWidget {
     this.currency = '',
   });
 
-  double get availableStock => selectedProduct.availableStock;
+  int get availableStock => selectedProduct.availableStock;
 
   @override
   Widget build(BuildContext context) {

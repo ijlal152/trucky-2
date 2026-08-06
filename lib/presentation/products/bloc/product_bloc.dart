@@ -112,7 +112,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
         name: productName,
         sku: sku,
         sellingPrice: event.sellingPrice,
-        initialQuantity: event.initialQuantity.toDouble(),
+        initialQuantity: event.initialQuantity,
         initialPurchasePrice: event.purchasePrice,
       ),
     );
@@ -225,7 +225,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
 
       final params = RecordTransactionParams(
         productId: detail.productId,
-        quantity: detail.quantity.toDouble(),
+        quantity: detail.quantity,
         unitPrice: op == ProductTransactionType.sale
             ? detail.sellingPrice
             : detail.purchasePrice,

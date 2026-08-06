@@ -18,7 +18,7 @@ class ProductTransactionModel {
   final String id;
   final String productId;
   final ProductTransactionType type;
-  final double quantity;
+  final int quantity;
   final double unitPrice;
   final double totalPrice;
   final DateTime createdAt;
@@ -31,7 +31,7 @@ class ProductTransactionModel {
       type: _typeFromString(
         map[ProductTransactionTable.type] as String,
       ),
-      quantity: (map[ProductTransactionTable.quantity] as num).toDouble(),
+      quantity: map[ProductTransactionTable.quantity] as int,
       unitPrice: (map[ProductTransactionTable.unitPrice] as num).toDouble(),
       totalPrice: (map[ProductTransactionTable.totalPrice] as num).toDouble(),
       createdAt: DateTime.fromMillisecondsSinceEpoch(

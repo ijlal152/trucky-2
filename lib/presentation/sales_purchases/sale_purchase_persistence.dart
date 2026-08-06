@@ -32,7 +32,7 @@ abstract final class SalePurchasePersistence {
         sourceType: entity?.role,
         purchasePrice: item.product.purchasePrice,
         sellingPrice: item.product.sellingPrice,
-        quantity: item.quantity.toDouble(),
+        quantity: item.quantity,
         paymentType: data.paymentTypeString,
         createdAt: now,
         transactionId: transactionId,

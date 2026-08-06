@@ -103,7 +103,7 @@ class ProductRepositoryImpl implements ProductRepository {
     required String name,
     required String sku,
     required double sellingPrice,
-    required double initialQuantity,
+    required int initialQuantity,
     required double initialPurchasePrice,
   }) {
     return _runWrite((txn) async {
@@ -111,7 +111,7 @@ class ProductRepositoryImpl implements ProductRepository {
       final productId = _uuid.v4();
 
       // Initial opening purchase transaction (snapshot of opening inventory).
-      final openingQty = initialQuantity < 0 ? 0.0 : initialQuantity;
+      final openingQty = initialQuantity < 0 ? 0 : initialQuantity;
       final openingPrice =
           initialPurchasePrice < 0 ? 0.0 : initialPurchasePrice;
       final openingTotal = openingQty * openingPrice;
@@ -147,7 +147,7 @@ class ProductRepositoryImpl implements ProductRepository {
   @override
   Future<Result<ProductEntity>> recordPurchase({
     required String productId,
-    required double quantity,
+    required int quantity,
     required double unitPrice,
   }) {
     return _runWrite<ProductEntity>((txn) async {
@@ -185,7 +185,7 @@ class ProductRepositoryImpl implements ProductRepository {
   @override
   Future<Result<ProductEntity>> recordSale({
     required String productId,
-    required double quantity,
+    required int quantity,
     required double unitPrice,
   }) {
     return _runWrite<ProductEntity>((txn) async {
@@ -230,7 +230,7 @@ class ProductRepositoryImpl implements ProductRepository {
   @override
   Future<Result<ProductEntity>> recordReturn({
     required String productId,
-    required double quantity,
+    required int quantity,
     required double unitPrice,
   }) {
     return _runWrite<ProductEntity>((txn) async {
@@ -289,7 +289,7 @@ class ProductRepositoryImpl implements ProductRepository {
     Transaction txn, {
     required String productId,
     required ProductTransactionType type,
-    required double quantity,
+    required int quantity,
     required double unitPrice,
     required DateTime now,
   }) async {

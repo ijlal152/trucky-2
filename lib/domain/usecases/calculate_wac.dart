@@ -12,9 +12,9 @@ class CalculateWac {
 
   /// Result of applying a transaction to the snapshot.
   NextSnapshot call({
-    required double oldQuantity,
+    required int oldQuantity,
     required double oldAverageCost,
-    required double transactionQuantity,
+    required int transactionQuantity,
     required double transactionUnitPrice,
     required WacOp op,
   }) {
@@ -67,7 +67,7 @@ class NextSnapshot {
     required this.newAverageCost,
   });
 
-  final double newQuantity;
+  final int newQuantity;
   final double newAverageCost;
 
   double get newStockValue => newQuantity * newAverageCost;

@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:trucky/core/usecase/usecase.dart';
 import 'package:trucky/core/utils/result.dart';
 import 'package:trucky/core/utils/typedefs.dart';
@@ -23,7 +24,7 @@ class CreateProductUsecase
   }
 }
 
-class CreateProductParams {
+class CreateProductParams extends Equatable {
   const CreateProductParams({
     required this.name,
     required this.sku,
@@ -35,6 +36,15 @@ class CreateProductParams {
   final String name;
   final String sku;
   final double sellingPrice;
-  final double initialQuantity;
+  final int initialQuantity;
   final double initialPurchasePrice;
+
+  @override
+  List<Object> get props => [
+    name,
+    sku,
+    sellingPrice,
+    initialQuantity,
+    initialPurchasePrice,
+  ];
 }
