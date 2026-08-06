@@ -11,4 +11,6 @@ abstract final class ProductTransactionTable {
   static const String totalPrice = 'total_price';
   static const String createdAt = 'created_at';
   static const String isSynced = 'is_synced';
+  static const String sourceName = 'source_name';
+  static const String sourceType = 'source_type';
 }

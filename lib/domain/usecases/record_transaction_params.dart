@@ -4,9 +4,13 @@ class RecordTransactionParams {
     required this.productId,
     required this.quantity,
     required this.unitPrice,
+    this.sourceName,
+    this.sourceType,
   });
 
   final String productId;
   final int quantity;
   final double unitPrice;
+  final String? sourceName;
+  final String? sourceType;
 }

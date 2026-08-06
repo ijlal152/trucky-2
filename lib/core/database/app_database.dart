@@ -9,7 +9,7 @@ class AppDatabase {
 
   static final AppDatabase instance = AppDatabase._();
 
-  static const int schemaVersion = 4;
+  static const int schemaVersion = 5;
 
   Database? _database;
 
@@ -110,6 +110,8 @@ class AppDatabase {
         total_price REAL NOT NULL,
         created_at INTEGER NOT NULL,
         is_synced INTEGER NOT NULL DEFAULT 0,
+        source_name TEXT,
+        source_type TEXT,
         FOREIGN KEY (product_id) REFERENCES ${TableNames.productsTable} (id)
           ON DELETE CASCADE
       )
@@ -134,6 +136,9 @@ class AppDatabase {
     }
     if (oldVersion < 4) {
       await _migrateToV4(db);
+    }
+    if (oldVersion < 5) {
+      await _migrateToV5(db);
     }
   }
 
@@ -179,6 +184,19 @@ class AppDatabase {
     );
     await db.execute('DROP TABLE IF EXISTS ${TableNames.productsTable}');
     await _createProductTables(db);
+  }
+
+  /// v5: add the client/supplier counterparty to the inventory ledger so the
+  /// products section can show who a sale/purchase/return came from.
+  Future<void> _migrateToV5(Database db) async {
+    await db.execute(
+      'ALTER TABLE ${TableNames.productTransactionTable} '
+      'ADD COLUMN source_name TEXT',
+    );
+    await db.execute(
+      'ALTER TABLE ${TableNames.productTransactionTable} '
+      'ADD COLUMN source_type TEXT',
+    );
   }
 
   Future<void> close() async {

@@ -25,11 +25,7 @@ class ProductLocalDataSource {
       ProductTable.name,
       orderBy: '${ProductTable.createdAt} ASC',
     );
-    log(
-      'getAllProducts:'
-      'from ${ProductTable.name} -> ${jsonEncode(rows)}',
-      name: 'DB-READ',
-    );
+    log('Product Table:\n${jsonEncode(rows)}');
     return rows.map(ProductModel.fromMap).toList(growable: false);
   }
 
@@ -76,11 +72,7 @@ class ProductLocalDataSource {
       whereArgs: [productId],
       orderBy: '${ProductTransactionTable.createdAt} DESC',
     );
-    log(
-      'getTransactionsForProduct: '
-      '${jsonEncode(rows)}',
-      name: 'DB-READ',
-    );
+    log('Product Transaction Table -> \n${jsonEncode(rows)}');
     return rows.map(ProductTransactionModel.fromMap).toList(growable: false);
   }
 

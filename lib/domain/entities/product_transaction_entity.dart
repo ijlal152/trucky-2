@@ -15,6 +15,8 @@ class ProductTransactionEntity {
     required this.totalPrice,
     required this.createdAt,
     required this.isSynced,
+    this.sourceName,
+    this.sourceType,
   });
 
   final String id;
@@ -25,4 +27,10 @@ class ProductTransactionEntity {
   final double totalPrice;
   final DateTime createdAt;
   final bool isSynced;
+
+  /// Optional client/supplier name this transaction originated from.
+  final String? sourceName;
+
+  /// Optional counterparty role ('client' or 'supplier').
+  final String? sourceType;
 }

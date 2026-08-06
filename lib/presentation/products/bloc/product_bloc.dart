@@ -55,6 +55,11 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   final RecordSaleUsecase _recordSale;
   final RecordReturnUsecase _recordReturn;
 
+  /// Per-product transaction cache keyed by product id, so tapping a product
+  /// on the list reuses the already-loaded ledger instead of hitting the
+  /// database again.
+  final Map<String, List<ProductDetail>> _txnCache = {};
+
   Future<void> _onLoadProducts(
     LoadProductsEvent event,
     Emitter<ProductState> emit,
@@ -279,6 +284,8 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
         unitPrice: op == ProductTransactionType.sale
             ? detail.sellingPrice
             : detail.purchasePrice,
+        sourceName: detail.sourceName,
+        sourceType: detail.sourceType,
       );
 
       final result = switch (op) {

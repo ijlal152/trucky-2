@@ -18,6 +18,8 @@ class RecordPurchaseUsecase
       productId: params.productId,
       quantity: params.quantity,
       unitPrice: params.unitPrice,
+      sourceName: params.sourceName,
+      sourceType: params.sourceType,
     );
   }
 }

@@ -139,10 +139,11 @@ class ProductDetail {
   static ProductDetail fromEntity(ProductTransactionEntity e) {
     return ProductDetail(
       productId: e.productId,
-      // Product-ledger rows have no counterparty; leave sourceName null so the
-      // widget renders the humanized `paymentType` instead of a raw enum name.
-      sourceName: null,
-      sourceType: _humanize(e.type.value),
+      // Product-ledger rows may carry a counterparty (client/supplier) from
+      // the source_name/source_type columns; fall back to the humanized type
+      // when there is none.
+      sourceName: e.sourceName,
+      sourceType: e.sourceType,
       purchasePrice: e.unitPrice,
       sellingPrice: e.unitPrice,
       quantity: e.quantity,

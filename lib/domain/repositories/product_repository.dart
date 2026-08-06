@@ -28,6 +28,8 @@ abstract interface class ProductRepository {
     required String productId,
     required int quantity,
     required double unitPrice,
+    String? sourceName,
+    String? sourceType,
   });
 
   /// Records a sale. Throws [ValidationFailure] when there is not
@@ -36,6 +38,8 @@ abstract interface class ProductRepository {
     required String productId,
     required int quantity,
     required double unitPrice,
+    String? sourceName,
+    String? sourceType,
   });
 
   /// Records a return (purchase-return or sale-return). Stock is added back at
@@ -44,6 +48,8 @@ abstract interface class ProductRepository {
     required String productId,
     required int quantity,
     required double unitPrice,
+    String? sourceName,
+    String? sourceType,
   });
 
   /// Returns the full transaction history for a product, newest first.

@@ -13,6 +13,8 @@ class ProductTransactionModel {
     required this.totalPrice,
     required this.createdAt,
     required this.isSynced,
+    this.sourceName,
+    this.sourceType,
   });
 
   final String id;
@@ -23,6 +25,8 @@ class ProductTransactionModel {
   final double totalPrice;
   final DateTime createdAt;
   final bool isSynced;
+  final String? sourceName;
+  final String? sourceType;
 
   factory ProductTransactionModel.fromMap(Map<String, Object?> map) {
     return ProductTransactionModel(
@@ -39,6 +43,8 @@ class ProductTransactionModel {
       ),
       isSynced:
           (map[ProductTransactionTable.isSynced] as int? ?? 0) == 1,
+      sourceName: map[ProductTransactionTable.sourceName] as String?,
+      sourceType: map[ProductTransactionTable.sourceType] as String?,
     );
   }
 
@@ -51,6 +57,8 @@ class ProductTransactionModel {
         ProductTransactionTable.totalPrice: totalPrice,
         ProductTransactionTable.createdAt: createdAt.millisecondsSinceEpoch,
         ProductTransactionTable.isSynced: isSynced ? 1 : 0,
+        ProductTransactionTable.sourceName: sourceName,
+        ProductTransactionTable.sourceType: sourceType,
       };
 
   ProductTransactionEntity toEntity() => ProductTransactionEntity(
@@ -62,6 +70,8 @@ class ProductTransactionModel {
         totalPrice: totalPrice,
         createdAt: createdAt,
         isSynced: isSynced,
+        sourceName: sourceName,
+        sourceType: sourceType,
       );
 
   static ProductTransactionType _typeFromString(String raw) {

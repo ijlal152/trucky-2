@@ -153,6 +153,8 @@ class ProductRepositoryImpl implements ProductRepository {
     required String productId,
     required int quantity,
     required double unitPrice,
+    String? sourceName,
+    String? sourceType,
   }) {
     return _runWrite<ProductEntity>((txn) async {
       final current = await _local.getProductByIdInTxn(txn, productId);
@@ -180,6 +182,8 @@ class ProductRepositoryImpl implements ProductRepository {
         quantity: quantity,
         unitPrice: unitPrice,
         now: now,
+        sourceName: sourceName,
+        sourceType: sourceType,
       );
       await _local.updateProductSnapshotInTxn(txn, updated);
       return updated.toEntity();
@@ -191,6 +195,8 @@ class ProductRepositoryImpl implements ProductRepository {
     required String productId,
     required int quantity,
     required double unitPrice,
+    String? sourceName,
+    String? sourceType,
   }) {
     return _runWrite<ProductEntity>((txn) async {
       final current = await _local.getProductByIdInTxn(txn, productId);
@@ -225,6 +231,8 @@ class ProductRepositoryImpl implements ProductRepository {
         quantity: quantity,
         unitPrice: unitPrice,
         now: now,
+        sourceName: sourceName,
+        sourceType: sourceType,
       );
       await _local.updateProductSnapshotInTxn(txn, updated);
       return updated.toEntity();
@@ -236,6 +244,8 @@ class ProductRepositoryImpl implements ProductRepository {
     required String productId,
     required int quantity,
     required double unitPrice,
+    String? sourceName,
+    String? sourceType,
   }) {
     return _runWrite<ProductEntity>((txn) async {
       final current = await _local.getProductByIdInTxn(txn, productId);
@@ -263,6 +273,8 @@ class ProductRepositoryImpl implements ProductRepository {
         quantity: quantity,
         unitPrice: unitPrice,
         now: now,
+        sourceName: sourceName,
+        sourceType: sourceType,
       );
       await _local.updateProductSnapshotInTxn(txn, updated);
       return updated.toEntity();
@@ -296,6 +308,8 @@ class ProductRepositoryImpl implements ProductRepository {
     required int quantity,
     required double unitPrice,
     required DateTime now,
+    String? sourceName,
+    String? sourceType,
   }) async {
     await _local.insertTransactionInTxn(
       txn,
@@ -308,6 +322,8 @@ class ProductRepositoryImpl implements ProductRepository {
         totalPrice: quantity * unitPrice,
         createdAt: now,
         isSynced: false,
+        sourceName: sourceName,
+        sourceType: sourceType,
       ),
     );
   }
