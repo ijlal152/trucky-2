@@ -70,11 +70,13 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
         return const <Product>[];
       },
     );
+
+    final withAvailableStock = await _withLedgerStock(products);
     emit(
       state.copyWith(
-        products: products,
+        products: withAvailableStock,
         isLoaded: true,
-        totalStockValue: products.fold<double>(
+        totalStockValue: withAvailableStock.fold<double>(
           0,
           (sum, product) => sum + product.totalValue,
         ),
@@ -206,7 +208,55 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       failure: (_) => const <ProductDetail>[],
     );
 
-    emit(state.copyWith(selectedProduct: product, productDetailsList: details));
+    emit(
+      state.copyWith(
+        selectedProduct: product.copyWith(
+          availableStock: _availableStockFrom(details),
+        ),
+        productDetailsList: details,
+      ),
+    );
+  }
+
+  /// Recomputes each product's available stock from its transaction ledger so
+  /// the product list always shows the live stock rather than the cached
+  /// snapshot.
+  Future<List<Product>> _withLedgerStock(List<Product> products) async {
+    final updated = <Product>[];
+    for (final product in products) {
+      final id = product.id;
+      if (id == null) {
+        updated.add(product);
+        continue;
+      }
+      final result = await _getProductTransactions(id);
+      final details = result.when(
+        success: (rows) => rows.map(ProductDetail.fromEntity).toList(),
+        failure: (_) => const <ProductDetail>[],
+      );
+      updated.add(product.copyWith(availableStock: _availableStockFrom(details)));
+    }
+    return updated;
+  }
+
+  int _availableStockFrom(List<ProductDetail> details) {
+    return details.fold<int>(
+      0,
+      (sum, detail) => sum + _stockSignFor(detail.paymentType) * detail.quantity,
+    );
+  }
+
+  int _stockSignFor(String paymentType) {
+    switch (paymentType) {
+      case 'Sale':
+        return -1;
+      case 'Initial Stock':
+      case 'Purchase':
+      case 'Return':
+        return 1;
+      default:
+        return 0;
+    }
   }
 
   Future<void> _onAddProductDetails(
