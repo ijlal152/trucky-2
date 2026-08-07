@@ -18,6 +18,12 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final productCount = context.watch<ProductBloc>().state.products.length;
+    final clientCount = context.watch<ClientSuppBloc>().state.clients.length;
+    final supplierCount = context
+        .watch<ClientSuppBloc>()
+        .state
+        .suppliers
+        .length;
 
     return Scaffold(
       body: Stack(
@@ -59,6 +65,8 @@ class HomeScreen extends StatelessWidget {
               ),
               child: DashBoardSheetWidget(
                 productCount: productCount,
+                clientCount: clientCount,
+                supplierCount: supplierCount,
                 onProductsTap: () => context.push(RoutePaths.products),
                 onTreasuryTap: () => context.push(RoutePaths.treasury),
                 onAnalysisTap: () => context.push(RoutePaths.analysis),

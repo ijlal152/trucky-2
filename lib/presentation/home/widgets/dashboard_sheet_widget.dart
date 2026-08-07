@@ -14,6 +14,8 @@ class DashBoardSheetWidget extends StatelessWidget {
     required this.onTreasuryTap,
     required this.onAnalysisTap,
     this.productCount = 0,
+    this.clientCount = 0,
+    this.supplierCount = 0,
   });
 
   final VoidCallback onProductsTap;
@@ -24,6 +26,8 @@ class DashBoardSheetWidget extends StatelessWidget {
   final VoidCallback onTreasuryTap;
   final VoidCallback onAnalysisTap;
   final int productCount;
+  final int clientCount;
+  final int supplierCount;
 
   @override
   Widget build(BuildContext context) {
@@ -52,13 +56,13 @@ class DashBoardSheetWidget extends StatelessWidget {
             children: [
               dashBoardFeatureItem(
                 title: "Suppliers",
-                total: "0",
+                total: supplierCount.toString(),
                 onTap: onSuppliersTap,
               ),
 
               dashBoardFeatureItem(
                 title: "Clients",
-                total: "0",
+                total: clientCount.toString(),
                 onTap: onClientsTap,
               ),
             ],
