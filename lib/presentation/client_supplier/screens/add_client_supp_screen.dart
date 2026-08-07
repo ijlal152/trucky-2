@@ -58,8 +58,9 @@ class _AddClientSuppScreenState extends State<AddClientSuppScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final entityType = context.watch<ClientSuppBloc>().state.entityType;
-    final isNameRequired = context.watch<ClientSuppBloc>().state.isNameRequired;
+    final state = context.watch<ClientSuppBloc>().state;
+    final entityType = state.entityType;
+    final isNameRequired = state.isNameRequired;
 
     return CustomScaffold(
       appBar: CustomAppBar(title: getPageTitle(entityType)),
@@ -90,12 +91,7 @@ class _AddClientSuppScreenState extends State<AddClientSuppScreen> {
               labelText: 'Phone Number',
               controller: phoneController,
               textInputType: TextInputType.number,
-              inputFormatters: [
-                FilteringTextInputFormatter.digitsOnly,
-                FilteringTextInputFormatter.allow(
-                  RegExp(r'[0-9]\d*'),
-                ),
-              ],
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             ),
             10.verticalSpace,
             CustomTextFormField(
@@ -121,9 +117,7 @@ class _AddClientSuppScreenState extends State<AddClientSuppScreen> {
                 signed: true,
               ),
               inputFormatters: [
-                FilteringTextInputFormatter.allow(
-                  RegExp(r'^-?\d*\.?\d{0,2}'),
-                ),
+                FilteringTextInputFormatter.allow(RegExp(r'^-?\d*\.?\d{0,2}')),
                 LengthLimiterInputFormatter(
                   maxIntegerLength: 20,
                   maxDecimalLength: 22,
