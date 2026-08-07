@@ -21,20 +21,14 @@ class ClientSuppLocalDataSource {
 
   Future<List<ClientSuppModel>> fetchAllClientSupps() async {
     final db = await _db;
-    final rows = await db.query(
-      ClientSuppTable.name,
-      orderBy: '${ClientSuppTable.createdAt} ASC',
-    );
+    final rows = await db.query(ClientSuppTable.name);
     log('ClientSupp Table:\n${jsonEncode(rows)}');
     return rows.map(ClientSuppModel.fromMap).toList(growable: false);
   }
 
   Future<List<ClientSuppTxnModel>> fetchAllClientSuppTxns() async {
     final db = await _db;
-    final rows = await db.query(
-      ClientSuppTxnTable.name,
-      orderBy: '${ClientSuppTxnTable.txnData} ASC',
-    );
+    final rows = await db.query(ClientSuppTxnTable.name);
 
     // return mockTransactions.map(ClientSuppTxnModel.fromMap).toList(growable: false);
     log('ClientSupp Transaction Table:\n${jsonEncode(rows)}');
