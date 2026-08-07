@@ -103,12 +103,7 @@ class TransactionListWidget<T extends ClientSuppTxn> extends StatelessWidget {
                               LabelWidget(
                                 text: item.paymentType,
                                 textSize: 11.sp,
-                                textColor: const Color.fromRGBO(
-                                  92,
-                                  97,
-                                  111,
-                                  1,
-                                ),
+                                textColor: const Color.fromRGBO(92, 97, 111, 1),
                               ),
                             ],
                           ),

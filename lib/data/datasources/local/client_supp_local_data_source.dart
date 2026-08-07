@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:sqflite/sqflite.dart';
 import 'package:trucky/core/database/app_database.dart';
 import 'package:trucky/core/database/client_supp_table.dart';
@@ -22,6 +25,7 @@ class ClientSuppLocalDataSource {
       ClientSuppTable.name,
       orderBy: '${ClientSuppTable.createdAt} ASC',
     );
+    log('ClientSupp Table:\n${jsonEncode(rows)}');
     return rows.map(ClientSuppModel.fromMap).toList(growable: false);
   }
 
@@ -31,6 +35,9 @@ class ClientSuppLocalDataSource {
       ClientSuppTxnTable.name,
       orderBy: '${ClientSuppTxnTable.txnData} ASC',
     );
+
+    // return mockTransactions.map(ClientSuppTxnModel.fromMap).toList(growable: false);
+    log('ClientSupp Transaction Table:\n${jsonEncode(rows)}');
     return rows.map(ClientSuppTxnModel.fromMap).toList(growable: false);
   }
 
@@ -82,3 +89,76 @@ class ClientSuppLocalDataSource {
     );
   }
 }
+
+var mockTransactions = [
+  {
+    "id": 1,
+    "user_id": 1,
+    "client_supp_id": 1,
+    "transaction_id": "txn-1786104552867179",
+    "client_supplier_name": "Client 1",
+    "role": "client",
+    "txn_data": 1786104552867,
+    "discount_amount": "0",
+    "amount": "55000",
+    "payment_type": "Initial Balance",
+    "note": null,
+    "is_synced": 0,
+  },
+  {
+    "id": 1,
+    "user_id": 1,
+    "client_supp_id": 1,
+    "transaction_id": "txn-1786104552867174",
+    "client_supplier_name": "Client 1",
+    "role": "client",
+    "txn_data": 1786104556666,
+    "discount_amount": "0",
+    "amount": "10000",
+    "payment_type": "Sale",
+    "note": null,
+    "is_synced": 0,
+  },
+  {
+    "id": 1,
+    "user_id": 1,
+    "client_supp_id": 1,
+    "transaction_id": "txn-1786104552867174",
+    "client_supplier_name": "Client 1",
+    "role": "client",
+    "txn_data": 1786104557777,
+    "discount_amount": "0",
+    "amount": "5000",
+    "payment_type": "Payment",
+    "note": null,
+    "is_synced": 0,
+  },
+  {
+    "id": 1,
+    "user_id": 1,
+    "client_supp_id": 1,
+    "transaction_id": "txn-1786104552867174",
+    "client_supplier_name": "Client 1",
+    "role": "client",
+    "txn_data": 1786104558888,
+    "discount_amount": "0",
+    "amount": "5000",
+    "payment_type": "Return",
+    "note": null,
+    "is_synced": 0,
+  },
+  {
+    "id": 1,
+    "user_id": 1,
+    "client_supp_id": 1,
+    "transaction_id": "txn-1786104552867174",
+    "client_supplier_name": "Client 1",
+    "role": "client",
+    "txn_data": 1786104559999,
+    "discount_amount": "0",
+    "amount": "5000",
+    "payment_type": "Refund",
+    "note": null,
+    "is_synced": 0,
+  },
+];

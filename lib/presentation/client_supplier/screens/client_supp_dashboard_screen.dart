@@ -63,8 +63,7 @@ class _ClientSuppDashboardScreenState extends State<ClientSuppDashboardScreen>
           onDelete: () {},
           onLocationPressed: (lat, lng) {},
           iconBuilder: (index, item) => _iconBasedOnPaymentType(item, isClient),
-          amountColorBuilder: (index, item) =>
-              _amountColor(item, isClient),
+          amountColorBuilder: (index, item) => _amountColor(item, isClient),
           totalBalance: state.selectedCSTxns.isEmpty
               ? '0'
               : ClientSuppTxn.calculateBalanceAtIndex(
