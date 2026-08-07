@@ -378,12 +378,37 @@ class ClientSuppBloc extends Bloc<ClientSuppEvent, ClientSuppState> {
 
   /// Sorts transactions newest-first, matching how the old app displayed
   /// them and how [ClientSuppTxn.calculateBalanceAtIndex] expects its input.
+  ///
+  /// A Sale/Purchase/Return and its settlement (Payment/Refund) share the same
+  /// timestamp, so ties are broken so the major operation always sorts before
+  /// its settlement.
   List<ClientSuppTxn> _sortTxnsNewestFirst(
     Iterable<ClientSuppTxn> transactions,
   ) {
     final sorted = transactions.toList()
-      ..sort((a, b) => b.txnData.compareTo(a.txnData));
+      ..sort((a, b) {
+        final dateCompare = b.txnData.compareTo(a.txnData);
+        if (dateCompare != 0) return dateCompare;
+        return _paymentTypePriority(
+          b.paymentType,
+        ).compareTo(_paymentTypePriority(a.paymentType));
+      });
     return sorted;
+  }
+
+  /// Display priority within a transaction timestamp; lower sorts first.
+  int _paymentTypePriority(String paymentType) {
+    switch (paymentType.toLowerCase()) {
+      case 'sale':
+      case 'purchase':
+      case 'return':
+        return 0;
+      case 'payment':
+      case 'refund':
+        return 1;
+      default:
+        return 2;
+    }
   }
 
   bool _matchesPaymentType(ClientSuppTxn txn, PaymentType type) {

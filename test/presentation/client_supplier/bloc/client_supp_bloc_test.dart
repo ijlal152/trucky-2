@@ -383,6 +383,48 @@ void main() {
         );
         expect(dashboardTotal, closeTo(900.0, 0.001));
       });
+
+      test('sale sorts before its payment when timestamps tie', () async {
+        bloc.add(const LoadClientSuppEvent());
+        await pumpEventQueue();
+
+        final sameInstant = DateTime.now();
+        bloc.add(
+          AddTransactionEvent(
+            txn: ClientSuppTxn(
+              clientSuppId: 1,
+              transactionId: 'txn-tie',
+              clientSupplierName: 'Ahmed Benali',
+              role: 'client',
+              txnData: sameInstant,
+              amount: '200',
+              paymentType: 'Sale',
+            ),
+          ),
+        );
+        bloc.add(
+          AddTransactionEvent(
+            txn: ClientSuppTxn(
+              clientSuppId: 1,
+              transactionId: 'txn-tie',
+              clientSupplierName: 'Ahmed Benali',
+              role: 'client',
+              txnData: sameInstant,
+              amount: '150',
+              paymentType: 'Payment',
+            ),
+          ),
+        );
+        await pumpEventQueue();
+
+        bloc.add(const SelectClientSuppEvent(index: 0));
+        await pumpEventQueue();
+
+        final types = bloc.state.selectedCSTxns
+            .map((t) => t.paymentType)
+            .toList();
+        expect(types, ['Sale', 'Payment', 'Payment', 'Initial Balance']);
+      });
     });
   });
 }
