@@ -56,8 +56,7 @@ void main() {
         expect(bloc.state.homeBalance, closeTo(1700.0, 0.001));
       });
 
-      test('computes the supplier home balance (2000 + 500 = 2500)',
-          () async {
+      test('computes the supplier home balance (2000 + 500 = 2500)', () async {
         bloc.add(const LoadClientSuppEvent());
         await pumpEventQueue();
 
@@ -131,10 +130,12 @@ void main() {
         bloc.add(SortClientSuppEvent(index: SortType.ascending.index));
         await pumpEventQueue();
 
-        expect(
-          bloc.state.clients.map((c) => c.name).toList(),
-          ['Ahmed Benali', 'Karim Meziane', 'Lina Bouzid', 'Sara Haddad'],
-        );
+        expect(bloc.state.clients.map((c) => c.name).toList(), [
+          'Ahmed Benali',
+          'Karim Meziane',
+          'Lina Bouzid',
+          'Sara Haddad',
+        ]);
       });
 
       test('sorts by balance high to low', () async {
@@ -246,27 +247,33 @@ void main() {
     });
 
     group('FilterTxnsByPaymentTypeEvent', () {
-      test('filters the selected entity transactions by payment type',
-          () async {
-        bloc.add(const LoadClientSuppEvent());
-        await pumpEventQueue();
-        bloc.add(const SelectClientSuppEvent(index: 0));
-        await pumpEventQueue();
+      test(
+        'filters the selected entity transactions by payment type',
+        () async {
+          bloc.add(const LoadClientSuppEvent());
+          await pumpEventQueue();
+          bloc.add(const SelectClientSuppEvent(index: 0));
+          await pumpEventQueue();
 
-        bloc.add(FilterTxnsByPaymentTypeEvent(index: PaymentType.payment.index));
-        await pumpEventQueue();
+          bloc.add(
+            FilterTxnsByPaymentTypeEvent(index: PaymentType.payment.index),
+          );
+          await pumpEventQueue();
 
-        expect(bloc.state.selectedCSTxns.length, 1);
-        expect(bloc.state.selectedCSTxns.single.paymentType, 'Payment');
-        expect(bloc.state.selectedIndex, PaymentType.payment.index);
-      });
+          expect(bloc.state.selectedCSTxns.length, 1);
+          expect(bloc.state.selectedCSTxns.single.paymentType, 'Payment');
+          expect(bloc.state.selectedIndex, PaymentType.payment.index);
+        },
+      );
 
       test('restores all transactions when "All" is selected', () async {
         bloc.add(const LoadClientSuppEvent());
         await pumpEventQueue();
         bloc.add(const SelectClientSuppEvent(index: 0));
         await pumpEventQueue();
-        bloc.add(FilterTxnsByPaymentTypeEvent(index: PaymentType.payment.index));
+        bloc.add(
+          FilterTxnsByPaymentTypeEvent(index: PaymentType.payment.index),
+        );
         await pumpEventQueue();
         expect(bloc.state.selectedCSTxns.length, 1);
 
@@ -365,6 +372,11 @@ void main() {
           ClientSuppTxn.calculateBalanceAtIndex(transactions: txns, index: 1),
           closeTo(1000.0, 0.001),
         );
+
+        // runningBalances matches calculateBalanceAtIndex at every index.
+        final balances = ClientSuppTxn.runningBalances(txns);
+        expect(balances[0], closeTo(700.0, 0.001));
+        expect(balances[1], closeTo(1000.0, 0.001));
       });
 
       test('selecting a client sorts its transactions newest-first', () async {

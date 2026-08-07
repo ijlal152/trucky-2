@@ -27,6 +27,10 @@ class TransactionListWidget<T extends ClientSuppTxn> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Precompute the running balance for every row once (O(n)) instead of
+    // calling calculateBalanceAtIndex (O(n)) per row (O(n²) total).
+    final balances = ClientSuppTxn.runningBalances(list);
+
     return list.isEmpty
         ? Center(
             child: LabelWidget(
@@ -73,7 +77,7 @@ class TransactionListWidget<T extends ClientSuppTxn> extends StatelessWidget {
                                 ),
                                 LabelWidget(
                                   text:
-                                      'Balance: ${NumberFormater.formatStringToCurrency(ClientSuppTxn.calculateBalanceAtIndex(transactions: list.cast<ClientSuppTxn>(), index: index).toString())}',
+                                      'Balance: ${NumberFormater.formatStringToCurrency(balances[index].toString())}',
                                   textSize: 11.sp,
                                   fontWeight: FontWeight.normal,
                                   fontFamily: FontConstants.inter,

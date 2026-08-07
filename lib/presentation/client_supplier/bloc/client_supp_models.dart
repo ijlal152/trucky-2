@@ -185,9 +185,17 @@ class ClientSuppTxn {
     required int index,
   }) {
     if (transactions.isEmpty || index >= transactions.length) return 0.0;
+    return runningBalances(transactions)[index];
+  }
 
+  /// Running balance at every index in a single backward pass.
+  ///
+  /// Equivalent to calling [calculateBalanceAtIndex] for each index, but O(n)
+  /// instead of O(n²) — use this when rendering a list of transactions.
+  static List<double> runningBalances(List<ClientSuppTxn> transactions) {
+    final balances = List<double>.filled(transactions.length, 0);
     double balance = 0.0;
-    for (int i = transactions.length - 1; i >= index; i--) {
+    for (int i = transactions.length - 1; i >= 0; i--) {
       final txn = transactions[i];
       final amt = double.tryParse(txn.amount) ?? 0.0;
       switch (txn.paymentType) {
@@ -204,7 +212,8 @@ class ClientSuppTxn {
           balance -= amt;
           break;
       }
+      balances[i] = balance;
     }
-    return balance;
+    return balances;
   }
 }
