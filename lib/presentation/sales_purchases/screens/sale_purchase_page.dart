@@ -106,41 +106,43 @@ class _SalePurchasePageState extends State<SalePurchasePage>
     final isClient = entityType == EntityType.client;
     showModalBottomSheet<void>(
       context: context,
-      builder: (sheetContext) => CustomBottomSheetContent(
-        child: Wrap(
-          spacing: 70,
-          children: [
-            btmSheetPaymentTypeItem(
-              icon: isClient
-                  ? AppAssets.images.sellsIcon
-                  : AppAssets.images.supplierIcon,
-              itemName: isClient ? 'Sale' : 'Purchase',
-              onTap: () {
-                context.read<SalePurchaseBloc>().add(
-                  InitSalePurchaseEvent(
-                    entityType: entityType,
-                    transactionType: TransactionType.sale,
-                  ),
-                );
-                Navigator.pop(sheetContext);
-                context.push(RoutePaths.chooseClientSupp);
-              },
-            ),
-            btmSheetPaymentTypeItem(
-              icon: AppAssets.images.returnIcon,
-              itemName: 'Return',
-              onTap: () {
-                context.read<SalePurchaseBloc>().add(
-                  InitSalePurchaseEvent(
-                    entityType: entityType,
-                    transactionType: TransactionType.returnTransaction,
-                  ),
-                );
-                Navigator.pop(sheetContext);
-                context.push(RoutePaths.chooseClientSupp);
-              },
-            ),
-          ],
+      builder: (sheetContext) => SafeArea(
+        child: CustomBottomSheetContent(
+          child: Wrap(
+            spacing: 70,
+            children: [
+              btmSheetPaymentTypeItem(
+                icon: isClient
+                    ? AppAssets.images.sellsIcon
+                    : AppAssets.images.supplierIcon,
+                itemName: isClient ? 'Sale' : 'Purchase',
+                onTap: () {
+                  context.read<SalePurchaseBloc>().add(
+                    InitSalePurchaseEvent(
+                      entityType: entityType,
+                      transactionType: TransactionType.sale,
+                    ),
+                  );
+                  Navigator.pop(sheetContext);
+                  context.push(RoutePaths.chooseClientSupp);
+                },
+              ),
+              btmSheetPaymentTypeItem(
+                icon: AppAssets.images.returnIcon,
+                itemName: 'Return',
+                onTap: () {
+                  context.read<SalePurchaseBloc>().add(
+                    InitSalePurchaseEvent(
+                      entityType: entityType,
+                      transactionType: TransactionType.returnTransaction,
+                    ),
+                  );
+                  Navigator.pop(sheetContext);
+                  context.push(RoutePaths.chooseClientSupp);
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
