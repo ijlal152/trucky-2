@@ -14,6 +14,22 @@ class ProductDetailsListWidget extends StatelessWidget {
 
   const ProductDetailsListWidget({super.key, required this.list});
 
+  static final Map<String, String> _paymentTypeIcons = {
+    'Initial Stock': AppAssets.images.supplierIcon,
+    'Sale': AppAssets.images.sellsIcon,
+    'Purchase': AppAssets.images.supplierIcon,
+    'Payment': AppAssets.images.supplierIcon,
+    'Return': AppAssets.images.returnIcon,
+    'Refund': AppAssets.images.negativeRefundIcon,
+  };
+
+  static const Map<String, Color> _paymentTypeColors = {
+    'Initial Stock': Color.fromRGBO(0, 177, 103, 1),
+    'Sale': Color.fromRGBO(255, 124, 111, 1),
+    'Payment': Color.fromRGBO(0, 177, 103, 1),
+    'Return': Color.fromRGBO(43, 136, 216, 1),
+  };
+
   @override
   Widget build(BuildContext context) {
     return list.isEmpty
@@ -39,7 +55,7 @@ class ProductDetailsListWidget extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            setIconBasedOnPaymentType(index),
+                            setIconBasedOnPaymentType(productDetail),
                             8.horizontalSpace,
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -77,7 +93,7 @@ class ProductDetailsListWidget extends StatelessWidget {
                               textSize: 16.sp,
                               fontFamily: FontConstants.interSemiBold,
                               textColor: setAmountColorBasedOnPaymentType(
-                                index,
+                                productDetail,
                               ),
                             ),
                             LabelWidget(
@@ -130,19 +146,10 @@ class ProductDetailsListWidget extends StatelessWidget {
     }
   }
 
-  Widget setIconBasedOnPaymentType(int index) {
+  Widget setIconBasedOnPaymentType(ProductDetail productDetail) {
     const double iconSize = 42;
 
-    final Map<String, String> paymentTypeIcons = {
-      'Initial Stock': AppAssets.images.supplierIcon,
-      'Sale': AppAssets.images.sellsIcon,
-      'Purchase': AppAssets.images.supplierIcon,
-      'Payment': AppAssets.images.supplierIcon,
-      'Return': AppAssets.images.returnIcon,
-      'Refund': AppAssets.images.negativeRefundIcon,
-    };
-
-    final String? iconPath = paymentTypeIcons[list[index].paymentType];
+    final String? iconPath = _paymentTypeIcons[productDetail.paymentType];
 
     if (iconPath != null) {
       return Image.asset(iconPath, height: iconSize.h, width: iconSize.h);
@@ -151,15 +158,8 @@ class ProductDetailsListWidget extends StatelessWidget {
     return const SizedBox.shrink();
   }
 
-  Color setAmountColorBasedOnPaymentType(int index) {
-    const Map<String, Color> paymentTypeColors = {
-      'Initial Stock': Color.fromRGBO(0, 177, 103, 1),
-      'Sale': Color.fromRGBO(255, 124, 111, 1),
-      'Payment': Color.fromRGBO(0, 177, 103, 1),
-      'Return': Color.fromRGBO(43, 136, 216, 1),
-    };
-
-    return paymentTypeColors[list[index].paymentType] ??
+  Color setAmountColorBasedOnPaymentType(ProductDetail productDetail) {
+    return _paymentTypeColors[productDetail.paymentType] ??
         const Color.fromRGBO(43, 136, 216, 1);
   }
 

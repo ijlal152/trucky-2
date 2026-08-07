@@ -221,21 +221,16 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
 
   /// Recomputes each product's available stock from its transaction ledger so
   /// the product list always shows the live stock rather than the cached
-  /// snapshot.
+  /// snapshot. Ledger reads run in parallel to avoid a serial N+1 load.
   Future<List<Product>> _withLedgerStock(List<Product> products) async {
-    final updated = <Product>[];
-    for (final product in products) {
-      final id = product.id;
-      if (id == null) {
-        updated.add(product);
-        continue;
-      }
-      final details = await _detailsFor(id);
-      updated.add(
-        product.copyWith(availableStock: _availableStockFrom(details)),
-      );
-    }
-    return updated;
+    return Future.wait(
+      products.map((product) async {
+        final id = product.id;
+        if (id == null) return product;
+        final details = await _detailsFor(id);
+        return product.copyWith(availableStock: _availableStockFrom(details));
+      }),
+    );
   }
 
   /// Returns the product's transaction details, reusing the in-memory cache

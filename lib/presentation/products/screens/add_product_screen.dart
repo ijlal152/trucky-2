@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner_plus/flutter_barcode_scanner_plus.dart';
@@ -84,7 +85,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
     }
   }
 
-  void _addProduct() {
+  Future<void> _addProduct() async {
     setState(() {
       _isProductNameRequired = _productNameController.text.trim().isEmpty;
       _isPurchasePriceRequired = _purchasePriceController.text.trim().isEmpty;
@@ -97,6 +98,16 @@ class _AddProductScreenState extends State<AddProductScreen> {
       return;
     }
 
+    // Encode the image off the UI thread so large camera photos do not jank
+    // the form while the product is being saved.
+    String? productImage;
+    if (_productImage != null) {
+      final bytes = await _productImage!.readAsBytes();
+      productImage = await compute(ImageUtils.encodeImageBytes, bytes);
+    }
+
+    if (!mounted) return;
+
     context.read<ProductBloc>().add(
       AddProductEvent(
         productName: _productNameController.text.trim(),
@@ -105,12 +116,11 @@ class _AddProductScreenState extends State<AddProductScreen> {
         sellingPrice: double.tryParse(_sellingPriceController.text) ?? 0.0,
         initialQuantity: int.tryParse(_initialQtyController.text) ?? 0,
         quantityPerPackage: _qtyPerPackageController.text.trim(),
-        productImage: _productImage != null
-            ? ImageUtils.convertImageToBase64(img: _productImage!)
-            : null,
+        productImage: productImage,
       ),
     );
 
+    if (!mounted) return;
     context.pop();
   }
 

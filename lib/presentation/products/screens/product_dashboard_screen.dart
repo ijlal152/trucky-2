@@ -21,9 +21,18 @@ class ProductDashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final state = context.watch<ProductBloc>().state;
     final bloc = context.read<ProductBloc>();
-    final selectedProduct = state.selectedProduct;
+    // Narrow subscriptions so the dashboard only rebuilds when the rendered
+    // fields change (the bloc is app-wide).
+    final selectedProduct = context.select<ProductBloc, Product?>(
+      (b) => b.state.selectedProduct,
+    );
+    final hideDashboardTotalBalance = context.select<ProductBloc, bool>(
+      (b) => b.state.hideDashboardTotalBalance,
+    );
+    final productDetailsList = context.select<ProductBloc, List<ProductDetail>>(
+      (b) => b.state.productDetailsList,
+    );
 
     return CustomScaffold(
       extendBodyBehindAppBar: true,
@@ -37,7 +46,7 @@ class ProductDashboardScreen extends StatelessWidget {
             child: GestureDetector(
               onTap: () =>
                   bloc.add(const ToggleDashboardBalanceVisibilityEvent()),
-              child: !state.hideDashboardTotalBalance
+              child: !hideDashboardTotalBalance
                   ? Image.asset(
                       AppAssets.images.visibilityOn,
                       height: 15.h,
@@ -89,7 +98,7 @@ class ProductDashboardScreen extends StatelessWidget {
                     filterIconOnTap: () {},
                     searchIconOnTap: () {},
                     contentWidget: ProductDetailsListWidget(
-                      list: state.productDetailsList,
+                      list: productDetailsList,
                     ),
                   ),
                 ),

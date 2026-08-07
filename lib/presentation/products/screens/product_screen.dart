@@ -62,8 +62,18 @@ class _ProductView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final state = context.watch<ProductBloc>().state;
     final bloc = context.read<ProductBloc>();
+    // Narrow subscriptions so the screen only rebuilds when the fields it
+    // renders actually change (the bloc is app-wide).
+    final hideProductTotalBalance = context.select<ProductBloc, bool>(
+      (b) => b.state.hideProductTotalBalance,
+    );
+    final totalStockValue = context.select<ProductBloc, double>(
+      (b) => b.state.totalStockValue,
+    );
+    final products = context.select<ProductBloc, List<Product>>(
+      (b) => b.state.products,
+    );
 
     return CustomScaffold(
       extendBodyBehindAppBar: true,
@@ -77,7 +87,7 @@ class _ProductView extends StatelessWidget {
             child: GestureDetector(
               onTap: () =>
                   bloc.add(const ToggleProductBalanceVisibilityEvent()),
-              child: state.hideProductTotalBalance
+              child: hideProductTotalBalance
                   ? Image.asset(
                       AppAssets.images.visibilityOn,
                       height: 15.h,
@@ -103,11 +113,11 @@ class _ProductView extends StatelessWidget {
               children: [
                 TotalBalanceWidget(
                   title: 'Total Stock Value',
-                  hideBalance: state.hideProductTotalBalance,
+                  hideBalance: hideProductTotalBalance,
                   balance: NumberFormater.formatAmount(
-                    state.totalStockValue.toString(),
+                    totalStockValue.toString(),
                     showCurrency: false,
-                    showAmount: state.hideProductTotalBalance,
+                    showAmount: hideProductTotalBalance,
                   ),
                 ),
                 40.verticalSpace,
@@ -118,8 +128,8 @@ class _ProductView extends StatelessWidget {
                     searchIconOnTap: () {},
                     isBarCodeEnabled: true,
                     contentWidget: ProductList(
-                      list: state.products,
-                      showBalance: state.hideProductTotalBalance,
+                      list: products,
+                      showBalance: hideProductTotalBalance,
                       scrollController: scrollController,
                       onProductTap: (String productID) {
                         bloc.add(SelectProductEvent(id: productID));

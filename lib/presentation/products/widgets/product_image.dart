@@ -6,7 +6,19 @@ import 'package:trucky/core/constants/app_assets.dart';
 import 'package:trucky/core/utils/image_utils.dart';
 
 /// In-memory cache of decoded product images keyed by their base64 string.
-final Map<String, Uint8List> _base64ImageCache = {};
+/// Bounded to avoid unbounded memory growth on large catalogs.
+final Map<String, Uint8List> _base64ImageCache = <String, Uint8List>{};
+
+/// Maximum number of decoded images kept in memory.
+const int _maxCacheEntries = 64;
+
+void _cacheImage(String key, Uint8List bytes) {
+  if (_base64ImageCache.length >= _maxCacheEntries) {
+    // Evict the oldest entry (insertion order) to keep the cache bounded.
+    _base64ImageCache.remove(_base64ImageCache.keys.first);
+  }
+  _base64ImageCache[key] = bytes;
+}
 
 Widget buildProductImage({
   required String? base64Image,
@@ -28,7 +40,7 @@ Widget buildProductImage({
     if (bytes == null) {
       return const Icon(Icons.image_not_supported, color: Colors.grey);
     }
-    _base64ImageCache[base64Image] = bytes;
+    _cacheImage(base64Image, bytes);
   }
 
   return _buildImageWidget(bytes, imgHeight, imgWidth, isRoundImg);

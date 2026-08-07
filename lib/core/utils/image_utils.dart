@@ -9,6 +9,10 @@ abstract final class ImageUtils {
     return base64Encode(imageBytes);
   }
 
+  /// Base64-encodes raw image bytes. Top-level so it can run on a background
+  /// isolate via `compute` (avoids blocking the UI thread).
+  static String encodeImageBytes(Uint8List bytes) => base64Encode(bytes);
+
   static Uint8List convertBase64ToImage({required String img}) {
     return base64Decode(img);
   }
