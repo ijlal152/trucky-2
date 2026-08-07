@@ -22,8 +22,8 @@ class ClientSuppState {
   });
 
   final EntityType entityType;
-  final List<ClientSuppEntity> clients;
-  final List<ClientSuppEntity> suppliers;
+  final List<ClientSupp> clients;
+  final List<ClientSupp> suppliers;
   final List<ClientSuppTxn> allTransactions;
 
   /// Full transaction lists per entity type (used for balance calcs).
@@ -32,7 +32,7 @@ class ClientSuppState {
 
   /// Transactions displayed for the selected client/supplier (dashboard).
   final List<ClientSuppTxn> selectedCSTxns;
-  final ClientSuppEntity? selectedCS;
+  final ClientSupp? selectedCS;
   final int selectedIndex;
   final SortType sortType;
   final bool showSearchField;
@@ -41,11 +41,11 @@ class ClientSuppState {
   final String searchQuery;
   final double homeBalance;
 
-  List<ClientSuppEntity> get currentEntityList =>
+  List<ClientSupp> get currentEntityList =>
       entityType == EntityType.client ? clients : suppliers;
 
   /// Entities filtered by the active search query (name or phone).
-  List<ClientSuppEntity> get searchResults {
+  List<ClientSupp> get searchResults {
     final query = searchQuery.trim().toLowerCase();
     if (query.isEmpty) return currentEntityList;
     return currentEntityList.where((entity) {
@@ -72,13 +72,13 @@ class ClientSuppState {
 
   ClientSuppState copyWith({
     EntityType? entityType,
-    List<ClientSuppEntity>? clients,
-    List<ClientSuppEntity>? suppliers,
+    List<ClientSupp>? clients,
+    List<ClientSupp>? suppliers,
     List<ClientSuppTxn>? allTransactions,
     List<ClientSuppTxn>? clientTxns,
     List<ClientSuppTxn>? supplierTxns,
     List<ClientSuppTxn>? selectedCSTxns,
-    ClientSuppEntity? selectedCS,
+    ClientSupp? selectedCS,
     int? selectedIndex,
     SortType? sortType,
     bool? showSearchField,

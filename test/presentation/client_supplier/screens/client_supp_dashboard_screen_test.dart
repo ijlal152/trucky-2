@@ -4,6 +4,7 @@ import 'package:trucky/presentation/client_supplier/bloc/client_supp_bloc.dart';
 import 'package:trucky/presentation/client_supplier/bloc/client_supp_event.dart';
 
 import '../../../helpers/client_supp_test_harness.dart';
+import '../../../helpers/fake_client_supp_repository.dart';
 
 void main() {
   group('ClientSuppDashboardScreen', () {
@@ -11,7 +12,7 @@ void main() {
     /// mirroring real navigation so pop() has a route to return to.
     Future<void> pumpToDashboard(WidgetTester tester,
         {ClientSuppBloc? bloc}) async {
-      final b = bloc ?? ClientSuppBloc();
+      final b = bloc ?? buildClientSuppBloc();
       b.add(const LoadClientSuppEvent());
       await tester.pump();
 

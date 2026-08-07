@@ -72,7 +72,7 @@ class PaymentDataModel {
   });
 
   final PaymentTransactionType paymentType;
-  final ClientSuppEntity? clientSupplier;
+  final ClientSupp? clientSupplier;
   final double oldBalance;
   final double currentOrderAmount;
   final double paymentAmount;
@@ -122,7 +122,7 @@ class PaymentDataModel {
   }
 
   factory PaymentDataModel.fromTransaction({
-    required ClientSuppEntity? clientSupplier,
+    required ClientSupp? clientSupplier,
     required double oldBalance,
     required double totalAmount,
     required TransactionType transactionType,
@@ -144,7 +144,7 @@ class PaymentDataModel {
   }
 
   factory PaymentDataModel.directPayment({
-    required ClientSuppEntity? clientSupplier,
+    required ClientSupp? clientSupplier,
     required double oldBalance,
   }) {
     return PaymentDataModel(
@@ -155,7 +155,7 @@ class PaymentDataModel {
   }
 
   factory PaymentDataModel.refund({
-    required ClientSuppEntity? clientSupplier,
+    required ClientSupp? clientSupplier,
     required double oldBalance,
   }) {
     return PaymentDataModel(

@@ -20,7 +20,7 @@ class ClientSuppCommonDashboardView extends StatelessWidget {
   final String totalBalance;
   final List<ClientSuppTxn> list;
   final ScrollController? scrollController;
-  final ClientSuppEntity? selectedEntity;
+  final ClientSupp? selectedEntity;
   final List<PaymentTypeSelectorModel> paymentTypes;
   final void Function(int)? onSelectedPaymentType;
   final int selectedPaymentTypeIndex;

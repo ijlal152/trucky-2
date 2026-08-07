@@ -20,7 +20,7 @@ class SalePurchaseState {
   final EntityType entityType;
   final TransactionType transactionType;
   final OperationType operationType;
-  final ClientSuppEntity? selectedClientSupp;
+  final ClientSupp? selectedClientSupp;
   final List<CartItem> selectedProdList;
   final int selectedTileIndex;
   final CartItem? editingItem;
@@ -47,7 +47,7 @@ class SalePurchaseState {
     EntityType? entityType,
     TransactionType? transactionType,
     OperationType? operationType,
-    ClientSuppEntity? selectedClientSupp,
+    ClientSupp? selectedClientSupp,
     List<CartItem>? selectedProdList,
     int? selectedTileIndex,
     CartItem? editingItem,

@@ -4,6 +4,8 @@ import 'package:trucky/presentation/client_supplier/bloc/client_supp_bloc.dart';
 import 'package:trucky/presentation/client_supplier/bloc/client_supp_event.dart';
 import 'package:trucky/presentation/client_supplier/bloc/client_supp_models.dart';
 
+import '../../../helpers/fake_client_supp_repository.dart';
+
 /// Flushes the bloc's microtask queue so synchronous handlers complete.
 Future<void> pumpEventQueue() async {
   for (var i = 0; i < 10; i++) {
@@ -18,7 +20,7 @@ void main() {
     late ClientSuppBloc bloc;
 
     setUp(() {
-      bloc = ClientSuppBloc();
+      bloc = buildClientSuppBloc();
     });
 
     tearDown(() {

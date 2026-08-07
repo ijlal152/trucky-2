@@ -12,6 +12,8 @@ import 'package:trucky/presentation/sales_purchases/bloc/sale_purchase_event.dar
 import 'package:trucky/presentation/sales_purchases/bloc/sale_purchase_models.dart';
 import 'package:trucky/presentation/sales_purchases/sale_purchase_persistence.dart';
 
+import '../../helpers/fake_client_supp_repository.dart';
+
 /// Flushes the bloc's microtask queue so synchronous handlers complete.
 Future<void> pumpEventQueue() async {
   for (var i = 0; i < 10; i++) {
@@ -337,7 +339,7 @@ void main() {
     late Widget app;
 
     setUp(() {
-      clientSuppBloc = ClientSuppBloc();
+      clientSuppBloc = buildClientSuppBloc();
       productBloc = ProductBloc();
       app = MultiBlocProvider(
         providers: [
@@ -510,8 +512,8 @@ void main() {
   });
 }
 
-ClientSuppEntity _clientEntity({String role = 'client'}) {
-  return ClientSuppEntity(
+ClientSupp _clientEntity({String role = 'client'}) {
+  return ClientSupp(
     id: 1,
     name: 'Ahmed Benali',
     role: role,

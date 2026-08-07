@@ -4,6 +4,7 @@ import 'package:trucky/presentation/client_supplier/bloc/client_supp_bloc.dart';
 import 'package:trucky/presentation/client_supplier/bloc/client_supp_event.dart';
 
 import '../../../helpers/client_supp_test_harness.dart';
+import '../../../helpers/fake_client_supp_repository.dart';
 
 void main() {
   group('AddClientSuppScreen', () {
@@ -13,7 +14,7 @@ void main() {
     /// successful add can pop back to a real route.
     Future<void> pumpToAddScreen(WidgetTester tester,
         {ClientSuppBloc? bloc}) async {
-      final b = bloc ?? ClientSuppBloc();
+      final b = bloc ?? buildClientSuppBloc();
       b.add(const LoadClientSuppEvent());
       await tester.pump();
 
@@ -34,7 +35,7 @@ void main() {
     });
 
     testWidgets('adds a client when the form is valid', (tester) async {
-      final bloc = ClientSuppBloc();
+      final bloc = buildClientSuppBloc();
       await pumpToAddScreen(tester, bloc: bloc);
 
       final fields = find.byType(TextFormField);
@@ -55,7 +56,7 @@ void main() {
 
     testWidgets('does not add a client with a duplicate name',
         (tester) async {
-      final bloc = ClientSuppBloc();
+      final bloc = buildClientSuppBloc();
       await pumpToAddScreen(tester, bloc: bloc);
 
       final fields = find.byType(TextFormField);

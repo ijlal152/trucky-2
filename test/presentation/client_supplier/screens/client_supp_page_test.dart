@@ -3,10 +3,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:trucky/core/constants/app_assets.dart';
 import 'package:trucky/core/constants/enums.dart';
 import 'package:trucky/core/constants/route_paths.dart';
-import 'package:trucky/presentation/client_supplier/bloc/client_supp_bloc.dart';
 import 'package:trucky/presentation/client_supplier/bloc/client_supp_event.dart';
 
 import '../../../helpers/client_supp_test_harness.dart';
+import '../../../helpers/fake_client_supp_repository.dart';
 
 Finder imageAsset(String assetName) {
   return find.byWidgetPredicate(
@@ -32,7 +32,7 @@ void main() {
 
     testWidgets('loads suppliers when the supplier tab is active',
         (tester) async {
-      final bloc = ClientSuppBloc();
+      final bloc = buildClientSuppBloc();
       bloc.add(const SetEntityTypeEvent(entityType: EntityType.supplier));
       await tester.pump();
 

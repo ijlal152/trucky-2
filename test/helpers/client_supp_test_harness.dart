@@ -9,6 +9,8 @@ import 'package:trucky/presentation/client_supplier/screens/add_client_supp_scre
 import 'package:trucky/presentation/client_supplier/screens/client_supp_dashboard_screen.dart';
 import 'package:trucky/presentation/client_supplier/screens/client_supp_page.dart';
 
+import 'fake_client_supp_repository.dart';
+
 /// Builds a router with the clients/suppliers routes and a stub home route.
 GoRouter clientSuppRouter({String initialLocation = RoutePaths.clients}) {
   return GoRouter(
@@ -56,7 +58,7 @@ Future<void> pumpRouterWithClientSuppApp(
       minTextAdapt: true,
       fontSizeResolver: FontSizeResolvers.height,
       builder: (context, child) => BlocProvider<ClientSuppBloc>(
-        create: (_) => bloc ?? ClientSuppBloc(),
+        create: (_) => bloc ?? buildClientSuppBloc(),
         child: MaterialApp.router(
           routerConfig: clientSuppRouter(initialLocation: initialLocation),
           debugShowCheckedModeBanner: false,

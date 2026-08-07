@@ -67,9 +67,8 @@ class _ClientSuppPageState extends State<ClientSuppPage>
           isBalanceVisible: state.isHomeBalanceVisible,
           focusNode: searchFocusNode,
           searchController: searchController,
-          onToggleBalance: () => bloc.add(
-            const ToggleHomeBalanceVisibilityEvent(),
-          ),
+          onToggleBalance: () =>
+              bloc.add(const ToggleHomeBalanceVisibilityEvent()),
           showObsecureIcon: true,
           showSearchField: state.showSearchField,
           searchIconOnTap: () {
@@ -78,9 +77,7 @@ class _ClientSuppPageState extends State<ClientSuppPage>
             } else {
               searchFocusNode.requestFocus();
             }
-            bloc.add(
-              ToggleSearchFieldEvent(isVisible: !state.showSearchField),
-            );
+            bloc.add(ToggleSearchFieldEvent(isVisible: !state.showSearchField));
           },
           onChanged: (value) => bloc.add(SearchClientSuppEvent(query: value)),
           sortType: Constants.sortTypeLabel(state.sortType),
@@ -106,8 +103,8 @@ class _ClientSuppPageState extends State<ClientSuppPage>
                   controller: fabCont.scrollController,
                   itemBuilder: (ctx, index) {
                     final clientSupp = getCurrentList(state)[index];
-                    final currentBalance = ClientSuppTxn
-                        .calculateCurrentBalance(
+                    final currentBalance =
+                        ClientSuppTxn.calculateCurrentBalance(
                           clientSupplierId: clientSupp.id ?? -1,
                           allTransactions: state.currentTxnList,
                         );
@@ -132,7 +129,7 @@ class _ClientSuppPageState extends State<ClientSuppPage>
     );
   }
 
-  List<ClientSuppEntity> getCurrentList(ClientSuppState state) {
+  List<ClientSupp> getCurrentList(ClientSuppState state) {
     if (state.searchQuery.trim().isNotEmpty) {
       return state.searchResults;
     }

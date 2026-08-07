@@ -22,7 +22,7 @@ class InitSalePurchaseEvent extends SalePurchaseEvent {
 /// Picks the client/supplier the transaction is recorded against.
 class ChooseClientSuppEvent extends SalePurchaseEvent {
   const ChooseClientSuppEvent({required this.entity});
-  final ClientSuppEntity entity;
+  final ClientSupp entity;
 }
 
 /// Toggles a product in the cart (out-of-stock products are ignored).
@@ -91,7 +91,7 @@ class BeginEditCartEvent extends SalePurchaseEvent {
   });
 
   final ClientSuppTxn txn;
-  final ClientSuppEntity clientSupp;
+  final ClientSupp clientSupp;
   final List<CartItem> items;
 }
 
@@ -100,5 +100,5 @@ class BeginEditPaymentEvent extends SalePurchaseEvent {
   const BeginEditPaymentEvent({required this.txn, required this.clientSupp});
 
   final ClientSuppTxn txn;
-  final ClientSuppEntity clientSupp;
+  final ClientSupp clientSupp;
 }

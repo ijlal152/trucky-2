@@ -1,13 +1,40 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trucky/core/constants/enums.dart';
+import 'package:trucky/core/di/injector.dart';
+import 'package:trucky/core/usecase/usecase.dart';
+import 'package:trucky/domain/entities/client_supp_entity.dart';
+import 'package:trucky/domain/entities/client_supp_txn_entity.dart';
+import 'package:trucky/domain/usecases/add_client_supp_txn_usecase.dart';
+import 'package:trucky/domain/usecases/add_client_supp_usecase.dart';
+import 'package:trucky/domain/usecases/delete_client_supp_txn_usecase.dart';
+import 'package:trucky/domain/usecases/fetch_all_client_supp_txn_usecase.dart';
+import 'package:trucky/domain/usecases/fetch_all_client_supp_usecase.dart';
 import 'package:trucky/presentation/client_supplier/bloc/client_supp_event.dart';
 import 'package:trucky/presentation/client_supplier/bloc/client_supp_models.dart';
 import 'package:trucky/presentation/client_supplier/bloc/client_supp_state.dart';
 import 'package:trucky/presentation/widgets/custom_snackbar.dart';
 
 /// Holds clients/suppliers state and exposes mutations for the UI.
+///
+/// All reads/writes are persisted to the local SQLite database through the
+/// [ClientSuppRepository] use cases; the bloc keeps an in-memory projection
+/// for the UI.
 class ClientSuppBloc extends Bloc<ClientSuppEvent, ClientSuppState> {
-  ClientSuppBloc() : super(const ClientSuppState()) {
+  ClientSuppBloc({
+    FetchAllClientSuppUsecase? fetchAllClientSupps,
+    FetchAllClientSuppTxnUsecase? fetchAllClientSuppTxns,
+    AddClientSuppUsecase? addClientSupp,
+    AddClientSuppTxnUsecase? addClientSuppTxn,
+    DeleteClientSuppTxnUsecase? deleteClientSuppTxn,
+  }) : _fetchAllClientSupps =
+           fetchAllClientSupps ?? Injector.fetchAllClientSuppUsecase,
+       _fetchAllClientSuppTxns =
+           fetchAllClientSuppTxns ?? Injector.fetchAllClientSuppTxnUsecase,
+       _addClientSupp = addClientSupp ?? Injector.addClientSuppUsecase,
+       _addClientSuppTxn = addClientSuppTxn ?? Injector.addClientSuppTxnUsecase,
+       _deleteClientSuppTxn =
+           deleteClientSuppTxn ?? Injector.deleteClientSuppTxnUsecase,
+       super(const ClientSuppState()) {
     on<LoadClientSuppEvent>(_onLoad);
     on<SetEntityTypeEvent>(_onSetEntityType);
     on<ToggleHomeBalanceVisibilityEvent>(_onToggleHomeBalance);
@@ -21,86 +48,45 @@ class ClientSuppBloc extends Bloc<ClientSuppEvent, ClientSuppState> {
     on<RemoveTransactionsEvent>(_onRemoveTransactions);
   }
 
-  int _nextClientId = 1;
-  int _nextSupplierId = 1;
-  int _nextTxnId = 1;
+  final FetchAllClientSuppUsecase _fetchAllClientSupps;
+  final FetchAllClientSuppTxnUsecase _fetchAllClientSuppTxns;
+  final AddClientSuppUsecase _addClientSupp;
+  final AddClientSuppTxnUsecase _addClientSuppTxn;
+  final DeleteClientSuppTxnUsecase _deleteClientSuppTxn;
 
-  void _onLoad(LoadClientSuppEvent event, Emitter<ClientSuppState> emit) {
-    final now = DateTime.now();
+  /// No auth/user module exists yet; the schema requires a `user_id`.
+  static const int _defaultUserId = 1;
 
-    final clients = List<ClientSuppEntity>.generate(
-      4,
-      (index) => ClientSuppEntity(
-        id: _nextClientId++,
-        name: _clientNames[index],
-        role: EntityType.client.name,
-        phoneNumber: '055${1000000 + index * 111111}',
-        gpsLocation: '36.710382, 3.199882',
-        createdAt: now.subtract(Duration(days: index * 3)),
-        updatedAt: now.subtract(Duration(days: index)),
-      ),
+  Future<void> _onLoad(
+    LoadClientSuppEvent event,
+    Emitter<ClientSuppState> emit,
+  ) async {
+    final entitiesResult = await _fetchAllClientSupps(const NoParams());
+    final txnsResult = await _fetchAllClientSuppTxns(const NoParams());
+
+    final entities = entitiesResult.when(
+      success: (data) => data,
+      failure: (_) => <ClientSuppEntity>[],
+    );
+    final txns = txnsResult.when(
+      success: (data) => data,
+      failure: (_) => <ClientSuppTxnEntity>[],
     );
 
-    final suppliers = List<ClientSuppEntity>.generate(
-      3,
-      (index) => ClientSuppEntity(
-        id: _nextSupplierId++,
-        name: _supplierNames[index],
-        role: EntityType.supplier.name,
-        phoneNumber: '077${2000000 + index * 222222}',
-        gpsLocation: '36.7525, 3.0420',
-        createdAt: now.subtract(Duration(days: index * 2)),
-        updatedAt: now.subtract(Duration(days: index)),
-      ),
-    );
+    final clients = entities
+        .where((e) => e.role == EntityType.client.name)
+        .map(ClientSupp.fromEntity)
+        .toList();
+    final suppliers = entities
+        .where((e) => e.role == EntityType.supplier.name)
+        .map(ClientSupp.fromEntity)
+        .toList();
 
-    final transactions = <ClientSuppTxn>[
-      _buildTxn(
-        clientSuppId: clients[0].id!,
-        name: clients[0].name,
-        amount: '1200',
-        paymentType: 'Initial Balance',
-        daysAgo: 10,
-        role: EntityType.client.name,
-      ),
-      _buildTxn(
-        clientSuppId: clients[1].id!,
-        name: clients[1].name,
-        amount: '800',
-        paymentType: 'Initial Balance',
-        daysAgo: 8,
-        role: EntityType.client.name,
-      ),
-      _buildTxn(
-        clientSuppId: suppliers[0].id!,
-        name: suppliers[0].name,
-        amount: '2000',
-        paymentType: 'Initial Balance',
-        daysAgo: 9,
-        role: EntityType.supplier.name,
-      ),
-      _buildTxn(
-        clientSuppId: clients[0].id!,
-        name: clients[0].name,
-        amount: '300',
-        paymentType: 'Payment',
-        daysAgo: 2,
-        role: EntityType.client.name,
-      ),
-      _buildTxn(
-        clientSuppId: suppliers[1].id!,
-        name: suppliers[1].name,
-        amount: '500',
-        paymentType: 'Initial Balance',
-        daysAgo: 6,
-        role: EntityType.supplier.name,
-      ),
-    ];
-
-    final clientTxns = transactions
+    final allTransactions = txns.map(ClientSuppTxn.fromEntity).toList();
+    final clientTxns = allTransactions
         .where((t) => t.role == EntityType.client.name)
         .toList();
-    final supplierTxns = transactions
+    final supplierTxns = allTransactions
         .where((t) => t.role == EntityType.supplier.name)
         .toList();
 
@@ -111,7 +97,7 @@ class ClientSuppBloc extends Bloc<ClientSuppEvent, ClientSuppState> {
         entityType: state.entityType,
         clients: clients,
         suppliers: suppliers,
-        allTransactions: transactions,
+        allTransactions: allTransactions,
         clientTxns: clientTxns,
         supplierTxns: supplierTxns,
         selectedCSTxns: const [],
@@ -126,7 +112,10 @@ class ClientSuppBloc extends Bloc<ClientSuppEvent, ClientSuppState> {
     );
   }
 
-  void _onSetEntityType(SetEntityTypeEvent event, Emitter<ClientSuppState> emit) {
+  void _onSetEntityType(
+    SetEntityTypeEvent event,
+    Emitter<ClientSuppState> emit,
+  ) {
     emit(
       state.copyWith(
         entityType: event.entityType,
@@ -172,10 +161,12 @@ class ClientSuppBloc extends Bloc<ClientSuppEvent, ClientSuppState> {
     final sortType = SortType.values[event.index];
     final sorted = _applySort(List.from(state.currentEntityList), sortType);
 
-    final clients =
-        state.entityType == EntityType.client ? sorted : state.clients;
-    final suppliers =
-        state.entityType == EntityType.supplier ? sorted : state.suppliers;
+    final clients = state.entityType == EntityType.client
+        ? sorted
+        : state.clients;
+    final suppliers = state.entityType == EntityType.supplier
+        ? sorted
+        : state.suppliers;
 
     emit(
       state.copyWith(
@@ -210,7 +201,10 @@ class ClientSuppBloc extends Bloc<ClientSuppEvent, ClientSuppState> {
     );
   }
 
-  void _onAdd(AddClientSuppEvent event, Emitter<ClientSuppState> emit) {
+  Future<void> _onAdd(
+    AddClientSuppEvent event,
+    Emitter<ClientSuppState> emit,
+  ) async {
     final name = event.name.trim();
     if (name.isEmpty) {
       emit(state.copyWith(isNameRequired: true));
@@ -233,88 +227,107 @@ class ClientSuppBloc extends Bloc<ClientSuppEvent, ClientSuppState> {
     }
 
     final now = DateTime.now();
-    final isClient = state.entityType == EntityType.client;
-
     final entity = ClientSuppEntity(
-      id: isClient ? _nextClientId++ : _nextSupplierId++,
+      userId: _defaultUserId,
       name: name,
       role: state.entityType.name,
-      phoneNumber: event.phoneNumber,
-      gpsLocation: event.gpsLocation,
+      phoneNumber: event.phoneNumber.isEmpty ? null : event.phoneNumber,
+      gpsLocation: event.gpsLocation.isEmpty ? null : event.gpsLocation,
       createdAt: now,
       updatedAt: now,
     );
 
-    final initialTxn = ClientSuppTxn(
-      id: _nextTxnId++,
-      clientSuppId: entity.id!,
-      transactionId: 'txn-${now.microsecondsSinceEpoch}',
-      clientSupplierName: name,
-      role: state.entityType.name,
-      txnData: now,
-      amount: event.initialBalance.isEmpty ? '0' : event.initialBalance,
-      paymentType: 'Initial Balance',
+    final result = await _addClientSupp(entity);
+    final id = result.when(
+      success: (id) => id,
+      failure: (e) {
+        MySnackbarMessage.showErrorMessage(title: 'Error!', message: e.message);
+        return -1;
+      },
     );
+    if (id < 0) return;
 
-    final allTxns = [...state.allTransactions, initialTxn];
-    final clients = isClient ? [...state.clients, entity] : state.clients;
-    final suppliers = isClient ? state.suppliers : [...state.suppliers, entity];
-    final clientTxns =
-        isClient ? [...state.clientTxns, initialTxn] : state.clientTxns;
-    final supplierTxns =
-        isClient ? state.supplierTxns : [...state.supplierTxns, initialTxn];
-
-    emit(
-      state.copyWith(
-        clients: clients,
-        suppliers: suppliers,
-        allTransactions: allTxns,
-        clientTxns: clientTxns,
-        supplierTxns: supplierTxns,
-        homeBalance: _calcHomeBalance(
-          clients,
-          suppliers,
-          clientTxns,
-          supplierTxns,
-          state.entityType,
-        ),
-      ),
-    );
+    final initialBalance = event.initialBalance.trim();
+    if (initialBalance.isNotEmpty && double.tryParse(initialBalance) != 0) {
+      final txn = ClientSuppTxnEntity(
+        userId: _defaultUserId,
+        clientSuppId: id,
+        transactionId: 'txn-${now.microsecondsSinceEpoch}',
+        clientSupplierName: name,
+        role: state.entityType.name,
+        txnData: now,
+        amount: initialBalance,
+        paymentType: 'Initial Balance',
+      );
+      await _addClientSuppTxn(txn);
+    }
+    await _onLoad(const LoadClientSuppEvent(), emit);
   }
 
-  void _onAddTransaction(
+  Future<void> _onAddTransaction(
     AddTransactionEvent event,
     Emitter<ClientSuppState> emit,
-  ) {
-    final txn = event.txn.id == null
-        ? event.txn.copyWith(id: _nextTxnId++)
-        : event.txn;
-    final isClient = txn.role == EntityType.client.name;
+  ) async {
+    final txn = event.txn;
+    final entity = ClientSuppTxnEntity(
+      userId: _defaultUserId,
+      clientSuppId: txn.clientSuppId,
+      transactionId: txn.transactionId,
+      clientSupplierName: txn.clientSupplierName,
+      role: txn.role,
+      txnData: txn.txnData,
+      discountAmount: txn.discountAmount,
+      amount: txn.amount,
+      paymentType: txn.paymentType,
+      note: txn.note,
+    );
 
-    final clientTxns = isClient ? [...state.clientTxns, txn] : state.clientTxns;
-    final supplierTxns =
-        isClient ? state.supplierTxns : [...state.supplierTxns, txn];
+    final result = await _addClientSuppTxn(entity);
+    result.when(
+      success: (id) {
+        final persisted = txn.copyWith(id: id);
+        final isClient = persisted.role == EntityType.client.name;
+        final clientTxns = isClient
+            ? [...state.clientTxns, persisted]
+            : state.clientTxns;
+        final supplierTxns = isClient
+            ? state.supplierTxns
+            : [...state.supplierTxns, persisted];
 
-    emit(
-      state.copyWith(
-        allTransactions: [...state.allTransactions, txn],
-        clientTxns: clientTxns,
-        supplierTxns: supplierTxns,
-        homeBalance: _calcHomeBalance(
-          state.clients,
-          state.suppliers,
-          clientTxns,
-          supplierTxns,
-          state.entityType,
-        ),
-      ),
+        emit(
+          state.copyWith(
+            allTransactions: [...state.allTransactions, persisted],
+            clientTxns: clientTxns,
+            supplierTxns: supplierTxns,
+            homeBalance: _calcHomeBalance(
+              state.clients,
+              state.suppliers,
+              clientTxns,
+              supplierTxns,
+              state.entityType,
+            ),
+          ),
+        );
+      },
+      failure: (e) {
+        MySnackbarMessage.showErrorMessage(title: 'Error!', message: e.message);
+      },
     );
   }
 
-  void _onRemoveTransactions(
+  Future<void> _onRemoveTransactions(
     RemoveTransactionsEvent event,
     Emitter<ClientSuppState> emit,
-  ) {
+  ) async {
+    final toDelete = state.allTransactions
+        .where((t) => t.transactionId == event.transactionId)
+        .toList();
+    for (final t in toDelete) {
+      if (t.id != null) {
+        await _deleteClientSuppTxn(t.id!);
+      }
+    }
+
     final remaining = state.allTransactions
         .where((t) => t.transactionId != event.transactionId)
         .toList();
@@ -360,12 +373,7 @@ class ClientSuppBloc extends Bloc<ClientSuppEvent, ClientSuppState> {
         ? all
         : all.where((t) => _matchesPaymentType(t, paymentType)).toList();
 
-    emit(
-      state.copyWith(
-        selectedCSTxns: filtered,
-        selectedIndex: event.index,
-      ),
-    );
+    emit(state.copyWith(selectedCSTxns: filtered, selectedIndex: event.index));
   }
 
   /// Sorts transactions newest-first, matching how the old app displayed
@@ -396,30 +404,7 @@ class ClientSuppBloc extends Bloc<ClientSuppEvent, ClientSuppState> {
     }
   }
 
-  ClientSuppTxn _buildTxn({
-    required int clientSuppId,
-    required String name,
-    required String amount,
-    required String paymentType,
-    required int daysAgo,
-    required String role,
-  }) {
-    return ClientSuppTxn(
-      id: _nextTxnId++,
-      clientSuppId: clientSuppId,
-      transactionId: 'txn-$_nextTxnId',
-      clientSupplierName: name,
-      role: role,
-      txnData: DateTime.now().subtract(Duration(days: daysAgo)),
-      amount: amount,
-      paymentType: paymentType,
-    );
-  }
-
-  List<ClientSuppEntity> _applySort(
-    List<ClientSuppEntity> list,
-    SortType sortType,
-  ) {
+  List<ClientSupp> _applySort(List<ClientSupp> list, SortType sortType) {
     switch (sortType) {
       case SortType.ascending:
         list.sort((a, b) => a.name.compareTo(b.name));
@@ -462,8 +447,8 @@ class ClientSuppBloc extends Bloc<ClientSuppEvent, ClientSuppState> {
   }
 
   double _calcHomeBalance(
-    List<ClientSuppEntity> clients,
-    List<ClientSuppEntity> suppliers,
+    List<ClientSupp> clients,
+    List<ClientSupp> suppliers,
     List<ClientSuppTxn> clientTxns,
     List<ClientSuppTxn> supplierTxns,
     EntityType entityType,
@@ -479,24 +464,11 @@ class ClientSuppBloc extends Bloc<ClientSuppEvent, ClientSuppState> {
       return sum + balance;
     });
   }
-
-  static const List<String> _clientNames = [
-    'Ahmed Benali',
-    'Sara Haddad',
-    'Karim Meziane',
-    'Lina Bouzid',
-  ];
-
-  static const List<String> _supplierNames = [
-    'Global Traders',
-    'Algeria Auto Parts',
-    'Mediterranean Supply',
-  ];
 }
 
 /// Helper to compute an entity balance within the current bloc state.
 class ClientSuppEntityBalance {
-  static double getBalance(ClientSuppEntity entity, ClientSuppState state) {
+  static double getBalance(ClientSupp entity, ClientSuppState state) {
     return ClientSuppTxn.calculateCurrentBalance(
       clientSupplierId: entity.id ?? -1,
       allTransactions: state.currentTxnList,

@@ -1,8 +1,10 @@
+import 'package:trucky/domain/entities/client_supp_entity.dart';
+import 'package:trucky/domain/entities/client_supp_txn_entity.dart';
 import 'package:trucky/presentation/products/bloc/product_models.dart';
 
 /// Model representing a Client or Supplier.
-class ClientSuppEntity {
-  const ClientSuppEntity({
+class ClientSupp {
+  const ClientSupp({
     this.id,
     required this.name,
     required this.role,
@@ -22,8 +24,8 @@ class ClientSuppEntity {
   final DateTime? updatedAt;
   final List<ClientSuppTxn> transactions;
 
-  factory ClientSuppEntity.empty() {
-    return ClientSuppEntity(
+  factory ClientSupp.empty() {
+    return ClientSupp(
       id: null,
       name: '',
       role: '',
@@ -35,7 +37,19 @@ class ClientSuppEntity {
     );
   }
 
-  ClientSuppEntity copyWith({
+  factory ClientSupp.fromEntity(ClientSuppEntity entity) {
+    return ClientSupp(
+      id: entity.id,
+      name: entity.name,
+      role: entity.role,
+      phoneNumber: entity.phoneNumber ?? '',
+      gpsLocation: entity.gpsLocation ?? '',
+      createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt,
+    );
+  }
+
+  ClientSupp copyWith({
     int? id,
     String? name,
     String? role,
@@ -45,7 +59,7 @@ class ClientSuppEntity {
     DateTime? updatedAt,
     List<ClientSuppTxn>? transactions,
   }) {
-    return ClientSuppEntity(
+    return ClientSupp(
       id: id ?? this.id,
       name: name ?? this.name,
       role: role ?? this.role,
@@ -85,6 +99,21 @@ class ClientSuppTxn {
   final String discountAmount;
   final String? note;
   final List<ProductDetail> products;
+
+  factory ClientSuppTxn.fromEntity(ClientSuppTxnEntity entity) {
+    return ClientSuppTxn(
+      id: entity.id,
+      clientSuppId: entity.clientSuppId,
+      transactionId: entity.transactionId,
+      clientSupplierName: entity.clientSupplierName,
+      role: entity.role,
+      txnData: entity.txnData,
+      amount: entity.amount,
+      paymentType: entity.paymentType,
+      discountAmount: entity.discountAmount,
+      note: entity.note,
+    );
+  }
 
   ClientSuppTxn copyWith({
     int? id,
