@@ -19,27 +19,24 @@ class QuantityControlWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 65.h,
-      child: Row(
-        children: [
-          plusMinusBtn(onTap: decQty ?? () {}, icon: Icons.remove),
-          Expanded(
-            child: CustomNumberField(
-              leftDottedMargin: 20,
-              rightDottedMargin: 20,
-              controller: controller,
-              inputFormatters: [
-                FilteringTextInputFormatter.digitsOnly,
-                LengthLimitingTextInputFormatter(8),
-              ],
-              keyboardType: TextInputType.number,
-            ),
+    return Row(
+      children: [
+        plusMinusBtn(onTap: decQty ?? () {}, icon: Icons.remove),
+        Expanded(
+          child: CustomNumberField(
+            leftDottedMargin: 20,
+            rightDottedMargin: 20,
+            controller: controller,
+            inputFormatters: [
+              FilteringTextInputFormatter.digitsOnly,
+              LengthLimitingTextInputFormatter(8),
+            ],
+            keyboardType: TextInputType.number,
           ),
-          plusMinusBtn(onTap: incQty ?? () {}, icon: Icons.add),
-        ],
-      ).marginSymmetric(horizontal: 50.w),
-    );
+        ),
+        plusMinusBtn(onTap: incQty ?? () {}, icon: Icons.add),
+      ],
+    ).marginSymmetric(horizontal: 50.w);
   }
 }
 
@@ -66,8 +63,7 @@ class CustomNumberField extends StatelessWidget {
   const CustomNumberField({
     super.key,
     this.controller,
-    this.keyboardType =
-        const TextInputType.numberWithOptions(decimal: true),
+    this.keyboardType = const TextInputType.numberWithOptions(decimal: true),
     this.inputFormatters,
     this.onChanged,
     this.fontSize = 32,
@@ -96,10 +92,9 @@ class CustomNumberField extends StatelessWidget {
               textAlign: TextAlign.center,
               keyboardType: keyboardType,
               onChanged: onChanged,
-              inputFormatters: inputFormatters ??
-                  [
-                    FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
-                  ],
+              inputFormatters:
+                  inputFormatters ??
+                  [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))],
               decoration: const InputDecoration(
                 hintText: '0',
                 border: InputBorder.none,
@@ -139,11 +134,7 @@ class DottedBorderPainter extends CustomPainter {
     var startX = 0.0;
 
     while (startX < size.width) {
-      canvas.drawLine(
-        Offset(startX, 0),
-        Offset(startX + dashWidth, 0),
-        paint,
-      );
+      canvas.drawLine(Offset(startX, 0), Offset(startX + dashWidth, 0), paint);
       startX += dashWidth + dashSpace;
     }
   }
