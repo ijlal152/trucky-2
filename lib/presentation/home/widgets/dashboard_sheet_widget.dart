@@ -16,6 +16,8 @@ class DashBoardSheetWidget extends StatelessWidget {
     this.productCount = 0,
     this.clientCount = 0,
     this.supplierCount = 0,
+    this.salesCount = 0,
+    this.purchasesCount = 0,
   });
 
   final VoidCallback onProductsTap;
@@ -28,6 +30,8 @@ class DashBoardSheetWidget extends StatelessWidget {
   final int productCount;
   final int clientCount;
   final int supplierCount;
+  final int salesCount;
+  final int purchasesCount;
 
   @override
   Widget build(BuildContext context) {
@@ -39,12 +43,12 @@ class DashBoardSheetWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               dashBoardFeatureItem(
-                total: "0",
+                total: salesCount.toString(),
                 title: "Sales",
                 onTap: onSalesTap,
               ),
               dashBoardFeatureItem(
-                total: "0",
+                total: purchasesCount.toString(),
                 title: "Purchases",
                 onTap: onPurchasesTap,
               ),

@@ -17,12 +17,17 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final csState = context.watch<ClientSuppBloc>().state;
     final productCount = context.watch<ProductBloc>().state.products.length;
-    final clientCount = context.watch<ClientSuppBloc>().state.clients.length;
-    final supplierCount = context
-        .watch<ClientSuppBloc>()
-        .state
-        .suppliers
+    final clientCount = csState.clients.length;
+    final supplierCount = csState.suppliers.length;
+    final salesCount = csState.clientTxns
+        .where((t) => t.paymentType == 'Sale' || t.paymentType == 'Return')
+        .length;
+    final purchasesCount = csState.supplierTxns
+        .where(
+          (t) => t.paymentType == 'Purchase' || t.paymentType == 'Return',
+        )
         .length;
 
     return Scaffold(
@@ -67,6 +72,8 @@ class HomeScreen extends StatelessWidget {
                 productCount: productCount,
                 clientCount: clientCount,
                 supplierCount: supplierCount,
+                salesCount: salesCount,
+                purchasesCount: purchasesCount,
                 onProductsTap: () => context.push(RoutePaths.products),
                 onTreasuryTap: () => context.push(RoutePaths.treasury),
                 onAnalysisTap: () => context.push(RoutePaths.analysis),
