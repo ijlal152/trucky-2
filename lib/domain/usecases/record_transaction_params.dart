@@ -8,7 +8,7 @@ class RecordTransactionParams {
     this.sourceType,
   });
 
-  final String productId;
+  final int productId;
   final int quantity;
   final double unitPrice;
   final String? sourceName;

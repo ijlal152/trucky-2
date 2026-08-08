@@ -46,7 +46,7 @@ class SetCartItemDataEvent extends SalePurchaseEvent {
     this.quantityPerPackage,
   });
 
-  final String productId;
+  final int productId;
   final int quantity;
   final double unitPrice;
   final String? quantityPerPackage;
@@ -62,7 +62,7 @@ class ToggleCartExpansionEvent extends SalePurchaseEvent {
 /// Removes an item from the cart.
 class RemoveCartItemEvent extends SalePurchaseEvent {
   const RemoveCartItemEvent({required this.productId});
-  final String productId;
+  final int productId;
 }
 
 /// Sets the cash + percentage discount.

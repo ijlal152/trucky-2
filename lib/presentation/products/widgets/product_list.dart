@@ -11,7 +11,7 @@ class ProductList extends StatelessWidget {
   final List<Product> list;
   final bool showBalance;
   final ScrollController? scrollController;
-  final void Function(String productID)? onProductTap;
+  final void Function(int productId)? onProductTap;
 
   const ProductList({
     super.key,
@@ -52,7 +52,7 @@ class ProductList extends StatelessWidget {
 class _ProductListItem extends StatelessWidget {
   final Product product;
   final bool showBalance;
-  final void Function(String productID)? onTap;
+  final void Function(int productId)? onTap;
 
   const _ProductListItem({
     required this.product,

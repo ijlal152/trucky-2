@@ -19,8 +19,8 @@ class ProductTransactionEntity {
     this.sourceType,
   });
 
-  final String id;
-  final String productId;
+  final int id;
+  final int productId;
   final ProductTransactionType type;
   final int quantity;
   final double unitPrice;

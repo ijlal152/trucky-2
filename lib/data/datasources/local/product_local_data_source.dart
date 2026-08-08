@@ -29,7 +29,7 @@ class ProductLocalDataSource {
     return rows.map(ProductModel.fromMap).toList(growable: false);
   }
 
-  Future<ProductModel?> getProductById(String id) async {
+  Future<ProductModel?> getProductById(int id) async {
     final db = await _db;
     final rows = await db.query(
       ProductTable.name,
@@ -46,7 +46,7 @@ class ProductLocalDataSource {
     return ProductModel.fromMap(rows.first);
   }
 
-  Future<ProductModel?> getProductByIdInTxn(Transaction txn, String id) async {
+  Future<ProductModel?> getProductByIdInTxn(Transaction txn, int id) async {
     final rows = await txn.query(
       ProductTable.name,
       where: '${ProductTable.id} = ?',
@@ -63,7 +63,7 @@ class ProductLocalDataSource {
   }
 
   Future<List<ProductTransactionModel>> getTransactionsForProduct(
-    String productId,
+    int productId,
   ) async {
     final db = await _db;
     final rows = await db.query(
@@ -96,10 +96,11 @@ class ProductLocalDataSource {
 
   // ---------------- Writes ----------------
 
-  Future<void> insertProductInTxn(Transaction txn, ProductModel product) async {
-    await txn.insert(
+  Future<int> insertProductInTxn(Transaction txn, ProductModel product) async {
+    final map = product.toMap()..remove(ProductTable.id);
+    return txn.insert(
       ProductTable.name,
-      product.toMap(),
+      map,
       conflictAlgorithm: ConflictAlgorithm.abort,
     );
   }
@@ -121,7 +122,7 @@ class ProductLocalDataSource {
     }
   }
 
-  Future<void> deleteProduct(String id) async {
+  Future<void> deleteProduct(int id) async {
     final db = await _db;
     await db.delete(
       ProductTable.name,
@@ -130,18 +131,19 @@ class ProductLocalDataSource {
     );
   }
 
-  Future<void> insertTransactionInTxn(
+  Future<int> insertTransactionInTxn(
     Transaction txn,
     ProductTransactionModel transaction,
   ) async {
-    await txn.insert(
+    final map = transaction.toMap()..remove(ProductTransactionTable.id);
+    return txn.insert(
       ProductTransactionTable.name,
-      transaction.toMap(),
+      map,
       conflictAlgorithm: ConflictAlgorithm.abort,
     );
   }
 
-  Future<void> markTransactionsSynced(List<String> ids) async {
+  Future<void> markTransactionsSynced(List<int> ids) async {
     if (ids.isEmpty) return;
     final db = await _db;
     final placeholders = List.filled(ids.length, '?').join(', ');

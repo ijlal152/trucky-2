@@ -11,7 +11,7 @@ abstract interface class ProductRepository {
   Future<Result<List<ProductEntity>>> getAllProducts();
 
   /// Returns the cached snapshot for a single product, or null if missing.
-  Future<Result<ProductEntity?>> getProductById(String id);
+  Future<Result<ProductEntity?>> getProductById(int id);
 
   /// Creates a new product with an opening purchase transaction. Returns the
   /// newly created product entity (with its generated id).
@@ -25,7 +25,7 @@ abstract interface class ProductRepository {
 
   /// Records a purchase, blending new stock into the existing WAC.
   Future<Result<ProductEntity>> recordPurchase({
-    required String productId,
+    required int productId,
     required int quantity,
     required double unitPrice,
     String? sourceName,
@@ -35,7 +35,7 @@ abstract interface class ProductRepository {
   /// Records a sale. Throws [ValidationFailure] when there is not
   /// enough stock.
   Future<Result<ProductEntity>> recordSale({
-    required String productId,
+    required int productId,
     required int quantity,
     required double unitPrice,
     String? sourceName,
@@ -45,7 +45,7 @@ abstract interface class ProductRepository {
   /// Records a return (purchase-return or sale-return). Stock is added back at
   /// the **current** WAC. `unitPrice` is informational (audit only).
   Future<Result<ProductEntity>> recordReturn({
-    required String productId,
+    required int productId,
     required int quantity,
     required double unitPrice,
     String? sourceName,
@@ -54,7 +54,7 @@ abstract interface class ProductRepository {
 
   /// Returns the full transaction history for a product, newest first.
   Future<Result<List<ProductTransactionEntity>>> getTransactionsForProduct(
-    String productId,
+    int productId,
   );
 
   /// Returns all unsynced transactions, ordered by `created_at ASC`.
@@ -63,8 +63,8 @@ abstract interface class ProductRepository {
   });
 
   /// Marks the given transactions as synced. Idempotent.
-  Future<Result<void>> markTransactionsSynced(List<String> ids);
+  Future<Result<void>> markTransactionsSynced(List<int> ids);
 
   /// Removes a product and (via FK cascade) all of its transactions.
-  Future<Result<void>> deleteProduct(String id);
+  Future<Result<void>> deleteProduct(int id);
 }

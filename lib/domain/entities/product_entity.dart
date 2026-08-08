@@ -16,7 +16,7 @@ class ProductEntity {
     required this.updatedAt,
   });
 
-  final String id;
+  final int id;
   final String name;
   final String sku;
   final double sellingPrice;

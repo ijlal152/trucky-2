@@ -6,13 +6,13 @@ import 'package:trucky/domain/repositories/product_repository.dart';
 
 /// Returns the full transaction history for a product, newest first.
 class GetProductTransactionsUsecase
-    extends UseCase<String, Result<List<ProductTransactionEntity>>> {
+    extends UseCase<int, Result<List<ProductTransactionEntity>>> {
   const GetProductTransactionsUsecase(this._repository);
 
   final ProductRepository _repository;
 
   @override
-  ResultFuture<List<ProductTransactionEntity>> call(String productId) {
+  ResultFuture<List<ProductTransactionEntity>> call(int productId) {
     return _repository.getTransactionsForProduct(productId);
   }
 }

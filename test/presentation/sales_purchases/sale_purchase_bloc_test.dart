@@ -137,13 +137,13 @@ void main() {
       });
 
       test('SetCartItemDataEvent applies quantity and price', () async {
-        final product = _product(id: '7', sellingPrice: 10);
+        final product = _product(id: 7, sellingPrice: 10);
         bloc.add(ToggleProductEvent(product: product));
         await pumpEventQueue();
 
         bloc.add(
           SetCartItemDataEvent(
-            productId: '7',
+            productId: 7,
             quantity: 3,
             unitPrice: 12,
             quantityPerPackage: '6',
@@ -187,14 +187,14 @@ void main() {
     group('RemoveCartItemEvent', () {
       test('removes only the given product', () async {
         bloc.add(
-          ToggleProductEvent(product: _product(id: '1', sellingPrice: 10)),
+          ToggleProductEvent(product: _product(id: 1, sellingPrice: 10)),
         );
         bloc.add(
-          ToggleProductEvent(product: _product(id: '2', sellingPrice: 20)),
+          ToggleProductEvent(product: _product(id: 2, sellingPrice: 20)),
         );
         await pumpEventQueue();
 
-        bloc.add(const RemoveCartItemEvent(productId: '1'));
+        bloc.add(const RemoveCartItemEvent(productId: 1));
         await pumpEventQueue();
 
         expect(bloc.state.selectedProdList.length, 1);
@@ -384,7 +384,7 @@ void main() {
     ) async {
       await pumpContext(tester);
       final client = _clientEntity();
-      final product = _product(id: '5', sellingPrice: 100);
+      final product = _product(id: 5, sellingPrice: 100);
       final data = PaymentDataModel.fromTransaction(
         clientSupplier: client,
         oldBalance: 1000,
@@ -524,7 +524,7 @@ ClientSupp _clientEntity({String role = 'client'}) {
 }
 
 Product _product({
-  String id = '1',
+  int id = 1,
   double sellingPrice = 10,
   double purchasePrice = 8,
 }) {

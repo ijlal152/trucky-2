@@ -9,7 +9,7 @@ class AppDatabase {
 
   static final AppDatabase instance = AppDatabase._();
 
-  static const int schemaVersion = 5;
+  static const int schemaVersion = 6;
 
   Database? _database;
 
@@ -87,7 +87,7 @@ class AppDatabase {
     // products_table: cached snapshot of inventory aggregates.
     await db.execute('''
       CREATE TABLE ${TableNames.productsTable} (
-        id TEXT PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
         sku TEXT NOT NULL UNIQUE,
         selling_price REAL NOT NULL DEFAULT 0,
@@ -102,8 +102,8 @@ class AppDatabase {
     // product_transactions_table: append-only ledger (source of truth).
     await db.execute('''
       CREATE TABLE ${TableNames.productTransactionTable} (
-        id TEXT PRIMARY KEY,
-        product_id TEXT NOT NULL,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        product_id INTEGER NOT NULL,
         type TEXT NOT NULL,
         quantity INTEGER NOT NULL,
         unit_price REAL NOT NULL,
@@ -139,6 +139,9 @@ class AppDatabase {
     }
     if (oldVersion < 5) {
       await _migrateToV5(db);
+    }
+    if (oldVersion < 6) {
+      await _migrateToV6(db);
     }
   }
 
@@ -197,6 +200,18 @@ class AppDatabase {
       'ALTER TABLE ${TableNames.productTransactionTable} '
       'ADD COLUMN source_type TEXT',
     );
+  }
+
+  /// v6: switch the product tables to INTEGER PRIMARY KEY AUTOINCREMENT ids
+  /// (was TEXT/uuid). SQLite cannot change a column type in place, so drop and
+  /// recreate the tables (same pattern as v3/v4). Product data is regenerated
+  /// from the client/supplier transaction flow afterwards.
+  Future<void> _migrateToV6(Database db) async {
+    await db.execute(
+      'DROP TABLE IF EXISTS ${TableNames.productTransactionTable}',
+    );
+    await db.execute('DROP TABLE IF EXISTS ${TableNames.productsTable}');
+    await _createProductTables(db);
   }
 
   Future<void> close() async {

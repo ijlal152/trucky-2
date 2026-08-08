@@ -43,7 +43,7 @@ class InsufficientStockFailure extends AppFailure {
          'requested=$requested',
        );
 
-  final String productId;
+  final int productId;
   final int available;
   final int requested;
 }

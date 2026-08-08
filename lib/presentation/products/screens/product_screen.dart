@@ -131,7 +131,7 @@ class _ProductView extends StatelessWidget {
                       list: products,
                       showBalance: hideProductTotalBalance,
                       scrollController: scrollController,
-                      onProductTap: (String productID) {
+                      onProductTap: (int productID) {
                         bloc.add(SelectProductEvent(id: productID));
                         context.push(RoutePaths.productDashboard);
                       },

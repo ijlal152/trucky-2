@@ -58,7 +58,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   /// Per-product transaction cache keyed by product id, so tapping a product
   /// on the list reuses the already-loaded ledger instead of hitting the
   /// database again.
-  final Map<String, List<ProductDetail>> _txnCache = {};
+  final Map<int, List<ProductDetail>> _txnCache = {};
 
   Future<void> _onLoadProducts(
     LoadProductsEvent event,
@@ -235,7 +235,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
 
   /// Returns the product's transaction details, reusing the in-memory cache
   /// when available so tapping a product does not re-read the database.
-  Future<List<ProductDetail>> _detailsFor(String productId) async {
+  Future<List<ProductDetail>> _detailsFor(int productId) async {
     final cached = _txnCache[productId];
     if (cached != null) return cached;
     final result = await _getProductTransactions(productId);

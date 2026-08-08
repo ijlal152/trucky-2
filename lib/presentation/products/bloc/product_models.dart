@@ -22,7 +22,7 @@ class Product {
     this.averageCost,
   });
 
-  final String? id;
+  final int? id;
   final String productName;
   final double purchasePrice;
   final double sellingPrice;
@@ -75,7 +75,7 @@ class Product {
   }
 
   Product copyWith({
-    String? id,
+    int? id,
     String? productName,
     double? purchasePrice,
     double? sellingPrice,
@@ -118,7 +118,7 @@ class ProductDetail {
     this.quantityPerPackage,
   });
 
-  final String productId;
+  final int productId;
 
   /// Human-readable counterparty label (client/supplier name). Null when the
   /// detail is derived from the product ledger (no counterparty attached), so
@@ -151,7 +151,7 @@ class ProductDetail {
       // the 'Return' icon/color/sign branches.
       paymentType: _humanize(e.type.value),
       createdAt: e.createdAt,
-      transactionId: e.id,
+      transactionId: e.id.toString(),
     );
   }
 

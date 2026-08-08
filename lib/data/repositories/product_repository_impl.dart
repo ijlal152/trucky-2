@@ -10,23 +10,19 @@ import 'package:trucky/domain/entities/product_transaction_entity.dart';
 import 'package:trucky/domain/entities/product_transaction_type.dart';
 import 'package:trucky/domain/repositories/product_repository.dart';
 import 'package:trucky/domain/usecases/calculate_wac.dart';
-import 'package:uuid/uuid.dart';
 
 class ProductRepositoryImpl implements ProductRepository {
   ProductRepositoryImpl({
     required ProductLocalDataSource local,
     CalculateWac? wac,
     AppDatabase? database,
-    Uuid? uuid,
   })  : _local = local,
         _wac = wac ?? const CalculateWac(),
-        _appDatabase = database ?? AppDatabase.instance,
-        _uuid = uuid ?? const Uuid();
+        _appDatabase = database ?? AppDatabase.instance;
 
   final ProductLocalDataSource _local;
   final CalculateWac _wac;
   final AppDatabase _appDatabase;
-  final Uuid _uuid;
 
   Future<Database> get _db async => _appDatabase.database;
 
@@ -43,7 +39,7 @@ class ProductRepositoryImpl implements ProductRepository {
   }
 
   @override
-  Future<Result<ProductEntity?>> getProductById(String id) async {
+  Future<Result<ProductEntity?>> getProductById(int id) async {
     try {
       final row = await _local.getProductById(id);
       return Result.success(row?.toEntity());
@@ -54,7 +50,7 @@ class ProductRepositoryImpl implements ProductRepository {
 
   @override
   Future<Result<List<ProductTransactionEntity>>> getTransactionsForProduct(
-    String productId,
+    int productId,
   ) async {
     try {
       final rows = await _local.getTransactionsForProduct(productId);
@@ -81,7 +77,7 @@ class ProductRepositoryImpl implements ProductRepository {
   }
 
   @override
-  Future<Result<void>> markTransactionsSynced(List<String> ids) async {
+  Future<Result<void>> markTransactionsSynced(List<int> ids) async {
     try {
       await _local.markTransactionsSynced(ids);
       return const Result.success(null);
@@ -91,7 +87,7 @@ class ProductRepositoryImpl implements ProductRepository {
   }
 
   @override
-  Future<Result<void>> deleteProduct(String id) async {
+  Future<Result<void>> deleteProduct(int id) async {
     try {
       await _local.deleteProduct(id);
       return const Result.success(null);
@@ -112,16 +108,30 @@ class ProductRepositoryImpl implements ProductRepository {
   }) {
     return _runWrite((txn) async {
       final now = DateTime.now();
-      final productId = _uuid.v4();
 
-      // Initial opening purchase transaction (snapshot of opening inventory).
+      // Opening purchase transaction (snapshot of opening inventory).
       final openingQty = initialQuantity < 0 ? 0 : initialQuantity;
       final openingPrice =
           initialPurchasePrice < 0 ? 0.0 : initialPurchasePrice;
       final openingTotal = openingQty * openingPrice;
 
+      // Insert the product first so the DB assigns its AUTOINCREMENT id, then
+      // reference it from the opening ledger row.
+      final product = ProductModel(
+        id: 0,
+        name: name,
+        sku: sku,
+        sellingPrice: sellingPrice,
+        stockQuantity: openingQty,
+        stockValue: openingTotal,
+        averageCost: openingPrice,
+        createdAt: now,
+        updatedAt: now,
+      );
+      final productId = await _local.insertProductInTxn(txn, product);
+
       final openingTxn = ProductTransactionModel(
-        id: _uuid.v4(),
+        id: 0,
         productId: productId,
         type: ProductTransactionType.initialStock,
         quantity: openingQty,
@@ -132,25 +142,13 @@ class ProductRepositoryImpl implements ProductRepository {
       );
       await _local.insertTransactionInTxn(txn, openingTxn);
 
-      final product = ProductModel(
-        id: productId,
-        name: name,
-        sku: sku,
-        sellingPrice: sellingPrice,
-        stockQuantity: openingQty,
-        stockValue: openingTotal,
-        averageCost: openingPrice,
-        createdAt: now,
-        updatedAt: now,
-      );
-      await _local.insertProductInTxn(txn, product);
-      return product.toEntity();
+      return product.copyWith(id: productId).toEntity();
     });
   }
 
   @override
   Future<Result<ProductEntity>> recordPurchase({
-    required String productId,
+    required int productId,
     required int quantity,
     required double unitPrice,
     String? sourceName,
@@ -192,7 +190,7 @@ class ProductRepositoryImpl implements ProductRepository {
 
   @override
   Future<Result<ProductEntity>> recordSale({
-    required String productId,
+    required int productId,
     required int quantity,
     required double unitPrice,
     String? sourceName,
@@ -241,7 +239,7 @@ class ProductRepositoryImpl implements ProductRepository {
 
   @override
   Future<Result<ProductEntity>> recordReturn({
-    required String productId,
+    required int productId,
     required int quantity,
     required double unitPrice,
     String? sourceName,
@@ -303,7 +301,7 @@ class ProductRepositoryImpl implements ProductRepository {
 
   Future<void> _insertTxn(
     Transaction txn, {
-    required String productId,
+    required int productId,
     required ProductTransactionType type,
     required int quantity,
     required double unitPrice,
@@ -314,7 +312,7 @@ class ProductRepositoryImpl implements ProductRepository {
     await _local.insertTransactionInTxn(
       txn,
       ProductTransactionModel(
-        id: _uuid.v4(),
+        id: 0,
         productId: productId,
         type: type,
         quantity: quantity,
@@ -333,7 +331,7 @@ class ProductRepositoryImpl implements ProductRepository {
 class _NotFoundFailure implements Exception {
   _NotFoundFailure(this.productId);
 
-  final String productId;
+  final int productId;
 
   AppFailure get failure =>
       CacheFailure('Product not found: $productId');

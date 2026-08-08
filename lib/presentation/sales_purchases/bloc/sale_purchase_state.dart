@@ -40,7 +40,7 @@ class SalePurchaseState {
 
   double get totalAfterDiscount => subtotal - discountAmount;
 
-  bool isInCart(String productId) =>
+  bool isInCart(int productId) =>
       selectedProdList.any((item) => item.product.id == productId);
 
   SalePurchaseState copyWith({

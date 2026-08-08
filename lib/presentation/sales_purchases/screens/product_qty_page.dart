@@ -57,7 +57,7 @@ class _ProductQtyPageState extends State<ProductQtyPage> {
 
     context.read<SalePurchaseBloc>().add(
       SetCartItemDataEvent(
-        productId: item.product.id ?? '',
+        productId: item.product.id ?? 0,
         quantity:
             int.tryParse(
               _quantityController.text.isEmpty ? '1' : _quantityController.text,

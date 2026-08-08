@@ -27,7 +27,7 @@ abstract final class SalePurchasePersistence {
     final now = data.dateTime ?? DateTime.now();
     final products = (data.products ?? const <CartItem>[]).map((item) {
       return ProductDetail(
-        productId: item.product.id ?? '',
+        productId: item.product.id ?? 0,
         sourceName: entity?.name,
         sourceType: entity?.role,
         purchasePrice: item.product.purchasePrice,

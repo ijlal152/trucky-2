@@ -72,7 +72,7 @@ class ChooseProductsPage extends StatelessWidget {
                                   final availableStock = product.availableStock;
                                   final outOfStock = availableStock <= 0;
                                   final added = state.isInCart(
-                                    product.id ?? '',
+                                    product.id ?? 0,
                                   );
                                   final price = isClient
                                       ? product.sellingPrice

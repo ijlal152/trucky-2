@@ -32,7 +32,7 @@ class AddProductEvent extends ProductEvent {
 class RemoveProductEvent extends ProductEvent {
   const RemoveProductEvent({required this.id});
 
-  final String id;
+  final int id;
 }
 
 class ToggleProductBalanceVisibilityEvent extends ProductEvent {
@@ -46,7 +46,7 @@ class ToggleDashboardBalanceVisibilityEvent extends ProductEvent {
 class SelectProductEvent extends ProductEvent {
   const SelectProductEvent({required this.id});
 
-  final String id;
+  final int id;
 }
 
 /// Appends product detail rows (from a sale/purchase/return) and adjusts the

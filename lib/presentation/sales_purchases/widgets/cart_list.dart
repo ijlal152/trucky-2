@@ -169,7 +169,7 @@ class CartList extends StatelessWidget {
           TextButton(
             onPressed: () {
               context.read<SalePurchaseBloc>().add(
-                RemoveCartItemEvent(productId: item.product.id ?? ''),
+                RemoveCartItemEvent(productId: item.product.id ?? 0),
               );
               Navigator.pop(dialogContext);
             },

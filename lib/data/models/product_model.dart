@@ -19,7 +19,7 @@ class ProductModel {
     required this.updatedAt,
   });
 
-  final String id;
+  final int id;
   final String name;
   final String sku;
   final double sellingPrice;
@@ -31,7 +31,7 @@ class ProductModel {
 
   factory ProductModel.fromMap(Map<String, Object?> map) {
     return ProductModel(
-      id: map[ProductTable.id] as String,
+      id: map[ProductTable.id] as int,
       name: map[ProductTable.productName] as String,
       sku: map[ProductTable.sku] as String,
       sellingPrice: (map[ProductTable.sellingPrice] as num).toDouble(),
@@ -72,7 +72,7 @@ class ProductModel {
       );
 
   ProductModel copyWith({
-    String? id,
+    int? id,
     String? name,
     String? sku,
     double? sellingPrice,
