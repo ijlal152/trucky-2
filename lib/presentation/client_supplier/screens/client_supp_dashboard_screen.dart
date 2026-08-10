@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:trucky/core/constants/app_assets.dart';
 import 'package:trucky/core/constants/constants.dart';
 import 'package:trucky/core/constants/enums.dart';
+import 'package:trucky/core/constants/route_paths.dart';
 import 'package:trucky/core/utils/widget_extensions.dart';
 import 'package:trucky/presentation/client_supplier/bloc/client_supp_bloc.dart';
 import 'package:trucky/presentation/client_supplier/bloc/client_supp_event.dart';
 import 'package:trucky/presentation/client_supplier/bloc/client_supp_models.dart';
 import 'package:trucky/presentation/client_supplier/bloc/client_supp_state.dart';
 import 'package:trucky/presentation/client_supplier/widgets/client_supp_common_dashboard_view.dart';
+import 'package:trucky/presentation/sales_purchases/bloc/sale_purchase_bloc.dart';
+import 'package:trucky/presentation/sales_purchases/bloc/sale_purchase_event.dart';
+import 'package:trucky/presentation/sales_purchases/bloc/sale_purchase_models.dart';
 import 'package:trucky/presentation/widgets/bottom_sheet_payment_type_items.dart';
 import 'package:trucky/presentation/widgets/custom_bottom_sheet.dart';
 import 'package:trucky/presentation/widgets/custom_fab_controller.dart';
@@ -71,50 +76,116 @@ class _ClientSuppDashboardScreenState extends State<ClientSuppDashboardScreen>
                   index: 0,
                 ).toString(),
           floatingActionButton: ScrollAwareFAB(
-            onTap: () {
-              showModalBottomSheet<void>(
-                context: context,
-                builder: (context) => CustomBottomSheetContent(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Wrap(
-                        spacing: 40,
-                        children: [
-                          btmSheetPaymentTypeItem(
-                            icon: isClient
-                                ? AppAssets.images.sellsIcon
-                                : AppAssets.images.supplierIcon,
-                            itemName: isClient ? 'Sale' : 'Purchase',
-                            onTap: () {},
-                          ),
-                          btmSheetPaymentTypeItem(
-                            icon: AppAssets.images.paymentIcon,
-                            itemName: 'Payment',
-                            onTap: () {},
-                          ),
-                          btmSheetPaymentTypeItem(
-                            icon: AppAssets.images.returnIcon,
-                            itemName: 'Return',
-                            onTap: () {},
-                          ),
-                          btmSheetPaymentTypeItem(
-                            icon: AppAssets.images.negativeRefundIcon,
-                            itemName: 'Refund',
-                            onTap: () {},
-                          ),
-                        ],
-                      ).paddingSymmetric(vertical: 30.h),
-                    ],
-                  ),
-                ),
-              );
-            },
+            onTap: () =>
+                _openTransactionSheet(context, bloc, selected, isClient),
             scale: fabCont.scaleAnimation,
           ),
         );
       },
     );
+  }
+
+  void _openTransactionSheet(
+    BuildContext context,
+    ClientSuppBloc bloc,
+    ClientSupp? selected,
+    bool isClient,
+  ) {
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (sheetContext) => CustomBottomSheetContent(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Wrap(
+              spacing: 40,
+              children: [
+                btmSheetPaymentTypeItem(
+                  icon: isClient
+                      ? AppAssets.images.sellsIcon
+                      : AppAssets.images.supplierIcon,
+                  itemName: isClient ? 'Sale' : 'Purchase',
+                  onTap: () => _navigateToSalePurchase(context, bloc),
+                ),
+                btmSheetPaymentTypeItem(
+                  icon: AppAssets.images.paymentIcon,
+                  itemName: 'Payment',
+                  onTap: () => _navigateToPayment(context, bloc, selected),
+                ),
+                btmSheetPaymentTypeItem(
+                  icon: AppAssets.images.returnIcon,
+                  itemName: 'Return',
+                  onTap: () => _navigateToReturn(context, bloc),
+                ),
+                btmSheetPaymentTypeItem(
+                  icon: AppAssets.images.negativeRefundIcon,
+                  itemName: 'Refund',
+                  onTap: () => _navigateToRefund(context, bloc, selected),
+                ),
+              ],
+            ).paddingSymmetric(vertical: 30.h),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _navigateToSalePurchase(BuildContext context, ClientSuppBloc bloc) {
+    final entityType = bloc.state.entityType;
+    context.read<SalePurchaseBloc>().add(
+      InitSalePurchaseEvent(
+        entityType: entityType,
+        transactionType: TransactionType.sale,
+      ),
+    );
+    Navigator.pop(context);
+    context.push(RoutePaths.chooseClientSupp);
+  }
+
+  void _navigateToReturn(BuildContext context, ClientSuppBloc bloc) {
+    final entityType = bloc.state.entityType;
+    context.read<SalePurchaseBloc>().add(
+      InitSalePurchaseEvent(
+        entityType: entityType,
+        transactionType: TransactionType.returnTransaction,
+      ),
+    );
+    Navigator.pop(context);
+    context.push(RoutePaths.chooseClientSupp);
+  }
+
+  void _navigateToPayment(
+    BuildContext context,
+    ClientSuppBloc bloc,
+    ClientSupp? selected,
+  ) {
+    final currentBalance = _calculateBalance(bloc);
+    final paymentData = PaymentDataModel.directPayment(
+      clientSupplier: selected,
+      oldBalance: currentBalance,
+    );
+    Navigator.pop(context);
+    context.push(RoutePaths.paymentDetails, extra: paymentData);
+  }
+
+  void _navigateToRefund(
+    BuildContext context,
+    ClientSuppBloc bloc,
+    ClientSupp? selected,
+  ) {
+    final currentBalance = _calculateBalance(bloc);
+    final paymentData = PaymentDataModel.refund(
+      clientSupplier: selected,
+      oldBalance: currentBalance,
+    );
+    Navigator.pop(context);
+    context.push(RoutePaths.paymentDetails, extra: paymentData);
+  }
+
+  double _calculateBalance(ClientSuppBloc bloc) {
+    final txns = bloc.state.selectedCSTxns;
+    if (txns.isEmpty) return 0;
+    return ClientSuppTxn.calculateBalanceAtIndex(transactions: txns, index: 0);
   }
 
   Widget _iconBasedOnPaymentType(ClientSuppTxn transaction, bool isClient) {
