@@ -1,5 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:trucky/core/constants/enums.dart';
+import 'package:trucky/domain/entities/client_supp_entity.dart';
+import 'package:trucky/domain/entities/client_supp_txn_entity.dart';
 import 'package:trucky/presentation/client_supplier/bloc/client_supp_bloc.dart';
 import 'package:trucky/presentation/client_supplier/bloc/client_supp_event.dart';
 import 'package:trucky/presentation/client_supplier/bloc/client_supp_models.dart';
@@ -535,6 +537,70 @@ void main() {
             .map((t) => t.paymentType)
             .toList();
         expect(types, ['Sale', 'Payment', 'Payment', 'Initial Balance']);
+      });
+
+      test('persisted sale+payment rows load with the sale first', () async {
+        final saleAt = DateTime.fromMillisecondsSinceEpoch(1787143314068);
+        final initialAt = DateTime.fromMillisecondsSinceEpoch(1787143278896);
+        final repo = FakeClientSuppRepository(
+          seedEntities: [
+            ClientSuppEntity(
+              id: 1,
+              userId: 1,
+              name: 'Ijlal Hussain',
+              role: 'client',
+              createdAt: initialAt,
+              updatedAt: initialAt,
+            ),
+          ],
+          seedTxns: [
+            ClientSuppTxnEntity(
+              id: 1,
+              userId: 1,
+              clientSuppId: 1,
+              transactionId: 'txn-1787143278896425',
+              clientSupplierName: 'Ijlal Hussain',
+              role: 'client',
+              txnData: initialAt,
+              amount: '45000',
+              paymentType: 'Initial Balance',
+            ),
+            ClientSuppTxnEntity(
+              id: 4,
+              userId: 1,
+              clientSuppId: 1,
+              transactionId: 'txn-1787143314068738',
+              clientSupplierName: 'Ijlal Hussain',
+              role: 'client',
+              txnData: saleAt,
+              amount: '19800.00',
+              paymentType: 'Sale',
+            ),
+            ClientSuppTxnEntity(
+              id: 5,
+              userId: 1,
+              clientSuppId: 1,
+              transactionId: 'txn-1787143314068738',
+              clientSupplierName: 'Ijlal Hussain',
+              role: 'client',
+              txnData: saleAt,
+              amount: '32000.00',
+              paymentType: 'Payment',
+            ),
+          ],
+        );
+        final seededBloc = buildClientSuppBloc(repo);
+        seededBloc.add(const LoadClientSuppEvent());
+        await pumpEventQueue();
+
+        seededBloc.add(const SelectClientSuppEvent(index: 0));
+        await pumpEventQueue();
+
+        final types = seededBloc.state.selectedCSTxns
+            .map((t) => t.paymentType)
+            .toList();
+        expect(types, ['Sale', 'Payment', 'Initial Balance']);
+        seededBloc.close();
       });
     });
   });

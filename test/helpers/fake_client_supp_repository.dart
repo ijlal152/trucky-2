@@ -15,8 +15,18 @@ import 'fake_product_repository.dart';
 /// In-memory [ClientSuppRepository] that seeds the same sample data the old
 /// mock bloc used, so widget/bloc tests keep passing without a real DB.
 class FakeClientSuppRepository implements ClientSuppRepository {
-  FakeClientSuppRepository() {
-    _seed();
+  FakeClientSuppRepository({
+    List<ClientSuppEntity>? seedEntities,
+    List<ClientSuppTxnEntity>? seedTxns,
+  }) {
+    if (seedEntities == null && seedTxns == null) {
+      _seed();
+      return;
+    }
+    if (seedEntities != null) _entities.addAll(seedEntities);
+    if (seedTxns != null) _txns.addAll(seedTxns);
+    _nextEntityId = _entities.fold(0, (m, e) => e.id ?? m) + 1;
+    _nextTxnId = _txns.fold(0, (m, t) => t.id ?? m) + 1;
   }
 
   final List<ClientSuppEntity> _entities = [];

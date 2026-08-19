@@ -28,7 +28,10 @@ class ClientSuppLocalDataSource {
 
   Future<List<ClientSuppTxnModel>> fetchAllClientSuppTxns() async {
     final db = await _db;
-    final rows = await db.query(ClientSuppTxnTable.name);
+    final rows = await db.query(
+      ClientSuppTxnTable.name,
+      orderBy: '${ClientSuppTxnTable.txnData} ASC',
+    );
 
     // return mockTransactions.map(ClientSuppTxnModel.fromMap).toList(growable: false);
     log('ClientSupp Transaction Table:\n${jsonEncode(rows)}');
