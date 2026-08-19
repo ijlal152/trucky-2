@@ -95,9 +95,20 @@ abstract final class SalePurchasePersistence {
     PaymentDataModel data,
     String transactionId,
   ) {
-    final clientSuppBloc = context.read<ClientSuppBloc>();
-    final productBloc = context.read<ProductBloc>();
+    _persistWithBlocs(
+      context.read<ClientSuppBloc>(),
+      context.read<ProductBloc>(),
+      data,
+      transactionId,
+    );
+  }
 
+  static void _persistWithBlocs(
+    ClientSuppBloc clientSuppBloc,
+    ProductBloc productBloc,
+    PaymentDataModel data,
+    String transactionId,
+  ) {
     final isOrder =
         data.paymentType == PaymentTransactionType.salePayment ||
         data.paymentType == PaymentTransactionType.returnPayment;
@@ -122,26 +133,46 @@ abstract final class SalePurchasePersistence {
   }
 
   /// Replaces an existing transaction (edit-mode).
-  static void editTransaction(
+  ///
+  /// The transaction keeps its original [transactionId] and [ClientSuppTxn.txnData],
+  /// so the edited Sale/Purchase/Return replaces the old rows in place rather
+  /// than recording a brand-new sale at a new ledger position.
+  ///
+  /// Bloc handlers run concurrently, so the removal is awaited (via its emitted
+  /// state) before the replacement rows are written; otherwise the late removal
+  /// emission could clobber the just-added rows.
+  static Future<void> editTransaction(
     BuildContext context,
     PaymentDataModel data,
     ClientSuppTxn oldTxn,
-  ) {
+  ) async {
     final clientSuppBloc = context.read<ClientSuppBloc>();
     final productBloc = context.read<ProductBloc>();
 
+    final txnId = oldTxn.transactionId;
     final isOrder =
         data.paymentType == PaymentTransactionType.salePayment ||
         data.paymentType == PaymentTransactionType.returnPayment;
 
-    clientSuppBloc.add(
-      RemoveTransactionsEvent(transactionId: oldTxn.transactionId),
+    final removeDone = clientSuppBloc.stream.firstWhere(
+      (s) => !s.allTransactions.any((t) => t.transactionId == txnId),
     );
+    clientSuppBloc.add(RemoveTransactionsEvent(transactionId: txnId));
     if (isOrder) {
-      productBloc.add(
-        RemoveProductDetailsEvent(transactionId: oldTxn.transactionId),
+      final productRemoveDone = productBloc.stream.firstWhere(
+        (s) => !s.productDetailsList.any((d) => d.transactionId == txnId),
       );
+      productBloc.add(
+        RemoveProductDetailsEvent(transactionId: txnId),
+      );
+      await productRemoveDone;
     }
-    addTransaction(context, data);
+    await removeDone;
+    _persistWithBlocs(
+      clientSuppBloc,
+      productBloc,
+      data.copyWith(dateTime: oldTxn.txnData),
+      txnId,
+    );
   }
 }

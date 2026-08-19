@@ -547,6 +547,93 @@ void main() {
       expect(updated.availableStock, before + 1);
     });
 
+    testWidgets('editing a sale updates the ledger in place, no duplicate', (
+      tester,
+    ) async {
+      final clientRepo = FakeClientSuppRepository();
+      final productRepo = FakeProductRepository();
+      final clientSuppBloc = buildClientSuppBloc(clientRepo, productRepo);
+      final productBloc = buildProductBloc(productRepo);
+      final context = await pumpContext(
+        tester,
+        clientSuppBloc: clientSuppBloc,
+        productBloc: productBloc,
+      );
+      productBloc.add(const LoadProductsEvent());
+      await tester.pump();
+
+      final client = _clientEntity();
+      final product = productBloc.state.products.first;
+      final before = product.availableStock;
+      final data = PaymentDataModel.fromTransaction(
+        clientSupplier: client,
+        oldBalance: 1000,
+        totalAmount: 100,
+        transactionType: TransactionType.sale,
+        products: [CartItem(product: product, quantity: 2, unitPrice: 100)],
+      ).copyWith(paymentAmount: 40);
+
+      SalePurchasePersistence.addTransaction(context, data);
+      await tester.pump();
+
+      final saleTxn = clientSuppBloc.state.allTransactions.firstWhere(
+        (t) => t.paymentType == 'Sale',
+      );
+      final txnId = saleTxn.transactionId;
+
+      final editedData = PaymentDataModel.fromTransaction(
+        clientSupplier: client,
+        oldBalance: 1000,
+        totalAmount: 250,
+        transactionType: TransactionType.sale,
+        products: [CartItem(product: product, quantity: 5, unitPrice: 100)],
+      ).copyWith(paymentAmount: 40);
+
+      await SalePurchasePersistence.editTransaction(context, editedData, saleTxn);
+      for (var i = 0; i < 3; i++) {
+        await tester.pump();
+      }
+
+      final txns = clientSuppBloc.state.allTransactions
+          .where((t) => t.transactionId == txnId)
+          .toList();
+      // One main Sale + one settlement Payment, still one transaction.
+      expect(txns.length, 2);
+      expect(txns.where((t) => t.paymentType == 'Sale').length, 1);
+      final editedSale = txns.firstWhere((t) => t.paymentType == 'Sale');
+      expect(editedSale.amount, '250.00');
+      expect(editedSale.txnData, saleTxn.txnData);
+
+      // Product ledger: a single Sale detail for the txn, stock reflects 5.
+      final details = productBloc.state.productDetailsList
+          .where((d) => d.transactionId == txnId)
+          .toList();
+      expect(details.length, 1);
+      expect(details.first.quantity, 5);
+      expect(productBloc.state.products.first.availableStock, before - 5);
+
+      // Reload from the shared repos simulates a restart: one Sale, one
+      // product detail, and stock is not double-deducted.
+      final reloadedSupp = buildClientSuppBloc(clientRepo, productRepo);
+      final reloadedProducts = buildProductBloc(productRepo);
+      reloadedSupp.add(const LoadClientSuppEvent());
+      reloadedProducts.add(const LoadProductsEvent());
+      await tester.pump();
+
+      final reloadedTxns = reloadedSupp.state.allTransactions
+          .where((t) => t.transactionId == txnId)
+          .toList();
+      expect(reloadedTxns.where((t) => t.paymentType == 'Sale').length, 1);
+      expect(
+        reloadedTxns.firstWhere((t) => t.paymentType == 'Sale').products.length,
+        1,
+      );
+      expect(
+        reloadedProducts.state.products.first.availableStock,
+        before - 5,
+      );
+    });
+
     testWidgets('sale products are joined from the ledger after a reload', (
       tester,
     ) async {
@@ -588,7 +675,7 @@ void main() {
       expect(main.products.first.sellingPrice, 100);
     });
 
-    testWidgets('editPaymentTransaction replaces the old record', (
+    testWidgets('editPaymentTransaction replaces the old record in place', (
       tester,
     ) async {
       final clientSuppBloc = buildClientSuppBloc();
@@ -607,15 +694,18 @@ void main() {
         oldBalance: 900,
       ).copyWith(paymentAmount: 150, notes: 'edited');
 
-      SalePurchasePersistence.editTransaction(context, newData, oldTxn);
+      await SalePurchasePersistence.editTransaction(context, newData, oldTxn);
       await tester.pump();
 
       final remaining = clientSuppBloc.state.allTransactions
           .where((t) => t.transactionId == oldTxn.transactionId)
           .toList();
-      expect(remaining, isEmpty);
+      expect(remaining.length, 1);
+      expect(remaining.first.amount, '150.00');
+      expect(remaining.first.paymentType, 'Payment');
+      expect(remaining.first.note, 'edited');
+      expect(remaining.first.txnData, oldTxn.txnData);
       expect(clientSuppBloc.state.allTransactions.length, 1);
-      expect(clientSuppBloc.state.allTransactions.first.amount, '150.00');
     });
   });
 }

@@ -74,7 +74,7 @@ class _PaymentDetailsPageState extends State<PaymentDetailsPage> {
     });
   }
 
-  void _onValidate() {
+  Future<void> _onValidate() async {
     final updatedData = currentPaymentData.copyWith(
       notes: notesController.text,
       dateTime: DateTime.now(),
@@ -84,13 +84,18 @@ class _PaymentDetailsPageState extends State<PaymentDetailsPage> {
     if (state.operationType == OperationType.edit) {
       final oldTxn = state.selectedTxn;
       if (oldTxn != null) {
-        SalePurchasePersistence.editTransaction(context, updatedData, oldTxn);
+        await SalePurchasePersistence.editTransaction(
+          context,
+          updatedData,
+          oldTxn,
+        );
       } else {
         SalePurchasePersistence.addTransaction(context, updatedData);
       }
     } else {
       SalePurchasePersistence.addTransaction(context, updatedData);
     }
+    if (!mounted) return;
 
     final isOrder =
         updatedData.paymentType == PaymentTransactionType.salePayment ||
@@ -98,7 +103,11 @@ class _PaymentDetailsPageState extends State<PaymentDetailsPage> {
     if (isOrder) {
       context.push(RoutePaths.invoice, extra: updatedData);
     } else {
-      context.go(RoutePaths.salePurchase);
+      context.go(
+        state.returnToDashboard
+            ? RoutePaths.clientSuppDashboard
+            : RoutePaths.salePurchase,
+      );
     }
   }
 
