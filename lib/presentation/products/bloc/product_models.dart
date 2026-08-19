@@ -151,7 +151,8 @@ class ProductDetail {
       // the 'Return' icon/color/sign branches.
       paymentType: _humanize(e.type.value),
       createdAt: e.createdAt,
-      transactionId: e.id.toString(),
+      transactionId: e.transactionId,
+      quantityPerPackage: e.quantityPerPackage,
     );
   }
 

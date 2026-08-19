@@ -38,6 +38,7 @@ class SalePurchaseBloc extends Bloc<SalePurchaseEvent, SalePurchaseState> {
         selectedTxn: null,
         discountCash: 0,
         discountPercentage: 0,
+        returnToDashboard: false,
       ),
     );
   }
@@ -154,6 +155,7 @@ class SalePurchaseBloc extends Bloc<SalePurchaseEvent, SalePurchaseState> {
         discountCash: 0,
         discountPercentage: 0,
         selectedTxn: null,
+        returnToDashboard: false,
       ),
     );
   }
@@ -172,6 +174,7 @@ class SalePurchaseBloc extends Bloc<SalePurchaseEvent, SalePurchaseState> {
         discountPercentage: 0,
         selectedTileIndex: -1,
         editingItem: null,
+        returnToDashboard: event.returnToDashboard,
       ),
     );
   }
@@ -190,6 +193,7 @@ class SalePurchaseBloc extends Bloc<SalePurchaseEvent, SalePurchaseState> {
         editingItem: null,
         discountCash: 0,
         discountPercentage: 0,
+        returnToDashboard: event.returnToDashboard,
       ),
     );
   }

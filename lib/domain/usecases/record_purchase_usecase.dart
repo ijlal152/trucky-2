@@ -20,6 +20,8 @@ class RecordPurchaseUsecase
       unitPrice: params.unitPrice,
       sourceName: params.sourceName,
       sourceType: params.sourceType,
+      transactionId: params.transactionId,
+      quantityPerPackage: params.quantityPerPackage,
     );
   }
 }

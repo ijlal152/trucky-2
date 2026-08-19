@@ -88,17 +88,30 @@ class BeginEditCartEvent extends SalePurchaseEvent {
     required this.txn,
     required this.clientSupp,
     required this.items,
+    this.returnToDashboard = false,
   });
 
   final ClientSuppTxn txn;
   final ClientSupp clientSupp;
   final List<CartItem> items;
+
+  /// Whether the edit started from the client/supplier dashboard, in which
+  /// case the user should return there after the edit completes.
+  final bool returnToDashboard;
 }
 
 /// Begins editing an existing Payment/Refund transaction.
 class BeginEditPaymentEvent extends SalePurchaseEvent {
-  const BeginEditPaymentEvent({required this.txn, required this.clientSupp});
+  const BeginEditPaymentEvent({
+    required this.txn,
+    required this.clientSupp,
+    this.returnToDashboard = false,
+  });
 
   final ClientSuppTxn txn;
   final ClientSupp clientSupp;
+
+  /// Whether the edit started from the client/supplier dashboard, in which
+  /// case the user should return there after the edit completes.
+  final bool returnToDashboard;
 }

@@ -73,5 +73,25 @@ void main() {
       expect(find.text('Edit'), findsOneWidget);
       expect(find.text('Delete'), findsOneWidget);
     });
+
+    testWidgets('tapping Initial Balance does not navigate', (tester) async {
+      await pumpToDashboard(tester);
+
+      await tester.tap(find.text('Initial Balance'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Ahmed Benali'), findsOneWidget);
+      expect(find.text('Balance'), findsOneWidget);
+    });
+
+    testWidgets('tapping a Payment transaction opens the payment details',
+        (tester) async {
+      await pumpToDashboard(tester);
+
+      await tester.tap(find.text('Payment'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Payment Details'), findsOneWidget);
+    });
   });
 }

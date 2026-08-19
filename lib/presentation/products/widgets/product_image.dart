@@ -1,5 +1,4 @@
-import 'dart:typed_data';
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trucky/core/constants/app_assets.dart';
@@ -20,6 +19,16 @@ void _cacheImage(String key, Uint8List bytes) {
   _base64ImageCache[key] = bytes;
 }
 
+/// Decodes a base64 image on a background isolate (top-level so it works with
+/// `compute`). Returns null when the payload is malformed.
+Uint8List? _decodeBase64Image(String base64Image) {
+  try {
+    return ImageUtils.convertBase64ToImage(img: base64Image);
+  } catch (_) {
+    return null;
+  }
+}
+
 Widget buildProductImage({
   required String? base64Image,
   double? imgHeight,
@@ -29,21 +38,62 @@ Widget buildProductImage({
   if (base64Image == null || base64Image.isEmpty) {
     return _productIcon(imgHeight, imgWidth);
   }
+  return _AsyncDecodedImage(
+    base64Image: base64Image,
+    imgHeight: imgHeight,
+    imgWidth: imgWidth,
+    isRoundImg: isRoundImg,
+  );
+}
 
-  Uint8List? bytes = _base64ImageCache[base64Image];
-  if (bytes == null) {
-    try {
-      bytes = ImageUtils.convertBase64ToImage(img: base64Image);
-    } catch (_) {
-      // Malformed base64; fall through to the broken-image icon.
-    }
-    if (bytes == null) {
-      return const Icon(Icons.image_not_supported, color: Colors.grey);
-    }
-    _cacheImage(base64Image, bytes);
+/// Decodes the base64 payload off the UI isolate, with the decoded bytes
+/// cached in [_base64ImageCache] so repeated builds do not re-decode.
+class _AsyncDecodedImage extends StatefulWidget {
+  const _AsyncDecodedImage({
+    required this.base64Image,
+    this.imgHeight,
+    this.imgWidth,
+    this.isRoundImg = true,
+  });
+
+  final String base64Image;
+  final double? imgHeight;
+  final double? imgWidth;
+  final bool isRoundImg;
+
+  @override
+  State<_AsyncDecodedImage> createState() => _AsyncDecodedImageState();
+}
+
+class _AsyncDecodedImageState extends State<_AsyncDecodedImage> {
+  late final Future<Uint8List?> _decodeFuture = _decode();
+
+  Future<Uint8List?> _decode() async {
+    final cached = _base64ImageCache[widget.base64Image];
+    if (cached != null) return cached;
+    final bytes = await compute(_decodeBase64Image, widget.base64Image);
+    if (bytes != null) _cacheImage(widget.base64Image, bytes);
+    return bytes;
   }
 
-  return _buildImageWidget(bytes, imgHeight, imgWidth, isRoundImg);
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<Uint8List?>(
+      future: _decodeFuture,
+      builder: (context, snapshot) {
+        final bytes = snapshot.data;
+        if (bytes == null || bytes.isEmpty) {
+          return _productIcon(widget.imgHeight, widget.imgWidth);
+        }
+        return _buildImageWidget(
+          bytes,
+          widget.imgHeight,
+          widget.imgWidth,
+          widget.isRoundImg,
+        );
+      },
+    );
+  }
 }
 
 Widget _productIcon(double? height, double? width) {

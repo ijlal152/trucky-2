@@ -8,6 +8,10 @@ import 'package:trucky/presentation/client_supplier/bloc/client_supp_bloc.dart';
 import 'package:trucky/presentation/client_supplier/screens/add_client_supp_screen.dart';
 import 'package:trucky/presentation/client_supplier/screens/client_supp_dashboard_screen.dart';
 import 'package:trucky/presentation/client_supplier/screens/client_supp_page.dart';
+import 'package:trucky/presentation/products/bloc/product_bloc.dart';
+import 'package:trucky/presentation/sales_purchases/bloc/sale_purchase_bloc.dart';
+import 'package:trucky/presentation/sales_purchases/screens/payment_details_page.dart';
+import 'package:trucky/presentation/sales_purchases/screens/sell_purchase_cart_page.dart';
 
 import 'fake_client_supp_repository.dart';
 
@@ -42,6 +46,16 @@ GoRouter clientSuppRouter({String initialLocation = RoutePaths.clients}) {
         name: 'clientSuppDashboard',
         builder: (context, state) => const ClientSuppDashboardScreen(),
       ),
+      GoRoute(
+        path: RoutePaths.paymentDetails,
+        name: 'paymentDetails',
+        builder: (context, state) => const PaymentDetailsPage(),
+      ),
+      GoRoute(
+        path: RoutePaths.sellPurchaseCart,
+        name: 'sellPurchaseCart',
+        builder: (context, state) => const SellPurchaseCartPage(),
+      ),
     ],
   );
 }
@@ -57,8 +71,14 @@ Future<void> pumpRouterWithClientSuppApp(
       designSize: const Size(412, 892),
       minTextAdapt: true,
       fontSizeResolver: FontSizeResolvers.height,
-      builder: (context, child) => BlocProvider<ClientSuppBloc>(
-        create: (_) => bloc ?? buildClientSuppBloc(),
+      builder: (context, child) => MultiBlocProvider(
+        providers: [
+          BlocProvider<ClientSuppBloc>(
+            create: (_) => bloc ?? buildClientSuppBloc(),
+          ),
+          BlocProvider<ProductBloc>(create: (_) => ProductBloc()),
+          BlocProvider<SalePurchaseBloc>(create: (_) => SalePurchaseBloc()),
+        ],
         child: MaterialApp.router(
           routerConfig: clientSuppRouter(initialLocation: initialLocation),
           debugShowCheckedModeBanner: false,

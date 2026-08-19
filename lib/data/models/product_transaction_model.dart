@@ -15,6 +15,8 @@ class ProductTransactionModel {
     required this.isSynced,
     this.sourceName,
     this.sourceType,
+    this.transactionId,
+    this.quantityPerPackage,
   });
 
   final int id;
@@ -27,6 +29,8 @@ class ProductTransactionModel {
   final bool isSynced;
   final String? sourceName;
   final String? sourceType;
+  final String? transactionId;
+  final String? quantityPerPackage;
 
   factory ProductTransactionModel.fromMap(Map<String, Object?> map) {
     return ProductTransactionModel(
@@ -42,6 +46,9 @@ class ProductTransactionModel {
       isSynced: (map[ProductTransactionTable.isSynced] as int? ?? 0) == 1,
       sourceName: map[ProductTransactionTable.sourceName] as String?,
       sourceType: map[ProductTransactionTable.sourceType] as String?,
+      transactionId: map[ProductTransactionTable.transactionId] as String?,
+      quantityPerPackage:
+          map[ProductTransactionTable.quantityPerPackage] as String?,
     );
   }
 
@@ -56,6 +63,8 @@ class ProductTransactionModel {
     ProductTransactionTable.isSynced: isSynced ? 1 : 0,
     ProductTransactionTable.sourceName: sourceName,
     ProductTransactionTable.sourceType: sourceType,
+    ProductTransactionTable.transactionId: transactionId,
+    ProductTransactionTable.quantityPerPackage: quantityPerPackage,
   };
 
   ProductTransactionEntity toEntity() => ProductTransactionEntity(
@@ -69,6 +78,8 @@ class ProductTransactionModel {
     isSynced: isSynced,
     sourceName: sourceName,
     sourceType: sourceType,
+    transactionId: transactionId,
+    quantityPerPackage: quantityPerPackage,
   );
 
   static ProductTransactionType _typeFromString(String raw) {

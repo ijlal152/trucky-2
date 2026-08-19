@@ -58,6 +58,17 @@ void main() {
       // widget renders via Text.rich so it is not matched by find.text).
       expect(find.text('*******'), findsNWidgets(4));
 
+      // Asset images resolve asynchronously (zero-width until loaded), so the
+      // tiny toggle is un-tappable in isolation. Precache the icon to give it
+      // its real size before tapping.
+      await tester.runAsync(
+        () => precacheImage(
+          AssetImage(AppAssets.images.visibilityOn),
+          tester.element(find.byType(MaterialApp)),
+        ),
+      );
+      await tester.pumpAndSettle();
+
       await tester.tap(imageAsset(AppAssets.images.visibilityOn),
           warnIfMissed: false);
       await tester.pumpAndSettle();

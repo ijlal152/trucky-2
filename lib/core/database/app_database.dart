@@ -9,7 +9,7 @@ class AppDatabase {
 
   static final AppDatabase instance = AppDatabase._();
 
-  static const int schemaVersion = 6;
+  static const int schemaVersion = 8;
 
   Database? _database;
 
@@ -112,6 +112,8 @@ class AppDatabase {
         is_synced INTEGER NOT NULL DEFAULT 0,
         source_name TEXT,
         source_type TEXT,
+        transaction_id TEXT,
+        quantity_per_package TEXT,
         FOREIGN KEY (product_id) REFERENCES ${TableNames.productsTable} (id)
           ON DELETE CASCADE
       )
@@ -142,6 +144,12 @@ class AppDatabase {
     }
     if (oldVersion < 6) {
       await _migrateToV6(db);
+    }
+    if (oldVersion < 7) {
+      await _migrateToV7(db);
+    }
+    if (oldVersion < 8) {
+      await _migrateToV8(db);
     }
   }
 
@@ -212,6 +220,29 @@ class AppDatabase {
     );
     await db.execute('DROP TABLE IF EXISTS ${TableNames.productsTable}');
     await _createProductTables(db);
+  }
+
+  Future<void> _migrateToV7(Database db) async {
+    await db.execute(
+      'ALTER TABLE ${TableNames.clientSuppTransactionsTable} '
+      'ADD COLUMN products_json TEXT',
+    );
+  }
+
+  /// v8: link inventory ledger rows back to their parent transaction
+  /// (Sale/Purchase/Return) so the products of a transaction can be read
+  /// from the database and joined back (mirrors the legacy `product_details`
+  /// `transactionId`). `quantity_per_package` preserves the per-package
+  /// quantity shown in the edit cart.
+  Future<void> _migrateToV8(Database db) async {
+    await db.execute(
+      'ALTER TABLE ${TableNames.productTransactionTable} '
+      'ADD COLUMN transaction_id TEXT',
+    );
+    await db.execute(
+      'ALTER TABLE ${TableNames.productTransactionTable} '
+      'ADD COLUMN quantity_per_package TEXT',
+    );
   }
 
   Future<void> close() async {

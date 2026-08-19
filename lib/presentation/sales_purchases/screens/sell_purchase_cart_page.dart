@@ -7,8 +7,8 @@ import 'package:trucky/core/constants/route_paths.dart';
 import 'package:trucky/core/utils/widget_extensions.dart';
 import 'package:trucky/presentation/sales_purchases/bloc/sale_purchase_bloc.dart';
 import 'package:trucky/presentation/sales_purchases/bloc/sale_purchase_event.dart';
-import 'package:trucky/presentation/sales_purchases/widgets/cart_list.dart';
 import 'package:trucky/presentation/sales_purchases/widgets/calculation_widget.dart';
+import 'package:trucky/presentation/sales_purchases/widgets/cart_list.dart';
 import 'package:trucky/presentation/sales_purchases/widgets/sell_purchase_helper.dart';
 import 'package:trucky/presentation/widgets/custom_app_bar.dart';
 import 'package:trucky/presentation/widgets/custom_bottom_nav_bar.dart';
@@ -24,7 +24,8 @@ class SellPurchaseCartPage extends StatelessWidget {
     return BlocBuilder<SalePurchaseBloc, dynamic>(
       builder: (context, _) {
         final state = context.read<SalePurchaseBloc>().state;
-        final isReturn = state.transactionType == TransactionType.returnTransaction;
+        final isReturn =
+            state.transactionType == TransactionType.returnTransaction;
         final baseTitle = isReturn
             ? 'Return'
             : (state.entityType == EntityType.supplier ? 'Purchase' : 'Sale');
@@ -42,18 +43,14 @@ class SellPurchaseCartPage extends StatelessWidget {
             titleColor: Colors.black,
             leadingIconColor: Colors.black,
             leadingOnTap: () => _confirmCancel(context),
-            actionWidgets: [
-              _selectedUserNameChip(context, selectedName),
-            ],
+            actionWidgets: [_selectedUserNameChip(context, selectedName)],
           ),
           body: SizedBox(
             width: double.infinity,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Flexible(
-                  child: CartList(cartItems: state.selectedProdList),
-                ),
+                Flexible(child: CartList(cartItems: state.selectedProdList)),
               ],
             ),
           ),
@@ -63,10 +60,7 @@ class SellPurchaseCartPage extends StatelessWidget {
             widget: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
-              children: const [
-                CalculationWidget(),
-                SellPurchaseHelper(),
-              ],
+              children: const [CalculationWidget(), SellPurchaseHelper()],
             ).paddingSymmetric(horizontal: 20.w),
           ),
         );
@@ -76,6 +70,7 @@ class SellPurchaseCartPage extends StatelessWidget {
 
   void _confirmCancel(BuildContext context) {
     final state = context.read<SalePurchaseBloc>().state;
+    final returnToDashboard = state.returnToDashboard;
     showDialog<void>(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -92,11 +87,15 @@ class SellPurchaseCartPage extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
-              context
-                  .read<SalePurchaseBloc>()
-                  .add(const ResetSalePurchaseDataEvent());
+              context.read<SalePurchaseBloc>().add(
+                const ResetSalePurchaseDataEvent(),
+              );
               Navigator.pop(dialogContext);
-              context.go(RoutePaths.salePurchase);
+              context.go(
+                returnToDashboard
+                    ? RoutePaths.clientSuppDashboard
+                    : RoutePaths.salePurchase,
+              );
             },
             child: const Text('Yes'),
           ),

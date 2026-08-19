@@ -7,7 +7,10 @@ import 'package:trucky/domain/usecases/add_client_supp_usecase.dart';
 import 'package:trucky/domain/usecases/delete_client_supp_txn_usecase.dart';
 import 'package:trucky/domain/usecases/fetch_all_client_supp_txn_usecase.dart';
 import 'package:trucky/domain/usecases/fetch_all_client_supp_usecase.dart';
+import 'package:trucky/domain/usecases/fetch_all_product_transactions_usecase.dart';
 import 'package:trucky/presentation/client_supplier/bloc/client_supp_bloc.dart';
+
+import 'fake_product_repository.dart';
 
 /// In-memory [ClientSuppRepository] that seeds the same sample data the old
 /// mock bloc used, so widget/bloc tests keep passing without a real DB.
@@ -230,13 +233,23 @@ class FakeClientSuppRepository implements ClientSuppRepository {
 }
 
 /// Builds a [ClientSuppBloc] backed by a fresh [FakeClientSuppRepository].
-ClientSuppBloc buildClientSuppBloc([FakeClientSuppRepository? repository]) {
+///
+/// The bloc's product-transactions join is wired to [productRepository] (or a
+/// fresh [FakeProductRepository]) so the transaction's products are read back
+/// from the same in-memory ledger the ProductBloc writes to.
+ClientSuppBloc buildClientSuppBloc([
+  FakeClientSuppRepository? repository,
+  FakeProductRepository? productRepository,
+]) {
   final repo = repository ?? FakeClientSuppRepository();
+  final productRepo = productRepository ?? FakeProductRepository();
   return ClientSuppBloc(
     fetchAllClientSupps: FetchAllClientSuppUsecase(repo),
     fetchAllClientSuppTxns: FetchAllClientSuppTxnUsecase(repo),
     addClientSupp: AddClientSuppUsecase(repo),
     addClientSuppTxn: AddClientSuppTxnUsecase(repo),
     deleteClientSuppTxn: DeleteClientSuppTxnUsecase(repo),
+    fetchAllProductTransactions:
+        FetchAllProductTransactionsUsecase(productRepo),
   );
 }

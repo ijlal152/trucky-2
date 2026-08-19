@@ -15,6 +15,7 @@ class SalePurchaseState {
     this.discountCash = 0,
     this.discountPercentage = 0,
     this.selectedTxn,
+    this.returnToDashboard = false,
   });
 
   final EntityType entityType;
@@ -27,6 +28,9 @@ class SalePurchaseState {
   final double discountCash;
   final double discountPercentage;
   final ClientSuppTxn? selectedTxn;
+
+  /// Whether the in-flight edit started from the client/supplier dashboard.
+  final bool returnToDashboard;
 
   double get totalQuantity => selectedProdList
       .fold<int>(0, (sum, item) => sum + item.quantity)
@@ -54,6 +58,7 @@ class SalePurchaseState {
     double? discountCash,
     double? discountPercentage,
     ClientSuppTxn? selectedTxn,
+    bool? returnToDashboard,
     bool clearSelectedClientSupp = false,
   }) {
     return SalePurchaseState(
@@ -69,6 +74,7 @@ class SalePurchaseState {
       discountCash: discountCash ?? this.discountCash,
       discountPercentage: discountPercentage ?? this.discountPercentage,
       selectedTxn: selectedTxn ?? this.selectedTxn,
+      returnToDashboard: returnToDashboard ?? this.returnToDashboard,
     );
   }
 }

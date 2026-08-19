@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trucky/core/constants/route_paths.dart';
 import 'package:trucky/core/utils/extensions.dart';
+import 'package:trucky/presentation/sales_purchases/bloc/sale_purchase_bloc.dart';
 import 'package:trucky/presentation/sales_purchases/bloc/sale_purchase_models.dart';
 import 'package:trucky/presentation/sales_purchases/widgets/invoice_widgets.dart';
 import 'package:trucky/presentation/widgets/custom_app_bar.dart';
@@ -62,6 +64,12 @@ class InvoicePage extends StatelessWidget {
   }
 
   void _handleNavigation(BuildContext context) {
-    context.go(RoutePaths.salePurchase);
+    final returnToDashboard =
+        context.read<SalePurchaseBloc>().state.returnToDashboard;
+    context.go(
+      returnToDashboard
+          ? RoutePaths.clientSuppDashboard
+          : RoutePaths.salePurchase,
+    );
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trucky/core/constants/app_assets.dart';
+import 'package:trucky/core/constants/enums.dart';
 import 'package:trucky/core/constants/route_paths.dart';
 import 'package:trucky/presentation/client_supplier/bloc/client_supp_bloc.dart';
 import 'package:trucky/presentation/client_supplier/bloc/client_supp_models.dart';
@@ -32,12 +33,18 @@ class SellPurchaseHelper extends StatelessWidget {
               btnTitle: 'Next',
               onTap: () {
                 final state = context.read<SalePurchaseBloc>().state;
-                final clientSupp =
-                    context.read<ClientSuppBloc>().state;
-                final oldBalance =
-                    ClientSuppTxn.calculateCurrentBalance(
+                final clientSupp = context.read<ClientSuppBloc>().state;
+                final editingId = state.operationType == OperationType.edit
+                    ? state.selectedTxn?.transactionId
+                    : null;
+                final allTransactions = editingId == null
+                    ? clientSupp.currentTxnList
+                    : clientSupp.currentTxnList
+                          .where((t) => t.transactionId != editingId)
+                          .toList();
+                final oldBalance = ClientSuppTxn.calculateCurrentBalance(
                   clientSupplierId: state.selectedClientSupp?.id ?? -1,
-                  allTransactions: clientSupp.currentTxnList,
+                  allTransactions: allTransactions,
                 );
                 final paymentData = PaymentDataModel.fromTransaction(
                   clientSupplier: state.selectedClientSupp,
@@ -47,17 +54,12 @@ class SellPurchaseHelper extends StatelessWidget {
                   transactionType: state.transactionType,
                   discount: state.discountAmount,
                 );
-                context.push(
-                  RoutePaths.paymentDetails,
-                  extra: paymentData,
-                );
+                context.push(RoutePaths.paymentDetails, extra: paymentData);
               },
             );
           },
         ),
-        CustomFloatingBtn(
-          onTap: () => context.push(RoutePaths.addProduct),
-        ),
+        CustomFloatingBtn(onTap: () => context.push(RoutePaths.addProduct)),
       ],
     );
   }

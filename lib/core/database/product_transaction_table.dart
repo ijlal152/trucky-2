@@ -13,4 +13,6 @@ abstract final class ProductTransactionTable {
   static const String isSynced = 'is_synced';
   static const String sourceName = 'source_name';
   static const String sourceType = 'source_type';
+  static const String transactionId = 'transaction_id';
+  static const String quantityPerPackage = 'quantity_per_package';
 }

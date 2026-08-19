@@ -15,6 +15,7 @@ import 'package:trucky/presentation/client_supplier/widgets/client_supp_common_d
 import 'package:trucky/presentation/sales_purchases/bloc/sale_purchase_bloc.dart';
 import 'package:trucky/presentation/sales_purchases/bloc/sale_purchase_event.dart';
 import 'package:trucky/presentation/sales_purchases/bloc/sale_purchase_models.dart';
+import 'package:trucky/presentation/sales_purchases/mixins/transaction_edit_mixin.dart';
 import 'package:trucky/presentation/widgets/bottom_sheet_payment_type_items.dart';
 import 'package:trucky/presentation/widgets/custom_bottom_sheet.dart';
 import 'package:trucky/presentation/widgets/custom_fab_controller.dart';
@@ -30,7 +31,7 @@ class ClientSuppDashboardScreen extends StatefulWidget {
 }
 
 class _ClientSuppDashboardScreenState extends State<ClientSuppDashboardScreen>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, TransactionEditMixin {
   late final CustomFabController fabCont;
 
   @override
@@ -69,6 +70,10 @@ class _ClientSuppDashboardScreenState extends State<ClientSuppDashboardScreen>
           onLocationPressed: (lat, lng) {},
           iconBuilder: (index, item) => _iconBasedOnPaymentType(item, isClient),
           amountColorBuilder: (index, item) => _amountColor(item, isClient),
+          onTapTxn: (index) {
+            final txn = state.selectedCSTxns[index];
+            onTapToEdit(context, txn, returnToDashboard: true);
+          },
           totalBalance: state.selectedCSTxns.isEmpty
               ? '0'
               : ClientSuppTxn.calculateBalanceAtIndex(

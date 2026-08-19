@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:trucky/presentation/products/bloc/product_bloc.dart';
 import 'package:trucky/presentation/products/bloc/product_event.dart';
 
+import '../../../helpers/fake_product_repository.dart';
 import '../../../helpers/product_test_harness.dart';
 
 void main() {
@@ -14,7 +15,7 @@ void main() {
     /// the FAB so that a successful add can pop back to a real route.
     Future<void> pumpToAddScreen(WidgetTester tester,
         {ProductBloc? bloc}) async {
-      final b = bloc ?? ProductBloc();
+      final b = bloc ?? buildProductBloc();
       b.add(const LoadProductsEvent());
       await tester.pump();
 
@@ -38,7 +39,7 @@ void main() {
 
     testWidgets('adds a product to the bloc when the form is valid',
         (tester) async {
-      final bloc = ProductBloc();
+      final bloc = buildProductBloc();
       await pumpToAddScreen(tester, bloc: bloc);
 
       final fields = find.byType(TextFormField);
@@ -62,7 +63,7 @@ void main() {
 
     testWidgets('does not add a product with a duplicate name',
         (tester) async {
-      final bloc = ProductBloc();
+      final bloc = buildProductBloc();
       await pumpToAddScreen(tester, bloc: bloc);
 
       final fields = find.byType(TextFormField);

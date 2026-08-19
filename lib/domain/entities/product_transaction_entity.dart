@@ -14,9 +14,11 @@ class ProductTransactionEntity {
     required this.unitPrice,
     required this.totalPrice,
     required this.createdAt,
-    required this.isSynced,
+    required     this.isSynced,
     this.sourceName,
     this.sourceType,
+    this.transactionId,
+    this.quantityPerPackage,
   });
 
   final int id;
@@ -33,4 +35,13 @@ class ProductTransactionEntity {
 
   /// Optional counterparty role ('client' or 'supplier').
   final String? sourceType;
+
+  /// Id of the parent Sale/Purchase/Return transaction this ledger row
+  /// belongs to, used to read a transaction's products back from the
+  /// database (mirrors the legacy `product_details.transactionId`).
+  final String? transactionId;
+
+  /// Per-package quantity captured at write time (restored into the edit
+  /// cart). Null when unknown.
+  final String? quantityPerPackage;
 }

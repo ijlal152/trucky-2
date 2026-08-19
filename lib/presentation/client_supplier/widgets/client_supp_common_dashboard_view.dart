@@ -30,6 +30,7 @@ class ClientSuppCommonDashboardView extends StatelessWidget {
   final Widget? floatingActionButton;
   final Widget Function(int index, ClientSuppTxn item)? iconBuilder;
   final Color Function(int index, ClientSuppTxn item)? amountColorBuilder;
+  final void Function(int index)? onTapTxn;
 
   const ClientSuppCommonDashboardView({
     super.key,
@@ -46,6 +47,7 @@ class ClientSuppCommonDashboardView extends StatelessWidget {
     this.floatingActionButton,
     this.iconBuilder,
     this.amountColorBuilder,
+    this.onTapTxn,
     required this.list,
   });
 
@@ -146,6 +148,7 @@ class ClientSuppCommonDashboardView extends StatelessWidget {
                                   amountColorBuilder:
                                       amountColorBuilder ??
                                       (index, item) => const Color(0xFF2ECC71),
+                                  onTapTxn: onTapTxn,
                                 ).paddingOnly(bottom: 30.h),
                               ),
                             ],

@@ -9,6 +9,8 @@ import 'package:trucky/presentation/products/screens/add_product_screen.dart';
 import 'package:trucky/presentation/products/screens/product_dashboard_screen.dart';
 import 'package:trucky/presentation/products/screens/product_screen.dart';
 
+import 'fake_product_repository.dart';
+
 /// Builds a router with the products routes and a stub home route.
 GoRouter productsRouter({String initialLocation = RoutePaths.products}) {
   return GoRouter(
@@ -51,7 +53,7 @@ Future<void> pumpWithProductApp(
       minTextAdapt: true,
       fontSizeResolver: FontSizeResolvers.height,
       builder: (context, child) => BlocProvider<ProductBloc>(
-        create: (_) => bloc ?? ProductBloc(),
+        create: (_) => bloc ?? buildProductBloc(),
         child: MaterialApp(
           home: Scaffold(body: child),
         ),
@@ -73,7 +75,7 @@ Future<void> pumpRouterWithProductApp(
       minTextAdapt: true,
       fontSizeResolver: FontSizeResolvers.height,
       builder: (context, child) => BlocProvider<ProductBloc>(
-        create: (_) => bloc ?? ProductBloc(),
+        create: (_) => bloc ?? buildProductBloc(),
         child: MaterialApp.router(
           routerConfig: productsRouter(initialLocation: initialLocation),
           debugShowCheckedModeBanner: false,

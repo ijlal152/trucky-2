@@ -9,11 +9,9 @@ import 'package:trucky/core/constants/enums.dart';
 import 'package:trucky/core/constants/route_paths.dart';
 import 'package:trucky/core/utils/widget_extensions.dart';
 import 'package:trucky/presentation/client_supplier/bloc/client_supp_bloc.dart';
-import 'package:trucky/presentation/client_supplier/bloc/client_supp_models.dart';
-import 'package:trucky/presentation/products/bloc/product_bloc.dart';
 import 'package:trucky/presentation/sales_purchases/bloc/sale_purchase_bloc.dart';
 import 'package:trucky/presentation/sales_purchases/bloc/sale_purchase_event.dart';
-import 'package:trucky/presentation/sales_purchases/bloc/sale_purchase_models.dart';
+import 'package:trucky/presentation/sales_purchases/mixins/transaction_edit_mixin.dart';
 import 'package:trucky/presentation/sales_purchases/widgets/sale_purchase_common_list.dart';
 import 'package:trucky/presentation/widgets/bottom_sheet_payment_type_items.dart';
 import 'package:trucky/presentation/widgets/content_sheet.dart';
@@ -34,7 +32,7 @@ class SalePurchasePage extends StatefulWidget {
 }
 
 class _SalePurchasePageState extends State<SalePurchasePage>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, TransactionEditMixin {
   late final CustomFabController fabCont;
 
   @override
@@ -51,54 +49,6 @@ class _SalePurchasePageState extends State<SalePurchasePage>
   void dispose() {
     fabCont.dispose();
     super.dispose();
-  }
-
-  void _onTapToEdit(ClientSuppTxn txn) {
-    if (txn.paymentType == 'Initial Balance') return;
-
-    final clientSuppBloc = context.read<ClientSuppBloc>();
-    final entity = clientSuppBloc.state.currentEntityList
-        .where((e) => e.id == txn.clientSuppId)
-        .firstOrNull;
-    if (entity == null) return;
-
-    final isPayment =
-        txn.paymentType == 'Payment' || txn.paymentType == 'Refund';
-    if (isPayment) {
-      context.read<SalePurchaseBloc>().add(
-        BeginEditPaymentEvent(txn: txn, clientSupp: entity),
-      );
-      context.push(RoutePaths.paymentDetails);
-      return;
-    }
-
-    final products = context.read<ProductBloc>().state.products;
-    final items = txn.products.map((detail) {
-      final product = products
-          .where((p) => p.id == detail.productId)
-          .firstOrNull;
-      return CartItem(
-        product:
-            product ??
-            Product(
-              id: detail.productId,
-              productName: detail.sourceName ?? '',
-              purchasePrice: detail.purchasePrice,
-              sellingPrice: detail.sellingPrice,
-              availableStock: detail.quantity,
-            ),
-        quantity: detail.quantity.toInt(),
-        unitPrice: clientSuppBloc.state.entityType == EntityType.supplier
-            ? detail.purchasePrice
-            : detail.sellingPrice,
-        quantityPerPackage: detail.quantityPerPackage,
-      );
-    }).toList();
-
-    context.read<SalePurchaseBloc>().add(
-      BeginEditCartEvent(txn: txn, clientSupp: entity, items: items),
-    );
-    context.push(RoutePaths.sellPurchaseCart);
   }
 
   void _openTransactionSheet() {
@@ -191,7 +141,8 @@ class _SalePurchasePageState extends State<SalePurchasePage>
                             Expanded(
                               child: SalesPurchaseCommonList(
                                 list: txns,
-                                onTap: (index) => _onTapToEdit(txns[index]),
+                                onTap: (index) =>
+                                    onTapToEdit(context, txns[index]),
                               ),
                             ),
                           ],

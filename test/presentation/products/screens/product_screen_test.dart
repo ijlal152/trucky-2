@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:trucky/core/constants/app_assets.dart';
-import 'package:trucky/presentation/products/bloc/product_bloc.dart';
 import 'package:trucky/presentation/products/bloc/product_event.dart';
 
+import '../../../helpers/fake_product_repository.dart';
 import '../../../helpers/product_test_harness.dart';
 
 void main() {
@@ -65,7 +65,7 @@ void main() {
 
   group('ProductScreen (pre-loaded bloc)', () {
     testWidgets('does not re-seed sample data once loaded', (tester) async {
-      final bloc = ProductBloc();
+      final bloc = buildProductBloc();
       bloc.add(const LoadProductsEvent());
       await tester.pump();
 
