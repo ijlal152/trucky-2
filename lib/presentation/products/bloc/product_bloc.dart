@@ -6,8 +6,10 @@ import 'package:trucky/domain/entities/product_entity.dart';
 import 'package:trucky/domain/entities/product_transaction_type.dart';
 import 'package:trucky/domain/usecases/create_product_usecase.dart';
 import 'package:trucky/domain/usecases/delete_product_usecase.dart';
+import 'package:trucky/domain/usecases/delete_transactions_by_transaction_id_usecase.dart';
 import 'package:trucky/domain/usecases/get_all_products_usecase.dart';
 import 'package:trucky/domain/usecases/get_product_transactions_usecase.dart';
+import 'package:trucky/domain/usecases/rebuild_snapshots_for_products_usecase.dart';
 import 'package:trucky/domain/usecases/record_purchase_usecase.dart';
 import 'package:trucky/domain/usecases/record_return_usecase.dart';
 import 'package:trucky/domain/usecases/record_sale_usecase.dart';
@@ -28,6 +30,9 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     RecordPurchaseUsecase? recordPurchase,
     RecordSaleUsecase? recordSale,
     RecordReturnUsecase? recordReturn,
+    DeleteTransactionsByTransactionIdUsecase?
+    deleteTransactionsByTransactionId,
+    RebuildSnapshotsForProductsUsecase? rebuildSnapshotsForProducts,
   }) : _getAllProducts = getAllProducts ?? Injector.getAllProductsUsecase,
        _createProduct = createProduct ?? Injector.createProductUsecase,
        _deleteProduct = deleteProduct ?? Injector.deleteProductUsecase,
@@ -36,6 +41,12 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
        _recordPurchase = recordPurchase ?? Injector.recordPurchaseUsecase,
        _recordSale = recordSale ?? Injector.recordSaleUsecase,
        _recordReturn = recordReturn ?? Injector.recordReturnUsecase,
+       _deleteTransactionsByTransactionId =
+           deleteTransactionsByTransactionId ??
+           Injector.deleteTransactionsByTransactionIdUsecase,
+       _rebuildSnapshotsForProducts =
+           rebuildSnapshotsForProducts ??
+           Injector.rebuildSnapshotsForProductsUsecase,
        super(const ProductState()) {
     on<LoadProductsEvent>(_onLoadProducts);
     on<AddProductEvent>(_onAdd);
@@ -54,6 +65,9 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   final RecordPurchaseUsecase _recordPurchase;
   final RecordSaleUsecase _recordSale;
   final RecordReturnUsecase _recordReturn;
+  final DeleteTransactionsByTransactionIdUsecase
+      _deleteTransactionsByTransactionId;
+  final RebuildSnapshotsForProductsUsecase _rebuildSnapshotsForProducts;
 
   /// Per-product transaction cache keyed by product id, so tapping a product
   /// on the list reuses the already-loaded ledger instead of hitting the
@@ -126,7 +140,11 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
 
     await result.when(
       success: (entity) async {
-        final products = [...state.products, Product.fromEntity(entity)];
+        final added = Product.fromEntity(entity).copyWith(
+          quantityPerPackage: event.quantityPerPackage,
+          productImage: event.productImage,
+        );
+        final products = [...state.products, added];
         emit(
           state.copyWith(
             products: products,
@@ -290,6 +308,8 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
             : detail.purchasePrice,
         sourceName: detail.sourceName,
         sourceType: detail.sourceType,
+        transactionId: detail.transactionId,
+        quantityPerPackage: detail.quantityPerPackage,
       );
 
       final result = switch (op) {
@@ -326,15 +346,10 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       // the new transaction.
       _txnCache.remove(entity.id);
 
-      final txns = await _getProductTransactions(entity.id);
-      txns.when(
-        success: (rows) {
-          if (rows.isNotEmpty) {
-            newLedgerRows.add(ProductDetail.fromEntity(rows.first));
-          }
-        },
-        failure: (_) {},
-      );
+      // Keep the submitted detail (preserving its parent transactionId and
+      // per-package quantity) instead of re-reading the ledger row, whose own
+      // id is unrelated to the sale/purchase transaction it belongs to.
+      newLedgerRows.add(detail);
     }
 
     emit(
@@ -352,15 +367,58 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   Future<void> _onRemoveProductDetails(
     RemoveProductDetailsEvent event,
     Emitter<ProductState> emit,
-  ) {
-    // Transactions are append-only by design (audit + sync). Removing them
-    // would violate the design contract. Instead, this event simply hides
-    // the row from the current view; the ledger stays intact.
+  ) async {
+    final result = await _deleteTransactionsByTransactionId(
+      event.transactionId,
+    );
+    final affected = result.when<List<int>?>(
+      success: (ids) => ids,
+      failure: (failure) {
+        MySnackbarMessage.showErrorMessage(
+          title: 'Error!',
+          message: failure.message,
+        );
+        return null;
+      },
+    );
+    if (affected == null) return;
+
     final filtered = state.productDetailsList
         .where((d) => d.transactionId != event.transactionId)
         .toList();
-    emit(state.copyWith(productDetailsList: filtered));
-    return Future.value();
+
+    if (affected.isEmpty) {
+      emit(state.copyWith(productDetailsList: filtered));
+      return;
+    }
+
+    final rebuildResult = await _rebuildSnapshotsForProducts(affected);
+    await rebuildResult.when(
+      success: (entities) {
+        final updatedProducts = List<Product>.from(state.products);
+        for (final entity in entities) {
+          final idx = updatedProducts.indexWhere((p) => p.id == entity.id);
+          if (idx >= 0) updatedProducts[idx] = Product.fromEntity(entity);
+          _txnCache.remove(entity.id);
+        }
+        emit(
+          state.copyWith(
+            products: updatedProducts,
+            productDetailsList: filtered,
+            totalStockValue: updatedProducts.fold<double>(
+              0,
+              (sum, p) => sum + p.totalValue,
+            ),
+          ),
+        );
+      },
+      failure: (failure) {
+        MySnackbarMessage.showErrorMessage(
+          title: 'Error!',
+          message: failure.message,
+        );
+      },
+    );
   }
 
   ProductTransactionType? _opFromPaymentType(String paymentType) {

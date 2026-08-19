@@ -13,13 +13,16 @@ import 'package:trucky/domain/usecases/create_product_usecase.dart';
 import 'package:trucky/domain/usecases/delete_client_supp_txn_usecase.dart';
 import 'package:trucky/domain/usecases/delete_client_supp_usecase.dart';
 import 'package:trucky/domain/usecases/delete_product_usecase.dart';
+import 'package:trucky/domain/usecases/delete_transactions_by_transaction_id_usecase.dart';
 import 'package:trucky/domain/usecases/fetch_all_client_supp_txn_usecase.dart';
 import 'package:trucky/domain/usecases/fetch_all_client_supp_usecase.dart';
+import 'package:trucky/domain/usecases/fetch_all_product_transactions_usecase.dart';
 import 'package:trucky/domain/usecases/get_all_products_usecase.dart';
 import 'package:trucky/domain/usecases/get_product_transactions_usecase.dart';
 import 'package:trucky/domain/usecases/record_purchase_usecase.dart';
 import 'package:trucky/domain/usecases/record_return_usecase.dart';
 import 'package:trucky/domain/usecases/record_sale_usecase.dart';
+import 'package:trucky/domain/usecases/rebuild_snapshots_for_products_usecase.dart';
 import 'package:trucky/domain/usecases/update_client_supp_usecase.dart';
 
 /// Global composition root: provides shared infrastructure to every feature.
@@ -56,6 +59,11 @@ abstract final class Injector {
   static final GetProductTransactionsUsecase getProductTransactionsUsecase =
       GetProductTransactionsUsecase(productRepository);
 
+  static final FetchAllProductTransactionsUsecase
+      fetchAllProductTransactionsUsecase = FetchAllProductTransactionsUsecase(
+    productRepository,
+  );
+
   static final RecordPurchaseUsecase recordPurchaseUsecase =
       RecordPurchaseUsecase(productRepository);
 
@@ -66,6 +74,14 @@ abstract final class Injector {
   static final RecordReturnUsecase recordReturnUsecase = RecordReturnUsecase(
     productRepository,
   );
+
+  static final DeleteTransactionsByTransactionIdUsecase
+      deleteTransactionsByTransactionIdUsecase =
+      DeleteTransactionsByTransactionIdUsecase(productRepository);
+
+  static final RebuildSnapshotsForProductsUsecase
+      rebuildSnapshotsForProductsUsecase =
+      RebuildSnapshotsForProductsUsecase(productRepository);
 
   // ---------------- Client / Supplier module ----------------
 

@@ -30,6 +30,8 @@ abstract interface class ProductRepository {
     required double unitPrice,
     String? sourceName,
     String? sourceType,
+    String? transactionId,
+    String? quantityPerPackage,
   });
 
   /// Records a sale. Throws [ValidationFailure] when there is not
@@ -40,6 +42,8 @@ abstract interface class ProductRepository {
     required double unitPrice,
     String? sourceName,
     String? sourceType,
+    String? transactionId,
+    String? quantityPerPackage,
   });
 
   /// Records a return (purchase-return or sale-return). Stock is added back at
@@ -50,12 +54,17 @@ abstract interface class ProductRepository {
     required double unitPrice,
     String? sourceName,
     String? sourceType,
+    String? transactionId,
+    String? quantityPerPackage,
   });
 
   /// Returns the full transaction history for a product, newest first.
   Future<Result<List<ProductTransactionEntity>>> getTransactionsForProduct(
     int productId,
   );
+
+  /// Returns every ledger row across all products, oldest first.
+  Future<Result<List<ProductTransactionEntity>>> getAllProductTransactions();
 
   /// Returns all unsynced transactions, ordered by `created_at ASC`.
   Future<Result<List<ProductTransactionEntity>>> getUnsyncedTransactions({
@@ -67,4 +76,16 @@ abstract interface class ProductRepository {
 
   /// Removes a product and (via FK cascade) all of its transactions.
   Future<Result<void>> deleteProduct(int id);
+
+  /// Deletes every ledger row for a transaction. Returns the distinct product
+  /// ids whose rows were removed so their snapshots can be rebuilt.
+  Future<Result<List<int>>> deleteTransactionsByTransactionId(
+    String transactionId,
+  );
+
+  /// Replays each product's remaining ledger (oldest first) through the WAC
+  /// engine and writes the recomputed snapshot. Returns the rebuilt entities.
+  Future<Result<List<ProductEntity>>> rebuildSnapshotsForProducts(
+    List<int> productIds,
+  );
 }

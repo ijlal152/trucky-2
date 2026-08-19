@@ -76,6 +76,22 @@ class ProductLocalDataSource {
     return rows.map(ProductTransactionModel.fromMap).toList(growable: false);
   }
 
+  /// Every ledger row across all products, oldest first. Used to join a
+  /// transaction's products back from the database by `transaction_id`.
+  Future<List<ProductTransactionModel>> getAllProductTransactions() async {
+    final db = await _db;
+    final rows = await db.query(
+      ProductTransactionTable.name,
+      orderBy: '${ProductTransactionTable.createdAt} ASC',
+    );
+    log(
+      'getAllProductTransactions: '
+      '-> ${jsonEncode(rows)}',
+      name: 'DB-READ',
+    );
+    return rows.map(ProductTransactionModel.fromMap).toList(growable: false);
+  }
+
   Future<List<ProductTransactionModel>> getUnsyncedTransactions({
     int limit = 500,
   }) async {
@@ -153,5 +169,43 @@ class ProductLocalDataSource {
       'WHERE ${ProductTransactionTable.id} IN ($placeholders)',
       ids,
     );
+  }
+
+  /// Deletes every ledger row for [transactionId]. Returns the distinct
+  /// product ids whose rows were removed so their snapshots can be rebuilt.
+  Future<List<int>> deleteTransactionsByTransactionIdInTxn(
+    Transaction txn,
+    String transactionId,
+  ) async {
+    final rows = await txn.query(
+      ProductTransactionTable.name,
+      columns: [ProductTransactionTable.productId],
+      where: '${ProductTransactionTable.transactionId} = ?',
+      whereArgs: [transactionId],
+    );
+    final productIds = rows
+        .map((r) => r[ProductTransactionTable.productId] as int)
+        .toSet()
+        .toList();
+    await txn.delete(
+      ProductTransactionTable.name,
+      where: '${ProductTransactionTable.transactionId} = ?',
+      whereArgs: [transactionId],
+    );
+    return productIds;
+  }
+
+  /// Returns a product's ledger rows, oldest first, for snapshot replay.
+  Future<List<ProductTransactionModel>> getTransactionsForProductInTxn(
+    Transaction txn,
+    int productId,
+  ) async {
+    final rows = await txn.query(
+      ProductTransactionTable.name,
+      where: '${ProductTransactionTable.productId} = ?',
+      whereArgs: [productId],
+      orderBy: '${ProductTransactionTable.createdAt} ASC',
+    );
+    return rows.map(ProductTransactionModel.fromMap).toList(growable: false);
   }
 }

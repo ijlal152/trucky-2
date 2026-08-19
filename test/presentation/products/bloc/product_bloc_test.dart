@@ -2,6 +2,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:trucky/presentation/products/bloc/product_bloc.dart';
 import 'package:trucky/presentation/products/bloc/product_event.dart';
 
+import '../../../helpers/fake_product_repository.dart';
+
 /// Flushes the bloc's microtask queue so synchronous handlers complete.
 Future<void> pumpEventQueue() async {
   for (var i = 0; i < 10; i++) {
@@ -16,7 +18,7 @@ void main() {
     late ProductBloc bloc;
 
     setUp(() {
-      bloc = ProductBloc();
+      bloc = buildProductBloc();
     });
 
     tearDown(() {
@@ -65,7 +67,7 @@ void main() {
         expect(bloc.state.products.length, 5);
         expect(
           bloc.state.products.map((p) => p.id),
-          isNot(equals(firstLoadIds)),
+          equals(firstLoadIds),
         );
       });
     });
@@ -95,8 +97,8 @@ void main() {
         expect(added.productSKU, 'SP-001');
         expect(added.availableStock, 8);
         expect(added.weightedAverageCost, 40.0);
-        // previous total (12990) + 8 * 65 (520) = 13510
-        expect(bloc.state.totalStockValue, closeTo(13510.0, 0.001));
+        // previous total (12990) + 8 * 40 (WAC) = 13310
+        expect(bloc.state.totalStockValue, closeTo(13310.0, 0.001));
       });
 
       test('rejects a product with a duplicate name', () async {
@@ -221,6 +223,60 @@ void main() {
       });
     });
 
+    test(
+      'RemoveProductDetailsEvent deletes ledger rows and rebuilds stock',
+      () async {
+        final repo = FakeProductRepository();
+        final bloc = buildProductBloc(repo);
+        bloc.add(const LoadProductsEvent());
+        await pumpEventQueue();
+
+        final product = bloc.state.products.first;
+        final before = product.availableStock;
+        const txnId = 'txn-edit';
+
+        bloc.add(
+          AddProductDetailsEvent(
+            details: [
+              ProductDetail(
+                productId: product.id!,
+                purchasePrice: product.purchasePrice,
+                sellingPrice: product.sellingPrice,
+                quantity: 2,
+                paymentType: 'Sale',
+                createdAt: DateTime.now(),
+                transactionId: txnId,
+              ),
+            ],
+          ),
+        );
+        await pumpEventQueue();
+
+        expect(bloc.state.products.first.availableStock, before - 2);
+        expect(
+          bloc.state.productDetailsList.where((d) => d.transactionId == txnId),
+          hasLength(1),
+        );
+
+        bloc.add(RemoveProductDetailsEvent(transactionId: txnId));
+        await pumpEventQueue();
+
+        // Rows gone from the view and stock restored.
+        expect(bloc.state.productDetailsList, isEmpty);
+        expect(bloc.state.products.first.availableStock, before);
+
+        // Fresh bloc over the same repo proves the row was really deleted,
+        // not merely hidden.
+        final reloaded = buildProductBloc(repo);
+        reloaded.add(const LoadProductsEvent());
+        await pumpEventQueue();
+        expect(reloaded.state.products.first.availableStock, before);
+
+        reloaded.close();
+        bloc.close();
+      },
+    );
+
     group('Product model getters', () {
       test('profit is selling minus purchase price', () {
         const product = Product(
@@ -231,8 +287,9 @@ void main() {
         );
         expect(product.profit, 20);
         expect(product.isInStock, isTrue);
-        expect(product.totalValue, 500);
-        expect(product.purchaseValue, 500);
+        // totalValue = availableStock * (weightedAverageCost ?? purchasePrice).
+        expect(product.totalValue, 400);
+        expect(product.purchaseValue, 400);
       });
 
       test('effectiveCost falls back to purchasePrice', () {

@@ -65,6 +65,20 @@ class ProductRepositoryImpl implements ProductRepository {
   }
 
   @override
+  Future<Result<List<ProductTransactionEntity>>> getAllProductTransactions() async {
+    try {
+      final rows = await _local.getAllProductTransactions();
+      final entities = rows.map((m) => m.toEntity()).toList()
+        ..sort(
+          (a, b) => a.createdAt.compareTo(b.createdAt),
+        );
+      return Result.success(entities);
+    } catch (e) {
+      return Result.failure(CacheFailure(e.toString()));
+    }
+  }
+
+  @override
   Future<Result<List<ProductTransactionEntity>>> getUnsyncedTransactions({
     int limit = 500,
   }) async {
@@ -153,6 +167,8 @@ class ProductRepositoryImpl implements ProductRepository {
     required double unitPrice,
     String? sourceName,
     String? sourceType,
+    String? transactionId,
+    String? quantityPerPackage,
   }) {
     return _runWrite<ProductEntity>((txn) async {
       final current = await _local.getProductByIdInTxn(txn, productId);
@@ -182,6 +198,8 @@ class ProductRepositoryImpl implements ProductRepository {
         now: now,
         sourceName: sourceName,
         sourceType: sourceType,
+        transactionId: transactionId,
+        quantityPerPackage: quantityPerPackage,
       );
       await _local.updateProductSnapshotInTxn(txn, updated);
       return updated.toEntity();
@@ -195,6 +213,8 @@ class ProductRepositoryImpl implements ProductRepository {
     required double unitPrice,
     String? sourceName,
     String? sourceType,
+    String? transactionId,
+    String? quantityPerPackage,
   }) {
     return _runWrite<ProductEntity>((txn) async {
       final current = await _local.getProductByIdInTxn(txn, productId);
@@ -231,6 +251,8 @@ class ProductRepositoryImpl implements ProductRepository {
         now: now,
         sourceName: sourceName,
         sourceType: sourceType,
+        transactionId: transactionId,
+        quantityPerPackage: quantityPerPackage,
       );
       await _local.updateProductSnapshotInTxn(txn, updated);
       return updated.toEntity();
@@ -244,6 +266,8 @@ class ProductRepositoryImpl implements ProductRepository {
     required double unitPrice,
     String? sourceName,
     String? sourceType,
+    String? transactionId,
+    String? quantityPerPackage,
   }) {
     return _runWrite<ProductEntity>((txn) async {
       final current = await _local.getProductByIdInTxn(txn, productId);
@@ -273,13 +297,74 @@ class ProductRepositoryImpl implements ProductRepository {
         now: now,
         sourceName: sourceName,
         sourceType: sourceType,
+        transactionId: transactionId,
+        quantityPerPackage: quantityPerPackage,
       );
       await _local.updateProductSnapshotInTxn(txn, updated);
       return updated.toEntity();
     });
   }
 
+  @override
+  Future<Result<List<int>>> deleteTransactionsByTransactionId(
+    String transactionId,
+  ) {
+    return _runWrite<List<int>>((txn) {
+      return _local.deleteTransactionsByTransactionIdInTxn(txn, transactionId);
+    });
+  }
+
+  @override
+  Future<Result<List<ProductEntity>>> rebuildSnapshotsForProducts(
+    List<int> productIds,
+  ) {
+    return _runWrite<List<ProductEntity>>((txn) async {
+      final rebuilt = <ProductEntity>[];
+      for (final id in productIds) {
+        final current = await _local.getProductByIdInTxn(txn, id);
+        if (current == null) continue;
+        final rows = await _local.getTransactionsForProductInTxn(txn, id);
+        var quantity = 0;
+        var averageCost = 0.0;
+        for (final row in rows) {
+          final op = _opFromType(row.type);
+          if (op == null) continue;
+          final next = _wac.call(
+            oldQuantity: quantity,
+            oldAverageCost: averageCost,
+            transactionQuantity: row.quantity,
+            transactionUnitPrice: row.unitPrice,
+            op: op,
+          );
+          quantity = next.newQuantity;
+          averageCost = next.newAverageCost;
+        }
+        final updated = current.copyWith(
+          stockQuantity: quantity,
+          stockValue: quantity * averageCost,
+          averageCost: averageCost,
+          updatedAt: DateTime.now(),
+        );
+        await _local.updateProductSnapshotInTxn(txn, updated);
+        rebuilt.add(updated.toEntity());
+      }
+      return rebuilt;
+    });
+  }
+
   // ---------------- Internals ----------------
+
+  WacOp? _opFromType(ProductTransactionType type) {
+    switch (type) {
+      case ProductTransactionType.initialStock:
+      case ProductTransactionType.purchase:
+        return WacOp.purchase;
+      case ProductTransactionType.sale:
+        return WacOp.sale;
+      case ProductTransactionType.returned:
+        return WacOp.returned;
+    }
+  }
 
   Future<Result<T>> _runWrite<T>(
     Future<T> Function(Transaction txn) block,
@@ -308,6 +393,8 @@ class ProductRepositoryImpl implements ProductRepository {
     required DateTime now,
     String? sourceName,
     String? sourceType,
+    String? transactionId,
+    String? quantityPerPackage,
   }) async {
     await _local.insertTransactionInTxn(
       txn,
@@ -322,6 +409,8 @@ class ProductRepositoryImpl implements ProductRepository {
         isSynced: false,
         sourceName: sourceName,
         sourceType: sourceType,
+        transactionId: transactionId,
+        quantityPerPackage: quantityPerPackage,
       ),
     );
   }
