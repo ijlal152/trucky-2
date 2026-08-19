@@ -424,6 +424,15 @@ class ClientSuppBloc extends Bloc<ClientSuppEvent, ClientSuppState> {
   ) {
     final sorted = transactions.toList()
       ..sort((a, b) {
+        // A Sale/Purchase/Return and its settlement (Payment/Refund) share the
+        // same transactionId. Keep the major operation above its settlement
+        // even when their persisted timestamps drifted by microseconds —
+        // otherwise the newer settlement sorts above its own sale.
+        if (a.transactionId == b.transactionId) {
+          return _paymentTypePriority(
+            a.paymentType,
+          ).compareTo(_paymentTypePriority(b.paymentType));
+        }
         final dateCompare = b.txnData.compareTo(a.txnData);
         if (dateCompare != 0) return dateCompare;
         return _paymentTypePriority(

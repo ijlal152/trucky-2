@@ -494,6 +494,48 @@ void main() {
             .toList();
         expect(types, ['Sale', 'Payment', 'Payment', 'Initial Balance']);
       });
+
+      test('sale sorts before its payment even when timestamps drift', () async {
+        bloc.add(const LoadClientSuppEvent());
+        await pumpEventQueue();
+
+        final saleInstant = DateTime.now();
+        bloc.add(
+          AddTransactionEvent(
+            txn: ClientSuppTxn(
+              clientSuppId: 1,
+              transactionId: 'txn-drift',
+              clientSupplierName: 'Ahmed Benali',
+              role: 'client',
+              txnData: saleInstant,
+              amount: '200',
+              paymentType: 'Sale',
+            ),
+          ),
+        );
+        bloc.add(
+          AddTransactionEvent(
+            txn: ClientSuppTxn(
+              clientSuppId: 1,
+              transactionId: 'txn-drift',
+              clientSupplierName: 'Ahmed Benali',
+              role: 'client',
+              txnData: saleInstant.add(const Duration(microseconds: 5)),
+              amount: '150',
+              paymentType: 'Payment',
+            ),
+          ),
+        );
+        await pumpEventQueue();
+
+        bloc.add(const SelectClientSuppEvent(index: 0));
+        await pumpEventQueue();
+
+        final types = bloc.state.selectedCSTxns
+            .map((t) => t.paymentType)
+            .toList();
+        expect(types, ['Sale', 'Payment', 'Payment', 'Initial Balance']);
+      });
     });
   });
 }
