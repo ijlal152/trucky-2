@@ -82,6 +82,19 @@ abstract final class SalePurchasePersistence {
 
   /// Adds a new transaction (add-mode).
   static void addTransaction(BuildContext context, PaymentDataModel data) {
+    _persist(context, data, _newTransactionId());
+  }
+
+  /// Writes the rows for [data] under [transactionId].
+  ///
+  /// A Sale/Purchase/Return writes one main transaction, one [ProductDetail]
+  /// row per cart line, and a settlement transaction (`Payment`/`Refund`)
+  /// only when a non-zero payment was entered.
+  static void _persist(
+    BuildContext context,
+    PaymentDataModel data,
+    String transactionId,
+  ) {
     final clientSuppBloc = context.read<ClientSuppBloc>();
     final productBloc = context.read<ProductBloc>();
 
@@ -91,20 +104,21 @@ abstract final class SalePurchasePersistence {
 
     if (!isOrder) {
       clientSuppBloc.add(
-        AddTransactionEvent(txn: _buildMainTxn(data, _newTransactionId())),
+        AddTransactionEvent(txn: _buildMainTxn(data, transactionId)),
       );
       return;
     }
 
-    final transactionId = _newTransactionId();
     final mainTxn = _buildMainTxn(data, transactionId);
     clientSuppBloc.add(AddTransactionEvent(txn: mainTxn));
     if (mainTxn.products.isNotEmpty) {
       productBloc.add(AddProductDetailsEvent(details: mainTxn.products));
     }
-    clientSuppBloc.add(
-      AddTransactionEvent(txn: _buildSettlementTxn(data, transactionId)),
-    );
+    if (data.paymentAmount > 0) {
+      clientSuppBloc.add(
+        AddTransactionEvent(txn: _buildSettlementTxn(data, transactionId)),
+      );
+    }
   }
 
   /// Replaces an existing transaction (edit-mode).

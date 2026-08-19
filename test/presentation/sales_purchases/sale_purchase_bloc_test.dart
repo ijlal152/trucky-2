@@ -13,6 +13,7 @@ import 'package:trucky/presentation/sales_purchases/bloc/sale_purchase_models.da
 import 'package:trucky/presentation/sales_purchases/sale_purchase_persistence.dart';
 
 import '../../helpers/fake_client_supp_repository.dart';
+import '../../helpers/fake_product_repository.dart';
 
 /// Flushes the bloc's microtask queue so synchronous handlers complete.
 Future<void> pumpEventQueue() async {
@@ -249,6 +250,35 @@ void main() {
         expect(bloc.state.operationType, OperationType.edit);
         expect(bloc.state.selectedProdList, isEmpty);
       });
+
+      test('BeginEditCartEvent with returnToDashboard sets the flag', () async {
+        final txn = _txn(paymentType: 'Sale');
+        bloc.add(
+          BeginEditCartEvent(
+            txn: txn,
+            clientSupp: _clientEntity(),
+            items: const [],
+            returnToDashboard: true,
+          ),
+        );
+        await pumpEventQueue();
+
+        expect(bloc.state.returnToDashboard, isTrue);
+      });
+
+      test('BeginEditCartEvent defaults returnToDashboard to false', () async {
+        final txn = _txn(paymentType: 'Sale');
+        bloc.add(
+          BeginEditCartEvent(
+            txn: txn,
+            clientSupp: _clientEntity(),
+            items: const [],
+          ),
+        );
+        await pumpEventQueue();
+
+        expect(bloc.state.returnToDashboard, isFalse);
+      });
     });
   });
 
@@ -334,43 +364,42 @@ void main() {
   });
 
   group('SalePurchasePersistence', () {
-    late ClientSuppBloc clientSuppBloc;
-    late ProductBloc productBloc;
-    late Widget app;
-
-    setUp(() {
-      clientSuppBloc = buildClientSuppBloc();
-      productBloc = ProductBloc();
-      app = MultiBlocProvider(
-        providers: [
-          BlocProvider.value(value: clientSuppBloc),
-          BlocProvider.value(value: productBloc),
-        ],
-        child: const MaterialApp(home: Scaffold(body: SizedBox())),
+    /// Pumps a context wired to in-memory blocs. The blocs are created inside
+    /// the testWidgets body (not setUp) because blocs created in setUp live
+    /// outside the FakeAsync test zone, so their events never flush under
+    /// `tester.pump`/`pumpAndSettle`.
+    Future<BuildContext> pumpContext(
+      WidgetTester tester, {
+      required ClientSuppBloc clientSuppBloc,
+      required ProductBloc productBloc,
+    }) async {
+      await tester.pumpWidget(
+        MultiBlocProvider(
+          providers: [
+            BlocProvider.value(value: clientSuppBloc),
+            BlocProvider.value(value: productBloc),
+          ],
+          child: const MaterialApp(home: Scaffold(body: SizedBox())),
+        ),
       );
-    });
-
-    tearDown(() {
-      clientSuppBloc.close();
-      productBloc.close();
-    });
-
-    Future<void> pumpContext(WidgetTester tester) async {
-      await tester.pumpWidget(app);
+      await tester.pump();
+      return tester.element(find.byType(SizedBox));
     }
 
     testWidgets('direct payment writes a single transaction', (tester) async {
-      await pumpContext(tester);
+      final clientSuppBloc = buildClientSuppBloc();
+      final context = await pumpContext(
+        tester,
+        clientSuppBloc: clientSuppBloc,
+        productBloc: buildProductBloc(),
+      );
       final data = PaymentDataModel.directPayment(
         clientSupplier: _clientEntity(),
         oldBalance: 1000,
       ).copyWith(paymentAmount: 300, notes: 'paid');
 
-      SalePurchasePersistence.addTransaction(
-        tester.element(find.byType(SizedBox)),
-        data,
-      );
-      await tester.pump();
+      SalePurchasePersistence.addTransaction(context, data);
+      await tester.pumpAndSettle();
 
       final txns = clientSuppBloc.state.allTransactions;
       expect(txns.length, 1);
@@ -382,7 +411,13 @@ void main() {
     testWidgets('sale writes the main txn, settlement and product details', (
       tester,
     ) async {
-      await pumpContext(tester);
+      final clientSuppBloc = buildClientSuppBloc();
+      final productBloc = buildProductBloc();
+      final context = await pumpContext(
+        tester,
+        clientSuppBloc: clientSuppBloc,
+        productBloc: productBloc,
+      );
       final client = _clientEntity();
       final product = _product(id: 5, sellingPrice: 100);
       final data = PaymentDataModel.fromTransaction(
@@ -393,10 +428,7 @@ void main() {
         products: [CartItem(product: product, quantity: 1, unitPrice: 100)],
       ).copyWith(paymentAmount: 40);
 
-      SalePurchasePersistence.addTransaction(
-        tester.element(find.byType(SizedBox)),
-        data,
-      );
+      SalePurchasePersistence.addTransaction(context, data);
       await tester.pump();
 
       final txns = clientSuppBloc.state.allTransactions
@@ -421,8 +453,42 @@ void main() {
       expect(details.first.paymentType, 'Sale');
     });
 
+    testWidgets('sale with zero payment writes no settlement', (tester) async {
+      final clientSuppBloc = buildClientSuppBloc();
+      final context = await pumpContext(
+        tester,
+        clientSuppBloc: clientSuppBloc,
+        productBloc: buildProductBloc(),
+      );
+      final client = _clientEntity();
+      final product = _product(id: 5, sellingPrice: 100);
+      final data = PaymentDataModel.fromTransaction(
+        clientSupplier: client,
+        oldBalance: 1000,
+        totalAmount: 100,
+        transactionType: TransactionType.sale,
+        products: [CartItem(product: product, quantity: 1, unitPrice: 100)],
+      );
+
+      SalePurchasePersistence.addTransaction(context, data);
+      await tester.pump();
+
+      final txns = clientSuppBloc.state.allTransactions
+          .where((t) => t.clientSuppId == client.id)
+          .toList();
+      expect(txns.length, 1);
+      expect(txns.first.paymentType, 'Sale');
+      expect(txns.first.amount, '100.00');
+    });
+
     testWidgets('sale reduces the product available stock', (tester) async {
-      await pumpContext(tester);
+      final clientSuppBloc = buildClientSuppBloc();
+      final productBloc = buildProductBloc();
+      final context = await pumpContext(
+        tester,
+        clientSuppBloc: clientSuppBloc,
+        productBloc: productBloc,
+      );
       productBloc.add(const LoadProductsEvent());
       await tester.pump();
 
@@ -436,10 +502,7 @@ void main() {
         products: [CartItem(product: product, quantity: 2, unitPrice: 100)],
       );
 
-      SalePurchasePersistence.addTransaction(
-        tester.element(find.byType(SizedBox)),
-        data,
-      );
+      SalePurchasePersistence.addTransaction(context, data);
       await tester.pump();
 
       final updated = productBloc.state.products
@@ -451,7 +514,13 @@ void main() {
     testWidgets('return writes a Refund settlement and restores stock', (
       tester,
     ) async {
-      await pumpContext(tester);
+      final clientSuppBloc = buildClientSuppBloc();
+      final productBloc = buildProductBloc();
+      final context = await pumpContext(
+        tester,
+        clientSuppBloc: clientSuppBloc,
+        productBloc: productBloc,
+      );
       productBloc.add(const LoadProductsEvent());
       await tester.pump();
 
@@ -465,10 +534,7 @@ void main() {
         products: [CartItem(product: product, quantity: 1, unitPrice: 50)],
       ).copyWith(paymentAmount: 50);
 
-      SalePurchasePersistence.addTransaction(
-        tester.element(find.byType(SizedBox)),
-        data,
-      );
+      SalePurchasePersistence.addTransaction(context, data);
       await tester.pump();
 
       final txns = clientSuppBloc.state.allTransactions;
@@ -481,10 +547,56 @@ void main() {
       expect(updated.availableStock, before + 1);
     });
 
+    testWidgets('sale products are joined from the ledger after a reload', (
+      tester,
+    ) async {
+      final clientRepo = FakeClientSuppRepository();
+      final productRepo = FakeProductRepository();
+      final clientSuppBloc = buildClientSuppBloc(clientRepo, productRepo);
+      final productBloc = buildProductBloc(productRepo);
+      final context = await pumpContext(
+        tester,
+        clientSuppBloc: clientSuppBloc,
+        productBloc: productBloc,
+      );
+      final client = _clientEntity();
+      final product = _product(id: 5, sellingPrice: 100);
+      final data = PaymentDataModel.fromTransaction(
+        clientSupplier: client,
+        oldBalance: 1000,
+        totalAmount: 100,
+        transactionType: TransactionType.sale,
+        products: [CartItem(product: product, quantity: 1, unitPrice: 100)],
+      ).copyWith(paymentAmount: 40);
+
+      SalePurchasePersistence.addTransaction(context, data);
+      await tester.pump();
+
+      // Fresh blocs over the same repositories simulate an app restart: the
+      // txn is read back from the database and its products are joined from
+      // the inventory ledger by transactionId (not stored on the txn row).
+      final reloaded = buildClientSuppBloc(clientRepo, productRepo);
+      reloaded.add(const LoadClientSuppEvent());
+      await tester.pump();
+
+      final txns = reloaded.state.allTransactions
+          .where((t) => t.clientSuppId == client.id)
+          .toList();
+      final main = txns.firstWhere((t) => t.paymentType == 'Sale');
+      expect(main.products.length, 1);
+      expect(main.products.first.productId, 5);
+      expect(main.products.first.sellingPrice, 100);
+    });
+
     testWidgets('editPaymentTransaction replaces the old record', (
       tester,
     ) async {
-      await pumpContext(tester);
+      final clientSuppBloc = buildClientSuppBloc();
+      final context = await pumpContext(
+        tester,
+        clientSuppBloc: clientSuppBloc,
+        productBloc: buildProductBloc(),
+      );
       final client = _clientEntity();
       final oldTxn = _txn(paymentType: 'Payment', amount: '100');
       clientSuppBloc.add(AddTransactionEvent(txn: oldTxn));
@@ -495,11 +607,7 @@ void main() {
         oldBalance: 900,
       ).copyWith(paymentAmount: 150, notes: 'edited');
 
-      SalePurchasePersistence.editTransaction(
-        tester.element(find.byType(SizedBox)),
-        newData,
-        oldTxn,
-      );
+      SalePurchasePersistence.editTransaction(context, newData, oldTxn);
       await tester.pump();
 
       final remaining = clientSuppBloc.state.allTransactions
