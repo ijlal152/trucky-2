@@ -4,14 +4,17 @@ import 'package:trucky/core/di/injector.dart';
 import 'package:trucky/core/usecase/usecase.dart';
 import 'package:trucky/domain/entities/client_supp_entity.dart';
 import 'package:trucky/domain/entities/client_supp_txn_entity.dart';
+import 'package:trucky/domain/entities/product_transaction_entity.dart';
 import 'package:trucky/domain/usecases/add_client_supp_txn_usecase.dart';
 import 'package:trucky/domain/usecases/add_client_supp_usecase.dart';
 import 'package:trucky/domain/usecases/delete_client_supp_txn_usecase.dart';
 import 'package:trucky/domain/usecases/fetch_all_client_supp_txn_usecase.dart';
 import 'package:trucky/domain/usecases/fetch_all_client_supp_usecase.dart';
+import 'package:trucky/domain/usecases/fetch_all_product_transactions_usecase.dart';
 import 'package:trucky/presentation/client_supplier/bloc/client_supp_event.dart';
 import 'package:trucky/presentation/client_supplier/bloc/client_supp_models.dart';
 import 'package:trucky/presentation/client_supplier/bloc/client_supp_state.dart';
+import 'package:trucky/presentation/products/bloc/product_models.dart';
 import 'package:trucky/presentation/widgets/custom_snackbar.dart';
 
 /// Holds clients/suppliers state and exposes mutations for the UI.
@@ -26,6 +29,7 @@ class ClientSuppBloc extends Bloc<ClientSuppEvent, ClientSuppState> {
     AddClientSuppUsecase? addClientSupp,
     AddClientSuppTxnUsecase? addClientSuppTxn,
     DeleteClientSuppTxnUsecase? deleteClientSuppTxn,
+    FetchAllProductTransactionsUsecase? fetchAllProductTransactions,
   }) : _fetchAllClientSupps =
            fetchAllClientSupps ?? Injector.fetchAllClientSuppUsecase,
        _fetchAllClientSuppTxns =
@@ -34,6 +38,9 @@ class ClientSuppBloc extends Bloc<ClientSuppEvent, ClientSuppState> {
        _addClientSuppTxn = addClientSuppTxn ?? Injector.addClientSuppTxnUsecase,
        _deleteClientSuppTxn =
            deleteClientSuppTxn ?? Injector.deleteClientSuppTxnUsecase,
+       _fetchAllProductTransactions =
+           fetchAllProductTransactions ??
+           Injector.fetchAllProductTransactionsUsecase,
        super(const ClientSuppState()) {
     on<LoadClientSuppEvent>(_onLoad);
     on<SetEntityTypeEvent>(_onSetEntityType);
@@ -53,6 +60,7 @@ class ClientSuppBloc extends Bloc<ClientSuppEvent, ClientSuppState> {
   final AddClientSuppUsecase _addClientSupp;
   final AddClientSuppTxnUsecase _addClientSuppTxn;
   final DeleteClientSuppTxnUsecase _deleteClientSuppTxn;
+  final FetchAllProductTransactionsUsecase _fetchAllProductTransactions;
 
   /// No auth/user module exists yet; the schema requires a `user_id`.
   static const int _defaultUserId = 1;
@@ -63,6 +71,9 @@ class ClientSuppBloc extends Bloc<ClientSuppEvent, ClientSuppState> {
   ) async {
     final entitiesResult = await _fetchAllClientSupps(const NoParams());
     final txnsResult = await _fetchAllClientSuppTxns(const NoParams());
+    final productTxnsResult = await _fetchAllProductTransactions(
+      const NoParams(),
+    );
 
     final entities = entitiesResult.when(
       success: (data) => data,
@@ -72,6 +83,23 @@ class ClientSuppBloc extends Bloc<ClientSuppEvent, ClientSuppState> {
       success: (data) => data,
       failure: (_) => <ClientSuppTxnEntity>[],
     );
+    final productTxns = productTxnsResult.when(
+      success: (data) => data,
+      failure: (_) => <ProductTransactionEntity>[],
+    );
+
+    // Join inventory ledger rows into their parent transactions by
+    // `transactionId` (mirrors the legacy `load_app_data` join), so the
+    // products of a persisted Sale/Purchase/Return are read back from the
+    // database rather than being stored on the transaction row.
+    final productsByTxnId = <String, List<ProductDetail>>{};
+    for (final row in productTxns) {
+      final txnId = row.transactionId;
+      if (txnId == null) continue;
+      productsByTxnId.putIfAbsent(txnId, () => []).add(
+        ProductDetail.fromEntity(row),
+      );
+    }
 
     final clients = entities
         .where((e) => e.role == EntityType.client.name)
@@ -82,7 +110,12 @@ class ClientSuppBloc extends Bloc<ClientSuppEvent, ClientSuppState> {
         .map(ClientSupp.fromEntity)
         .toList();
 
-    final allTransactions = txns.map(ClientSuppTxn.fromEntity).toList();
+    final allTransactions = txns.map((e) {
+      final txn = ClientSuppTxn.fromEntity(e);
+      return txn.copyWith(
+        products: productsByTxnId[txn.transactionId] ?? const [],
+      );
+    }).toList();
     final clientTxns = allTransactions
         .where((t) => t.role == EntityType.client.name)
         .toList();
@@ -293,12 +326,16 @@ class ClientSuppBloc extends Bloc<ClientSuppEvent, ClientSuppState> {
         final supplierTxns = isClient
             ? state.supplierTxns
             : [...state.supplierTxns, persisted];
+        final selectedCSTxns = state.selectedCS?.id == persisted.clientSuppId
+            ? _sortTxnsNewestFirst([...state.selectedCSTxns, persisted])
+            : state.selectedCSTxns;
 
         emit(
           state.copyWith(
             allTransactions: [...state.allTransactions, persisted],
             clientTxns: clientTxns,
             supplierTxns: supplierTxns,
+            selectedCSTxns: selectedCSTxns,
             homeBalance: _calcHomeBalance(
               state.clients,
               state.suppliers,
@@ -390,8 +427,8 @@ class ClientSuppBloc extends Bloc<ClientSuppEvent, ClientSuppState> {
         final dateCompare = b.txnData.compareTo(a.txnData);
         if (dateCompare != 0) return dateCompare;
         return _paymentTypePriority(
-          b.paymentType,
-        ).compareTo(_paymentTypePriority(a.paymentType));
+          a.paymentType,
+        ).compareTo(_paymentTypePriority(b.paymentType));
       });
     return sorted;
   }

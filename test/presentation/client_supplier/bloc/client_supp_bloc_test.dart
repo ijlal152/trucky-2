@@ -215,7 +215,7 @@ void main() {
         await pumpEventQueue();
 
         bloc.add(
-          const AddClientSuppEvent(name: 'New Supplier', initialBalance: '0'),
+          const AddClientSuppEvent(name: 'New Supplier', initialBalance: '500'),
         );
         await pumpEventQueue();
 
@@ -290,6 +290,63 @@ void main() {
         await pumpEventQueue();
 
         expect(bloc.state.isHomeBalanceVisible, isFalse);
+      });
+    });
+
+    group('AddTransactionEvent', () {
+      test('adding a txn for the selected entity updates selectedCSTxns', () async {
+        bloc.add(const LoadClientSuppEvent());
+        await pumpEventQueue();
+        bloc.add(const SelectClientSuppEvent(index: 0));
+        await pumpEventQueue();
+        final before = bloc.state.selectedCSTxns.length;
+
+        bloc.add(
+          AddTransactionEvent(
+            txn: ClientSuppTxn(
+              clientSuppId: 1,
+              transactionId: 'txn-new',
+              clientSupplierName: 'Ahmed Benali',
+              role: 'client',
+              txnData: DateTime.now(),
+              amount: '100',
+              paymentType: 'Sale',
+            ),
+          ),
+        );
+        await pumpEventQueue();
+
+        expect(bloc.state.selectedCSTxns.length, before + 1);
+        expect(
+          bloc.state.selectedCSTxns.any((t) => t.transactionId == 'txn-new'),
+          isTrue,
+        );
+      });
+
+      test('adding a txn for another entity leaves selectedCSTxns unchanged',
+          () async {
+        bloc.add(const LoadClientSuppEvent());
+        await pumpEventQueue();
+        bloc.add(const SelectClientSuppEvent(index: 0));
+        await pumpEventQueue();
+        final before = bloc.state.selectedCSTxns.length;
+
+        bloc.add(
+          AddTransactionEvent(
+            txn: ClientSuppTxn(
+              clientSuppId: 2,
+              transactionId: 'txn-other',
+              clientSupplierName: 'Sara Haddad',
+              role: 'client',
+              txnData: DateTime.now(),
+              amount: '100',
+              paymentType: 'Sale',
+            ),
+          ),
+        );
+        await pumpEventQueue();
+
+        expect(bloc.state.selectedCSTxns.length, before);
       });
     });
 
